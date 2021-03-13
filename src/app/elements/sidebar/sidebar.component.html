@@ -1,10 +1,10 @@
 <nav class="sidebar">
-  <div class="sidebar-header">
-    <a href="#" class="sidebar-brand">
-      Noble<span>UI</span>
+  <div class="sidebar-header" style="padding-left: 0px!important; padding-right: 0px!important;">
+    <a href="http://www.kadunahajj.com" target="_blank" class="sidebar-brand">
+      <img src="../../../assets/images/cropped-siteLogo.png" style="max-height: 3rem;" alt="">
     </a>
     <div
-      class="sidebar-toggler"
+      class="sidebar-toggler mx-auto"
       [class.not-active]="!sidebarService.active"
       [class.active]="sidebarService.active"
       (click)="toggle()">
@@ -16,65 +16,84 @@
   </div>
   <div class="sidebar-body" appSidebarClosedHover>
     <ul class="nav">
-      <li class="nav-item nav-category">Main</li>
-      <li class="nav-item">
-        <a href="dashboard-one.html" class="nav-link">
+      <li class="nav-item nav-category" *ngIf="!isAdmin">Main</li>
+      <li class="nav-item" routerLinkActive="active" *ngIf="!isAdmin">
+        <a routerLink="/app/user/dashboard" class="nav-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
           <span class="link-title">Dashboard</span>
         </a>
       </li>
-      <li class="nav-item nav-category">Components</li>
-      <li class="nav-item">
-        <a class="nav-link" data-toggle="collapse" href="#errorPages" role="button" aria-expanded="false" aria-controls="errorPages">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <span class="link-title">Users</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </a>
-        <div class="collapse" id="errorPages">
-          <ul class="nav sub-menu">
-            <li class="nav-item">
-              <a href="pages/error/404.html" class="nav-link">Ini</a>
-            </li>
-            <li class="nav-item">
-              <a href="pages/error/500.html" class="nav-link">Local Governments Setup</a>
-            </li>
-            <li class="nav-item">
-              <a href="pages/error/500.html" class="nav-link">Banks Setup</a>
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li class="nav-item"  routerLinkActive="active">
+
+      <li class="nav-item nav-category" *ngIf="isAdmin">Application</li>
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isAdmin">
         <a routerLink="/app/admin/users" class="nav-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
           <span class="link-title">Users</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a href="pages/apps/chat.html" class="nav-link">
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isAdmin">
+        <a routerLink="/app/admin/hajj-year" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span class="link-title">Hajj Year</span>
+        </a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" *ngIf="isAdmin">
+        <a routerLink="/app/admin/enrollment-zones" class="nav-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
           <span class="link-title">Enrollment Zones</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" routerLinkActive="active" *ngIf="isAdmin">
         <a class="nav-link" data-toggle="collapse" href="#errorPages" role="button" aria-expanded="false" aria-controls="errorPages">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bookmark"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          <span class="link-title">Parameters</span>
-          <i class="link-arrow" data-feather="chevron-down"></i>
+          <span class="link-title mr-auto">Parameters</span>
+          <svg *ngIf="sidebarService.sidebarFolded || sidebarOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </a>
         <div class="collapse" id="errorPages">
           <ul class="nav sub-menu">
             <li class="nav-item">
-              <a href="pages/error/404.html" class="nav-link">States Setup</a>
+              <a routerLink="/app/admin/states" routerLinkActive="active" class="nav-link">States</a>
             </li>
             <li class="nav-item">
-              <a href="pages/error/500.html" class="nav-link">Local Governments Setup</a>
+              <a routerLink="/app/admin/lga" routerLinkActive="active" class="nav-link">Local Governments</a>
             </li>
             <li class="nav-item">
-              <a href="pages/error/500.html" class="nav-link">Banks Setup</a>
+              <a routerLink="/app/admin/banks" routerLinkActive="active" class="nav-link">Banks</a>
             </li>
           </ul>
         </div>
+      </li>
+
+      <li class="nav-item nav-category" *ngIf="isInitiator || isReviewer || isUserAdmin">Pilgrims</li>
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isInitiator">
+        <a routerLink="/app/user/pilgrims" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span class="link-title">Registered Pilgrims</span>
+        </a>
+      </li>
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isUserAdmin">
+        <a routerLink="/app/user/pilgrims-admin" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span class="link-title">Registered Pilgrims</span>
+        </a>
+      </li>
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isReviewer">
+        <a routerLink="/app/user/pilgrims-reviewer" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span class="link-title">Active Pilgrims</span>
+        </a>
+      </li>
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isReviewer">
+        <a routerLink="/app/user/pilgrims-deleted-reviewer" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-x"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="18" y1="8" x2="23" y2="13"></line><line x1="23" y1="8" x2="18" y2="13"></line></svg>
+          <span class="link-title">Deleted Pilgrims</span>
+        </a>
+      </li>
+      <li class="nav-item"  routerLinkActive="active" *ngIf="isInitiator">
+        <a routerLink="/app/user/register-pilgrim" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          <span class="link-title">Register Pilgrim</span>
+        </a>
       </li>
     </ul>
   </div>

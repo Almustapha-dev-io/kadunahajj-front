@@ -1,0 +1,68 @@
+<app-loader *ngIf="loader.loaderVisible"></app-loader>
+
+<p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">User Profile</p>
+
+<mat-dialog-content *ngIf="!loader.loaderVisible">
+  <div class="form-group row mx-auto">
+    <label for="name">Full Name</label>
+    <input
+      type="text"
+      id="name"
+      class="form-control form-control-sm"
+      disabled
+      [value]="user.name | uppercase ">
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="email">Email</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="email"
+        disabled
+        [value]="user.email | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="role">Role</label>
+      <input
+        type="text"
+        id="role"
+        class="form-control form-control-sm"
+        disabled
+        [value]="user.role.name | uppercase">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="zone">Zone</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="zone"
+        disabled
+        [value]="user.localGovernment.name | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="dateCreated">Date Created</label>
+      <input
+        type="text"
+        id="dateCreated"
+        class="form-control form-control-sm"
+        disabled
+        [value]="user.dateCreated | date: 'medium'">
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
+   <button
+    type="button"
+    class="btn-outline-primary btn-sm btn ml-2"
+    matDialogClose>
+    Close
+  </button>
+</mat-dialog-actions>

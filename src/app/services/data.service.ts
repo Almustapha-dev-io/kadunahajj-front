@@ -9,24 +9,20 @@ import { AppError } from '../common/errors/app-error';
 import { UnauthorizedError } from '../common/errors/unauthorized-error';
 import { BadGatewayError } from '../common/errors/bad-gateway-error';
 import { ServerError } from '../common/errors/server-error';
-import { LoaderService } from './loader.service';
-import { ModalLoaderService } from './modal-loader.service';
+import { SessionTimeoutError } from '../common/errors/session-timeout-error';
+import { UnknownServerError } from '../common/errors/unknown-server.errors';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  constructor(
-    private http: HttpClient,
-    private loaderService: LoaderService,
-    private modalLoader: ModalLoaderService
-  ) { }
+  constructor(private http: HttpClient) { }
 
   get(url, token: any, id?: any): Observable<any> {
     const headers = new HttpHeaders({ 'x-auth-token': token});
 
-    return this.http.get(url + id, { observe: 'response', headers })
+    return this.http.get(`${url}/${id ? id: ''}`, { observe: 'response', headers })
       .pipe(
         map(response => response.body),
         catchError(this.handleError)
@@ -75,6 +71,12 @@ export class DataService {
 
     if (error.status === 504)
       return throwError(new BadGatewayError(error));
+
+    if (error.status === 599)
+      return throwError(new SessionTimeoutError(error));
+
+    if (error.status === 0)
+      return throwError(new UnknownServerError(error));
 
     return throwError(new AppError(error));
   }

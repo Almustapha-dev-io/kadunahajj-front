@@ -1,0 +1,60 @@
+
+<form #f="ngForm" (ngSubmit)="submit(f.value)">
+  <p mat-dialog-title style="font-size: 150%;">{{ action }}</p>
+
+  <mat-dialog-content>
+    <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button
+      type="submit"
+      class="btn-primary btn-sm btn"
+      [class.magnifyText]="(!loader.loaderVisible) || f.valid"
+      [disabled]="loader.loaderVisible || f.invalid">
+      Save
+    </button>
+
+    <button
+      type="button"
+      class="btn-outline-primary btn-sm btn ml-2"
+      [class.magnifyText]="!loader.loaderVisible"
+      [disabled]="loader.loaderVisible"
+      matDialogClose>
+      Cancel
+    </button>
+  </mat-dialog-actions>
+
+  <ng-template #show>
+    <div class="form-group">
+      <label for="name" [class.text-danger]="name.touched && name.invalid">Bank Name</label>
+      <input
+        type="text"
+        id="name"
+        class="form-control form-control-sm"
+        [class.error-control]="name.touched && name.invalid"
+        name="name"
+        [(ngModel)]="bankName"
+        #name="ngModel"
+        minlength="5"
+        maxlength="255"
+        required>
+
+        <div class="text-danger mt-1" *ngIf="name.touched && name.invalid">
+          <div *ngIf="name.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="name.errors.minlength">
+            Bank name must be minimum {{ name.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="name.errors.maxlength">
+            Bank name must be maximum {{ name.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+    </div>
+  </ng-template>
+
+  <ng-template #load>
+    <app-loader>Please wait...</app-loader>
+  </ng-template>
+</form>

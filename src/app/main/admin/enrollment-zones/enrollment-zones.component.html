@@ -1,0 +1,95 @@
+<nav class="page-breadcrumb">
+  <ol class="breadcrumb" style="font-size: 150%;">
+    <li class="breadcrumb-item"><a class="text-primary">Enrollment Zones</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Enrollment Zones</li>
+  </ol>
+</nav>
+
+
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body" style="overflow-x: auto;">
+        <h6 class="card-title">ENROLLMENT ZONES MASTER LIST</h6>
+
+        <input
+          type="search"
+          name="search"
+          [(ngModel)]="searchText"
+          class="form-control col-sm-12 col-md-3 float-right mb-3"
+          placeholder="Search">
+
+        <div class="table-responsive" style="overflow-y: hidden!important;">
+          <table class="table">
+            <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+          </table>
+
+          <div class="col-12 mx-auto mt-3">
+            <pagination-controls class="float-right"
+              (pageChange) = "p = $event"
+              maxSize="9"
+              directionLinks="true"
+              autoHide="true"
+              responsive="true"
+              previousLabel="Previous"
+              nextLabel="Next"
+              screenReaderPaginationLabel="Pagination"
+              screenReaderPageLabel="page"
+              screenReaderCurrentLabel="You're on page">
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #load>
+  <thead>
+    <tr>
+      <td><app-loader>Fetching data...</app-loader></td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #show>
+  <ng-container *ngIf="zones.length > 0 then tableData; else noData"></ng-container>
+</ng-template>
+
+<ng-template #noData>
+  <thead>
+    <tr>
+      <td>No record(s) to display</td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #tableData>
+  <thead>
+    <tr>
+      <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="sn">S/N</th>
+      <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="name">Name</th>
+      <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="code">Zone Code</th>
+      <!-- <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="dateCreated">Date Created</th> -->
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody  *ngFor="let i=index; let zone of zones | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+    <tr>
+      <td>{{ i+1 }}</td>
+      <td>{{ zone.name }}</td>
+      <td>{{ zone.code | uppercase }}</td>
+      <!-- <td>{{ zone.dateCreated | date: 'medium' }}</td> -->
+      <td>
+        &nbsp;
+        <button
+          type="button"
+          class="btn magnifyText btn-outline-primary btn"
+          (click)="editZone(zone)">
+          Edit Zone
+        </button>
+      </td>
+    </tr>
+  </tbody>
+
+</ng-template>

@@ -32,8 +32,6 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { MatNativeDateModule } from '@angular/material/core';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 @NgModule({
   exports: [
     MatCheckboxModule,
@@ -67,8 +65,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatNativeDateModule,
-    BrowserAnimationsModule
+    MatNativeDateModule
   ]
 })
 

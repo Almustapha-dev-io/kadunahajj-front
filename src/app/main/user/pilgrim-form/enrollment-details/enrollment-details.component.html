@@ -1,0 +1,205 @@
+<form [formGroup]="enrollmentAndPassport">
+  <ng-container *ngIf="loader.loaderVisible then load; else showForm"></ng-container>
+
+  <ng-template #load>
+    <app-loader></app-loader>
+  </ng-template>
+
+  <ng-template #showForm>
+    <form [formGroup]="enrollmentDetailsForm">
+      <h5>Enrollment details</h5>
+      <hr style="margin-top: 0px;" />
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="enrollmentZone" [class.text-danger]="enrollmentZone.touched && enrollmentZone.invalid">Enrollment Zone</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="enrollmentZone.touched && enrollmentZone.invalid"
+            type="text"
+            id="enrollmentZone"
+            formControlName="enrollmentZone"
+            (change)="valueChange()">
+            <option *ngFor="let lg of lga" [value]="lg._id">{{ lg.name }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="enrollmentZone.touched && enrollmentZone.invalid">
+            <div *ngIf="enrollmentZone.errors.required">
+              Select an enrollment zone.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="lastHajjYear" [class.text-danger]="lastHajjYear.touched && lastHajjYear.invalid">Last Hajj Year</label>
+          <input
+            type="text"
+            id="lastHajjYear"
+            [class.error-control]="lastHajjYear.touched && lastHajjYear.invalid"
+            class="form-control form-control-sm"
+            formControlName="lastHajjYear"
+            (keyup)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="lastHajjYear.touched && lastHajjYear.invalid">
+            <div *ngIf="lastHajjYear.errors.required">
+              This field is required.
+            </div>
+            <div *ngIf="lastHajjYear.errors.pattern">
+              Please enter a valid year.
+            </div>
+            <div *ngIf="lastHajjYear.errors.min">
+              Last hajj year must be minimum {{ lastHajjYear.errors.min.min }}.
+            </div>
+            <div *ngIf="lastHajjYear.errors.max">
+              Last hajj year must be maximum {{ lastHajjYear.errors.max.max }}.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="hajjExperience" [class.text-danger]="hajjExperience.touched && hajjExperience.invalid">Last Hajj Experience</label>
+          <input
+            type="text"
+            id="hajjExperience"
+            [class.error-control]="hajjExperience.touched && hajjExperience.invalid"
+            class="form-control form-control-sm"
+            formControlName="hajjExperience"
+            (keyup)="valueChange()">
+
+            <div class="text-danger mt-1" *ngIf="hajjExperience.touched && hajjExperience.invalid">
+              <div *ngIf="hajjExperience.errors.required">
+                This field is required.
+              </div>
+              <div *ngIf="hajjExperience.errors.minlength">
+                Last hajj year must be minimum {{ hajjExperience.errors.minlength.requiredLength }}.
+              </div>
+              <div *ngIf="hajjExperience.errors.maxlength">
+                Last hajj year must be maximum {{ hajjExperience.errors.maxlength.requiredLength }}.
+              </div>
+            </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="passportDetailsForm">
+      <br />
+      <h5>Passport details</h5>
+      <hr style="margin-top: 0px;" />
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="passportType" [class.text-danger]="passportType.touched && passportType.invalid">
+            Passport Type
+          </label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="passportType.touched && passportType.invalid"
+            type="text"
+            id="passportType"
+            formControlName="passportType"
+            (change)="valueChange()">
+            <option [value]="null" selected hidden>Select passport type</option>
+            <option *ngFor="let p of passportTypes" [value]="p">{{ p | uppercase }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="passportType.touched && passportType.invalid">
+            <div *ngIf="passportType.errors.required">
+              Select pilgrim's passport type.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="passportNumber" [class.text-danger]="passportNumber.touched && passportNumber.invalid">
+            Passport Number
+          </label>
+          <input
+            type="text"
+            id="passportNumber"
+            [class.error-control]="passportNumber.touched && passportNumber.invalid"
+            class="form-control form-control-sm"
+            formControlName="passportNumber"
+            (keyup)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="passportNumber.touched && passportNumber.invalid">
+            <div *ngIf="passportNumber.errors.required">
+              This field is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="dateOfIssue" [class.text-danger]="dateOfIssue.touched && dateOfIssue.invalid">
+            Date of Issue
+          </label>
+          <input
+            type="date"
+            id="dateOfIssue"
+            [class.error-control]="dateOfIssue.touched && dateOfIssue.invalid"
+            class="form-control form-control-sm"
+            formControlName="dateOfIssue"
+            (change)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="dateOfIssue.touched && dateOfIssue.invalid">
+            <div *ngIf="dateOfIssue.errors.required">
+              Select a valid date.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="expiryDate" [class.text-danger]="expiryDate.touched && expiryDate.invalid">
+            Expiry Date
+          </label>
+          <input
+            type="date"
+            id="expiryDate"
+            [class.error-control]="expiryDate.touched && expiryDate.invalid"
+            class="form-control form-control-sm"
+            formControlName="expiryDate"
+            (change)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="expiryDate.touched && expiryDate.invalid">
+            <div *ngIf="expiryDate.errors.required">
+              Select a valid date.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="placeOfIssue" [class.text-danger]="placeOfIssue.touched && placeOfIssue.invalid">
+            Place of Issue
+          </label>
+          <input
+            type="text"
+            id="placeOfIssue"
+            [class.error-control]="placeOfIssue.touched && placeOfIssue.invalid"
+            class="form-control form-control-sm"
+            formControlName="placeOfIssue"
+            (keyup)="valueChange()">
+
+            <div class="text-danger mt-1" *ngIf="placeOfIssue.touched && placeOfIssue.invalid">
+              <div *ngIf="placeOfIssue.errors.required">
+                This field is required.
+              </div>
+            </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</form>
+

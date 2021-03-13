@@ -1,0 +1,146 @@
+<nav class="page-breadcrumb">
+  <ol class="breadcrumb" style="font-size: 150%;">
+    <li class="breadcrumb-item"><a class="text-primary">Hajj Years</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ display }}</li>
+  </ol>
+</nav>
+
+<div class="col-12" style="text-align: center;">
+  <div class="btn-group mb-4" role="group">
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'active'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('active')">
+      Active
+    </button>
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'inactive'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('inactive')">
+      Closed
+    </button>
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === ''"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('')">
+      All Years
+    </button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body" style="overflow-x: auto;">
+        <h6 class="card-title">HAJJ YEARS MASTER LIST</h6>
+
+        <button
+          class="btn btn-success mb-4"
+          [class.magnifyText]="(!loader.loaderVisible) && active === 'active'"
+          [disabled]="loader.loaderVisible || active !== 'active'"
+          (click)="openNewHajjYear()">
+          <span>Open New Hajj Year</span>
+        </button>
+
+        <input
+          type="search"
+          name="search"
+          [(ngModel)]="searchText"
+          class="form-control col-sm-12 col-md-3 float-right mb-3"
+          placeholder="Search">
+
+        <div class="table-responsive" style="overflow-y: hidden!important;">
+          <table class="table">
+            <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+          </table>
+
+          <div class="col-12 mx-auto mt-3">
+            <pagination-controls class="float-right"
+              (pageChange) = "p = $event"
+              maxSize="9"
+              directionLinks="true"
+              autoHide="true"
+              responsive="true"
+              previousLabel="Previous"
+              nextLabel="Next"
+              screenReaderPaginationLabel="Pagination"
+              screenReaderPageLabel="page"
+              screenReaderCurrentLabel="You're on page">
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #load>
+  <thead>
+    <tr>
+      <td><app-loader>Fetching data...</app-loader></td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #show>
+  <ng-container *ngIf="years.length > 0 then tableData; else noData"></ng-container>
+</ng-template>
+
+<ng-template #noData>
+  <thead>
+    <tr>
+      <td>No record(s) to display</td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #tableData>
+  <thead>
+    <tr>
+      <th class="sort" scope="col" [appSort]="years" data-order="desc" data-name="sn">S/N</th>
+      <th class="sort" scope="col" [appSort]="years" data-order="desc" data-name="year">Year</th>
+      <th class="sort" scope="col" [appSort]="years" data-order="desc" data-name="dateOpened">Open Date</th>
+      <th class="sort" scope="col" [appSort]="years" data-order="desc" data-name="lastClosed">Last Closed Date</th>
+      <th *ngIf="active === 'active'">Actions</th>
+      <th *ngIf="active === ''">Status</th>
+    </tr>
+  </thead>
+  <tbody  *ngFor="let i=index; let year of years | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+    <tr>
+      <td>{{ i+1 }}</td>
+      <td>{{ year.year }}</td>
+      <td>{{ year.dateOpened | date: 'medium' }}</td>
+      <td>{{ year.lastClosed | date: 'medium' }}</td>
+      <td>
+        <span *ngIf="active === ''" [class.text-success]="year.active" [class.text-danger]="!year.active">
+          {{ year.active ? 'Active' : 'Closed' }}
+        </span>
+        &nbsp;
+        &nbsp;
+        <button
+          *ngIf="currentYear === year.year && !year.active"
+          type="button"
+          class="btn magnifyText btn-outline-primary btn-sm"
+          (click)="reopenHajjYear(year.year)">
+          Reopen
+        </button>
+
+        <button
+          (click)="closeHajjYear(year.year)"
+          *ngIf="active === 'active'"
+          type="button"
+          class="btn magnifyText btn-danger btn-sm">
+          Close
+        </button>
+      </td>
+    </tr>
+  </tbody>
+
+</ng-template>

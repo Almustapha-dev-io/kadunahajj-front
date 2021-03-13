@@ -1,9 +1,21 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+const endpoint = 'https://kaduna-hajj-app-api.herokuapp.com';
 
 export const environment = {
-  production: false
+  production: false,
+  auth: `${endpoint}/api/auths`,
+  roles: `${endpoint}/api/roles`,
+  users: `${endpoint}/api/users`,
+  zones: `${endpoint}/api/enrollment-zones`,
+  years: `${endpoint}/api/years`,
+  banks: `${endpoint}/api/banks`,
+  states: `${endpoint}/api/states`,
+  lgas: `${endpoint}/api/local-govs`,
+  pilgrims: `${endpoint}/api/pilgrims`,
+
+  emailPattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 };
 
 /*

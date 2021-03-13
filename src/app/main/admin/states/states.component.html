@@ -1,0 +1,90 @@
+<nav class="page-breadcrumb">
+  <ol class="breadcrumb" style="font-size: 150%;">
+    <li class="breadcrumb-item"><a class="text-primary">States</a></li>
+    <li class="breadcrumb-item active" aria-current="page">All States</li>
+  </ol>
+</nav>
+
+
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body" style="overflow-x: auto;">
+        <h6 class="card-title">STATES MASTER LIST</h6>
+
+        <input
+          type="search"
+          name="search"
+          [(ngModel)]="searchText"
+          class="form-control col-sm-12 col-md-3 float-right mb-3"
+          placeholder="Search">
+
+        <div class="table-responsive" style="overflow-y: hidden!important;">
+          <table class="table">
+            <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+          </table>
+
+          <div class="col-12 mx-auto mt-3">
+            <pagination-controls class="float-right"
+              (pageChange) = "p = $event"
+              maxSize="9"
+              directionLinks="true"
+              autoHide="true"
+              responsive="true"
+              previousLabel="Previous"
+              nextLabel="Next"
+              screenReaderPaginationLabel="Pagination"
+              screenReaderPageLabel="page"
+              screenReaderCurrentLabel="You're on page">
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #load>
+  <thead>
+    <tr>
+      <td><app-loader>Fetching data...</app-loader></td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #show>
+  <ng-container *ngIf="states.length > 0 then tableData; else noData"></ng-container>
+</ng-template>
+
+<ng-template #noData>
+  <thead>
+    <tr>
+      <td>No record(s) to display</td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #tableData>
+  <thead>
+    <tr>
+      <th class="sort" scope="col" [appSort]="states" data-order="desc" data-name="sn">S/N</th>
+      <th class="sort" scope="col" [appSort]="states" data-order="desc" data-name="name">Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody  *ngFor="let i=index; let state of states | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+    <tr>
+      <td>{{ i+1 }}</td>
+      <td>{{ state.name }}</td>
+      <td>
+        <button
+          type="button"
+          class="btn magnifyText btn-outline-primary btn"
+          (click)="editState(state)">
+          Edit State
+        </button>
+      </td>
+    </tr>
+  </tbody>
+
+</ng-template>

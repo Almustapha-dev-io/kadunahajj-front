@@ -1,0 +1,57 @@
+<h5>Document Upload</h5>
+<hr style="margin-top: 0px;" />
+
+<div class="row">
+  <div class="form-group col-md-6 col-sm-12 mx-auto">
+    <label for="documentType">Document Type</label>
+    <select
+      class="form-control form-control-sm"
+      type="text"
+      id="documentType"
+      name="documentType"
+      ngModel
+      #docType="ngModel"
+      (change)="docChange(docType.value)">
+      <option value="" selected hidden>Select document type</option>
+      <option value="ePass">E-Passport</option>
+      <option value="mou">MOU Form</option>
+      <option value="guarantor">Guarantor Form</option>
+    </select>
+  </div>
+
+  <div class="form-group col-md-6 col-sm-12 mx-auto">
+  </div>
+</div>
+
+<form [formGroup]="attachedDocumentsForm">
+
+  <div class="dropzone mt-3" appDragAndDrop (fileDropped)="fileDropped($event)">
+    <input
+      type="file"
+      #fileDropRef
+      id="fileDropRef"
+      (change)="fileDropped($event.target.files)" />
+
+    <img src="../../../../../assets/images/upload.svg" alt="" />
+    <h3>Drag and drop file here</h3>
+    <h3>or</h3>
+    <label for="fileDropRef">Browse for file</label>
+  </div>
+</form>
+
+<div class="files-list">
+  <div class="single-file" *ngFor="let f of files; let i=index">
+    <img src="../../../../../assets/images/ic-file.svg" alt="file" width="45px">
+    <div class="info">
+      <h4 class="name">
+        {{ f?.file.name }}
+      </h4>
+      <p class="size">
+        {{ formatBytes(f?.file.size) }}
+      </p>
+      <app-progress [progress]="f?.progress"></app-progress>
+    </div>
+    <img src="../../../../../assets/images/ic-delete-file.svg" class="delete" width="20px" alt="file"
+      (click)="removeUploadedDocument(f.documentType)">
+  </div>
+</div>

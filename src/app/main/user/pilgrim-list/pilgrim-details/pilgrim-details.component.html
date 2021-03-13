@@ -1,0 +1,391 @@
+<app-loader *ngIf="loader.loaderVisible"></app-loader>
+
+<p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Pilgrim Details</p>
+
+<mat-dialog-content *ngIf="!loader.loaderVisible">
+  <h5>Enrollment details</h5>
+  <hr style="margin-top: 0px;" />
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="registrationCode">Registration Code</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="registrationCode"
+        disabled
+        [value]="enrollmentDetails.code">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="year">Registration Year</label>
+      <input
+        type="text"
+        id="year"
+        class="form-control form-control-sm"
+        disabled
+        [value]="enrollmentDetails.enrollmentYear.year">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="registrationZone">Registration Zone</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="registrationZone"
+        disabled
+        [value]="enrollmentDetails.enrollmentZone.name">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="lastHajjYear">Last Hajj Year</label>
+      <input
+        type="text"
+        id="lastHajjYear"
+        class="form-control form-control-sm"
+        disabled
+        [value]="enrollmentDetails.lastHajjYear">
+    </div>
+  </div>
+
+  <div class="form-group row mx-auto">
+    <label for="hajjExperience">Last Hajj Experience</label>
+    <input
+      type="text"
+      id="hajjExperience"
+      class="form-control form-control-sm"
+      disabled
+      [value]="enrollmentDetails.hajjExperience">
+  </div>
+
+  <br />
+
+  <h5>Personal details</h5>
+  <hr style="margin-top: 0px; margin-bottom: 0px;" />
+
+  <div class="form-group row mx-auto">
+    <label for="name">Full Name</label>
+    <input
+      type="text"
+      id="name"
+      class="form-control form-control-sm"
+      disabled
+      [value]="personalDetails.surname + ', ' + personalDetails.otherNames | uppercase ">
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="sex">Gender</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="sex"
+        disabled
+        [value]="personalDetails.sex | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="maritalStatus">Marital Status</label>
+      <input
+        type="text"
+        id="maritalStatus"
+        class="form-control form-control-sm"
+        disabled
+        [value]="personalDetails.maritalStatus | uppercase">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="stateOfOrigin">State Of Origin</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="stateOfOrigin"
+        disabled
+        [value]="personalDetails.stateOfOrigin.name | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="lgaOfOrigin">Local Gov't</label>
+      <input
+        type="text"
+        id="lgaOfOrigin"
+        class="form-control form-control-sm"
+        disabled
+        [value]="personalDetails.localGovOfOrigin.name | uppercase">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="dateOfBirth">Date Of Birth</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="dateOfBirth"
+        disabled
+        [value]="personalDetails.dateOfBirth | date: 'longDate'">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="phone">Phone</label>
+      <input
+        type="text"
+        id="phone"
+        class="form-control form-control-sm"
+        disabled
+        [value]="personalDetails.phone">
+    </div>
+  </div>
+
+  <div class="form-group row mx-auto" *ngIf="personalDetails.alternatePhone">
+    <label for="altPhone">Alternate Phone</label>
+    <input
+      type="text"
+      id="altPhone"
+      class="form-control form-control-sm"
+      disabled
+      [value]="personalDetails.alternatePhone">
+  </div>
+
+  <div class="form-group row mx-auto">
+    <label for="address">Residential Address</label>
+    <textarea
+      id="address"
+      class="form-control form-control-sm"
+      rows="3"
+      disabled
+      [value]="personalDetails.homeAddress | uppercase">
+    </textarea>
+  </div>
+
+  <br />
+
+  <h5>Office details</h5>
+  <hr style="margin-top: 0px; margin-bottom: 0px;" />
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="occupation">Occupation</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="occupation"
+        disabled
+        [value]="officeDetails.occupation | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="profession">Profession</label>
+      <input
+        type="text"
+        id="profession"
+        class="form-control form-control-sm"
+        disabled
+        [value]="officeDetails.profession | uppercase">
+    </div>
+  </div>
+
+  <div class="form-group row mx-auto">
+    <label for="placeOfWork">Place Of Work</label>
+    <input
+      type="text"
+      id="placeOfWork"
+      class="form-control form-control-sm"
+      disabled
+      [value]="officeDetails.placeOfWork | uppercase">
+  </div>
+
+  <div class="form-group row mx-auto">
+    <label for="officeAddress">Office Address</label>
+    <textarea
+      id="officeAddress"
+      class="form-control form-control-sm"
+      rows="3"
+      disabled
+      [value]="officeDetails.officeAddress | uppercase">
+    </textarea>
+  </div>
+
+  <br />
+
+  <h5>Next of kin details</h5>
+  <hr style="margin-top: 0px; margin-bottom: 0px;" />
+
+  <div class="form-group row mx-auto">
+    <label for="kinFullName">Full Name</label>
+    <input
+      type="text"
+      id="kinFullName"
+      class="form-control form-control-sm"
+      disabled
+      [value]="nextOfKinDetails.fullName | uppercase">
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="relationship">Relationship</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="relationship"
+        disabled
+        [value]="nextOfKinDetails.relationship | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="kinPhone">Phone</label>
+      <input
+        type="text"
+        id="kinPhone"
+        class="form-control form-control-sm"
+        disabled
+        [value]="nextOfKinDetails.phone">
+    </div>
+  </div>
+
+  <div class="form-group row mx-auto">
+    <label for="kinAdress">Home Address</label>
+    <textarea
+      id="kinAdress"
+      class="form-control form-control-sm"
+      rows="3"
+      disabled
+      [value]="nextOfKinDetails.address | uppercase">
+    </textarea>
+  </div>
+
+  <br />
+
+  <h5>E-Passport details</h5>
+  <hr style="margin-top: 0px;" />
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="passportNumber">Passport Number</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="passportNumber"
+        disabled
+        [value]="passportDetails.passportNumber | uppercase">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="passportType">Passport Type</label>
+      <input
+        type="text"
+        id="passportType"
+        class="form-control form-control-sm"
+        disabled
+        [value]="passportDetails.passportType | uppercase">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="dateOfIssue">Date of Issue</label>
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        id="dateOfIssue"
+        disabled
+        [value]="passportDetails.dateOfIssue | date: 'longDate'">
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="expiryDate">Expiry Date</label>
+      <input
+        type="text"
+        id="expiryDate"
+        class="form-control form-control-sm"
+        disabled
+        [value]="passportDetails.expiryDate | date: 'longDate'">
+    </div>
+  </div>
+
+  <br />
+
+  <h5>Payment history</h5>
+  <hr style="margin-top: 0px;" />
+
+  <div *ngFor="let payment of paymentHistory; let i = index">
+    <div class="row col-12 mx-auto">
+      <h4>{{ i+1 }}.</h4>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6 col-sm-12 mx-auto">
+        <label [for]="'receiptNumber'+i">Receipt Number</label>
+        <input
+          class="form-control form-control-sm"
+          type="text"
+          [id]="'receiptNumber'+i"
+          disabled
+          [value]="payment.receiptNumber | uppercase">
+      </div>
+
+      <div class="form-group col-md-6 col-sm-12 mx-auto">
+        <label [for]="'tellerNumber'+i">Teller Number</label>
+        <input
+          type="text"
+          [id]="'tellerNumber'+i"
+          class="form-control form-control-sm"
+          disabled
+          [value]="payment.tellerNumber | uppercase">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6 col-sm-12 mx-auto">
+        <label [for]="'paymentDate'+i">Payment Date</label>
+        <input
+          type="text"
+          [id]="'paymentDate'+i"
+          class="form-control form-control-sm"
+          disabled
+          [value]="payment.paymentDate | date: 'longDate'">
+      </div>
+
+      <div class="form-group col-md-6 col-sm-12 mx-auto">
+        <label [for]="'bank'+i">Bank</label>
+        <input
+          class="form-control form-control-sm"
+          type="text"
+          [id]="'bank'+i"
+          disabled
+          [value]="payment.bankObject.name">
+      </div>
+    </div>
+  </div>
+
+  <br />
+
+  <h5>Uploaded images</h5>
+  <hr style="margin-top: 0px;" />
+
+  <ul class="list-group">
+    <li class="list-group-item">
+      Guarantor Form&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.guarantorFormUrl)" target="_blank">View</a>
+    </li>
+    <li class="list-group-item">
+      MOU&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.mouUrl)" target="_blank">View</a>
+    </li>
+    <li class="list-group-item">
+      E-Passport&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.passportUrl)" target="_blank">View</a>
+    </li>
+  </ul>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
+   <button
+    type="button"
+    class="btn-outline-primary btn-sm btn ml-2"
+    matDialogClose>
+    Close
+  </button>
+</mat-dialog-actions>

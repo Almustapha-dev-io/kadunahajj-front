@@ -8,7 +8,7 @@ export class NotificationService {
 
   constructor() {}
 
-  get Toast() {
+  private get Toast() {
     return Swal.mixin({
       toast: true,
       position: 'top',
@@ -30,23 +30,35 @@ export class NotificationService {
     this.Toast.fire({
       icon: 'error',
       title: ' ',
-      text: message? message : 'Error'
+      text: message? message : 'Error',
+      timer: 0
     });
   }
 
   prompt(message) {
     return Swal.fire({
       icon: 'question',
-      text: message,
-      showCancelButton: true
-    })
+      html: message,
+      showCancelButton: true,
+      customClass: {
+        popup: 'swal-wide',
+        confirmButton: 'magnifyText',
+        cancelButton: 'magnifyText'
+      },
+      confirmButtonText: 'Continue'
+    });
   }
 
   alert(message) {
     return Swal.fire({
       icon: 'info',
-      text: message,
-      allowOutsideClick: false
+      html: message,
+      allowOutsideClick: false,
+      customClass: {
+        popup: 'swal-wide',
+        confirmButton: 'magnifyText'
+      },
+      confirmButtonText: 'Continue'
     });
   }
 }

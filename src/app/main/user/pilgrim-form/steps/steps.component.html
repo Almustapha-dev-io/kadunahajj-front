@@ -1,0 +1,11 @@
+<ng-container *ngFor="let step of steps | async; let i = index;">
+  <div class="step"
+  (click)="onStepClick(step)"
+  [ngClass]="{
+    'active': step.isComplete,
+    'inactive': !step.isComplete,
+    'current': (currentStep | async)?.stepIndex === step.stepIndex
+  }">
+  {{ step.stepIndex +'. ' + stepIndex(step.stepIndex) }}
+  </div>
+</ng-container>

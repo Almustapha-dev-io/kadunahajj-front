@@ -1,0 +1,138 @@
+
+<form #f="ngForm" (ngSubmit)="submit(f)">
+  <p mat-dialog-title style="font-size: 150%;">{{ action }}</p>
+
+  <mat-dialog-content>
+    <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button
+      type="submit"
+      class="btn-primary btn-sm btn"
+      [class.magnifyText]="(!loader.loaderVisible) || f.valid"
+      [disabled]="loader.loaderVisible || f.invalid">
+      Save
+    </button>
+
+    <button
+      type="button"
+      class="btn-outline-primary btn-sm btn ml-2"
+      [class.magnifyText]="!loader.loaderVisible"
+      [disabled]="loader.loaderVisible"
+      matDialogClose>
+      Cancel
+    </button>
+  </mat-dialog-actions>
+
+  <ng-template #show>
+    <div class="form-group">
+      <label for="name" [class.text-danger]="name.touched && name.invalid">Full Name</label>
+      <input
+        type="text"
+        id="name"
+        class="form-control form-control-sm"
+        [class.error-control]="name.touched && name.invalid"
+        name="name"
+        [(ngModel)]="formName"
+        #name="ngModel"
+        minlength="5"
+        maxlength="50"
+        required>
+
+        <div class="text-danger mt-1" *ngIf="name.touched && name.invalid">
+          <div *ngIf="name.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="name.errors.minlength">
+            Full name must be minimum {{ name.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="name.errors.maxlength">
+            Full name must be maximum {{ name.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email" [class.text-danger]="email.touched && email.invalid">Email</label>
+      <input
+        type="email"
+        id="email"
+        class="form-control form-control-sm"
+        [class.error-control]="email.touched && email.invalid"
+        name="email"
+        [(ngModel)]="formEmail"
+        #email="ngModel"
+        [pattern]="emailPattern"
+        minlength="5"
+        maxlength="50"
+        required>
+
+        <div class="text-danger mt-1" *ngIf="email.touched && email.invalid">
+          <div *ngIf="email.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="email.errors.pattern">
+            Please enter a valid email.
+          </div>
+          <div *ngIf="email.errors.minlength">
+            Email must be minimum {{ email.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="email.errors.maxlength">
+            Email must be maximum {{ email.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="roleId" [class.text-danger]="roleId.touched && roleId.invalid">Role</label>
+      <select
+        style="border-radius: 2px;"
+        id="roleId"
+        class="form-control form-control-sm"
+        [class.error-control]="roleId.touched && roleId.invalid"
+        name="roleId"
+        [(ngModel)]="formRoleId"
+        #roleId="ngModel"
+        required
+        (change)="filterZones()"
+        [disabled]="data">
+        <option selected hidden value="">Select a Role</option>
+        <option *ngFor="let role of rolesList" [value]="role._id">{{ role.name | uppercase }}</option>
+      </select>
+
+      <div class="text-danger mt-1" *ngIf="roleId.touched && roleId.invalid">
+        <div *ngIf="roleId.errors.required">
+          Select a Role.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="localGovernmentId" [class.text-danger]="localGovernmentId.touched && localGovernmentId.invalid">Local Government</label>
+      <select
+        style="border-radius: 2px;"
+        id="localGovernmentId"
+        class="form-control form-control-sm"
+        [class.error-control]="localGovernmentId.touched && localGovernmentId.invalid"
+        name="localGovernmentId"
+        [(ngModel)]="formLga"
+        #localGovernmentId="ngModel"
+        required
+        [disabled]="data">
+        <option selected hidden value="">Select a Local Government</option>
+        <option *ngFor="let zone of zones" [value]="zone._id">{{ zone.name +' (' + zone.code +')' | uppercase }}</option>
+      </select>
+
+      <div class="text-danger mt-1" *ngIf="localGovernmentId.touched && localGovernmentId.invalid">
+        <div *ngIf="localGovernmentId.errors.required">
+          Select a local government.
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #load>
+    <app-loader>Please wait...</app-loader>
+  </ng-template>
+</form>

@@ -11,6 +11,9 @@ import { SideBarService } from '../../services/side-bar.service';
 })
 export class SidebarComponent extends AppBreakPointsObserver implements OnInit {
 
+  sidebarOpen = false;
+  role = sessionStorage.getItem('roleName');
+
   constructor(
     _mediaMatcher: MediaMatcher,
     zone: NgZone,
@@ -24,6 +27,22 @@ export class SidebarComponent extends AppBreakPointsObserver implements OnInit {
     this.setScreenOrientations();
   }
 
+  get isAdmin() {
+    return this.role === 'super-admin';
+  }
+
+  get isInitiator() {
+    return this.role === 'initiator';
+  }
+
+  get isUserAdmin() {
+    return this.role === 'admin';
+  }
+
+  get isReviewer() {
+    return this.role === 'reviewer';
+  }
+
   toggle() {
     this.sidebarService.toggleSidebarFolded();
     this.sidebarService.toggleActive();
@@ -31,14 +50,18 @@ export class SidebarComponent extends AppBreakPointsObserver implements OnInit {
     if (this.isBigScreenLandscape || this.isBigScreenPortrait) {
       if (this.sidebarService.sidebarFolded) {
         this.renderer.removeClass(document.body, 'sidebar-folded');
+        this.sidebarOpen = true;
       } else {
         this.renderer.addClass(document.body, 'sidebar-folded');
+        this.sidebarOpen = false;
       }
     } else {
       if (this.sidebarService.sidebarFolded) {
         this.renderer.removeClass(document.body, 'sidebar-open');
+        this.sidebarOpen = false;
       } else {
         this.renderer.addClass(document.body, 'sidebar-open');
+        this.sidebarOpen = true;
       }
     }
   }

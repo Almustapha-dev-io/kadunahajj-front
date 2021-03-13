@@ -1,0 +1,103 @@
+<form [formGroup]="nextOfKinDetailsForm">
+
+  <h5>Next of kin details</h5>
+  <hr style="margin-top: 0px;" />
+
+  <div class="form-group row mx-auto">
+    <label for="fullName" [class.text-danger]="fullName.touched && fullName.invalid">Full Name</label>
+    <input
+      type="text"
+      id="fullName"
+      [class.error-control]="fullName.touched && fullName.invalid"
+      class="form-control form-control-sm"
+      formControlName="fullName"
+      (keyup)="valueChange()">
+
+    <div class="text-danger mt-1" *ngIf="fullName.touched && fullName.invalid">
+      <div *ngIf="fullName.errors.required">
+        This field is required.
+      </div>
+      <div *ngIf="fullName.errors.minlength">
+        Next of kin name must be minimum {{ fullName.errors.minlength.requiredLength }} characters.
+      </div>
+      <div *ngIf="fullName.errors.maxlength">
+        Next of kin name must be maximum {{ fullName.errors.maxlength.requiredLength }} characters.
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="relationship" [class.text-danger]="relationship.touched && relationship.invalid">Relationship</label>
+      <select
+        class="form-control form-control-sm"
+        [class.error-control]="relationship.touched && relationship.invalid"
+        type="text"
+        id="relationship"
+        formControlName="relationship"
+        (change)="valueChange()">
+        <option [value]="null" selected hidden>Select relationship</option>
+        <option *ngFor="let r of relationships" [value]="r">{{ r | uppercase }}</option>
+      </select>
+
+      <div class="text-danger mt-1" *ngIf="relationship.touched && relationship.invalid">
+        <div *ngIf="relationship.errors.required">
+          Select pilgrim's next of kin relationship.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <label for="phone" [class.text-danger]="phone.touched && phone.invalid">
+        Phone
+      </label>
+      <input
+        type="text"
+        id="phone"
+        [class.error-control]="phone.touched && phone.invalid"
+        class="form-control form-control-sm"
+        formControlName="phone"
+        (keyup)="valueChange()">
+
+      <div class="text-danger mt-1" *ngIf="phone.touched && phone.invalid">
+        <div *ngIf="phone.errors.required">
+          This Field is required
+        </div>
+        <div *ngIf="phone.errors.minlength">
+          Phone must be minimum {{ phone.errors.minlength.requiredLength }} characters.
+        </div>
+        <div *ngIf="phone.errors.maxlength">
+          Phone must be maximum {{ phone.errors.maxlength.requiredLength }} characters.
+        </div>
+        <div *ngIf="phone.errors.pattern">
+          Please enter a valid phone number.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row mx-auto">
+    <label for="address" [class.text-danger]="address.touched && address.invalid">Residential Address</label>
+    <textarea
+      type="text"
+      id="address"
+      [class.error-control]="address.touched && address.invalid"
+      class="form-control form-control-sm"
+      formControlName="address"
+      (keyup)="valueChange()"
+      rows="3">
+    </textarea>
+
+    <div class="text-danger mt-1" *ngIf="address.touched && address.invalid">
+      <div *ngIf="address.errors.required">
+        This field is required.
+      </div>
+      <div *ngIf="address.errors.minlength">
+        Address must be minimum {{ address.errors.minlength.requiredLength }} characters.
+      </div>
+      <div *ngIf="address.errors.maxlength">
+        Address must be maximum {{ address.errors.maxlength.requiredLength }} characters.
+      </div>
+    </div>
+  </div>
+</form>

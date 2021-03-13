@@ -1,0 +1,43 @@
+
+.inactive {
+  background-color: #f2f2f2;
+  color: #aaaaaa;
+}
+
+.active {
+  background: #5a66f3;
+  color: #FFFFFF;
+  cursor: pointer
+}
+
+.current {
+  background: darken($color: #5a66f3, $amount: 30);
+  color: #FFFFFF;
+  cursor: pointer
+}
+
+.step {
+  padding: 0rem 1rem;
+  border-radius: 3px;
+  font-size: 90%;
+  line-height: 2.8rem;
+  height: 2.8rem;
+  width: 95%;
+}
+
+.inactive:hover {
+  cursor: default!important;
+}
+
+.step:last-child {
+  margin-top: .4rem;
+}
+
+.step:nth-child(2), .step:nth-child(3) {
+  margin-bottom: .4rem;
+}
+
+.step:first-child {
+  margin-bottom: .4rem;
+}
+

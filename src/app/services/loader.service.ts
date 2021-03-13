@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 export class LoaderService {
   loaderVisible: boolean = false;
 
+  mainLoader: boolean = false;
+
   constructor() { }
 
   showLoader(): void {

@@ -1,1 +1,138 @@
-<p>users works!</p>
+<nav class="page-breadcrumb">
+  <ol class="breadcrumb" style="font-size: 150%;">
+    <li class="breadcrumb-item"><a class="text-primary" >Users</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ display }}</li>
+  </ol>
+</nav>
+
+<div class="col-12" style="text-align: center;">
+  <div class="btn-group mb-4" role="group">
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'initiators'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('initiators')">
+      Initiators
+    </button>
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'admins'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('admins')">
+      Admins
+    </button>
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'reviewers'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('reviewers')">
+      Reviewers
+    </button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body" style="overflow-x: auto;">
+        <h6 class="card-title">USERS MASTER LIST</h6>
+
+        <button
+          class="btn btn-success mb-4"
+          [class.magnifyText]="!loader.loaderVisible"
+          [disabled]="loader.loaderVisible"
+          (click)="addUser()">
+          <span>Add User</span>
+        </button>
+
+        <input
+          type="search"
+          name="search"
+          [(ngModel)]="searchText"
+          class="form-control col-sm-12 col-md-3 float-right mb-3"
+          placeholder="Search">
+
+
+        <div class="table-responsive" style="overflow-y: hidden!important;">
+          <table class="table">
+            <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+          </table>
+
+          <div class="col-12 mx-auto mt-3">
+            <pagination-controls class="float-right"
+              (pageChange) = "p = $event"
+              maxSize="9"
+              directionLinks="true"
+              autoHide="true"
+              responsive="true"
+              previousLabel="Previous"
+              nextLabel="Next"
+              screenReaderPaginationLabel="Pagination"
+              screenReaderPageLabel="page"
+              screenReaderCurrentLabel="You're on page">
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #load>
+  <thead>
+    <tr>
+      <td><app-loader>Fetching data...</app-loader></td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #show>
+  <ng-container *ngIf="users.length > 0 then tableData; else noData"></ng-container>
+</ng-template>
+
+<ng-template #noData>
+  <thead>
+    <tr>
+      <td>No record(s) to display</td>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #tableData>
+  <thead>
+    <tr>
+      <th class="sort" scope="col" [appSort]="users" data-order="desc" data-name="sn">S/N</th>
+      <th class="sort" scope="col" [appSort]="users" data-order="desc" data-name="name">Full Name</th>
+      <th class="sort" scope="col" [appSort]="users" data-order="desc" data-name="email">Email</th>
+      <th class="sort" scope="col" [appSort]="users" data-order="desc" data-name="localGovernment.name">Zone</th>
+      <th class="sort" scope="col" [appSort]="users" data-order="desc" data-name="dateCreated">Date Created</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody  *ngFor="let i=index; let user of users | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+    <tr>
+      <td>{{ i+1 }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.localGovernment.name }}</td>
+      <td>{{ user.dateCreated | date: 'medium' }}</td>
+      <td>
+        <button type="button" class="btn magnifyText btn-primary btn-sm" style="color: white!important;" (click)="addUser(user)">Edit</button>
+        &nbsp;
+        &nbsp;
+        <div class="d-inline-block" ngbDropdown container="body" #moreActionsDrop="ngbDropdown">
+          <button class="magnifyText btn btn-sm btn-outline-primary" id="moredropDown" ngbDropdownAnchor (focus)="moreActionsDrop.open()">More</button>
+          <div ngbDropdownMenu aria-labelledby="moredropDown">
+            <button class="my-2" style="font-size: 105%!important;" ngbDropdownItem (click)="resetPassword(user)" >Reset Password</button>
+            <button class="my-2" style="font-size: 105%!important;" ngbDropdownItem >Change Role</button>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+
+</ng-template>

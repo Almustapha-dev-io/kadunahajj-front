@@ -1,0 +1,110 @@
+<form [formGroup]="paymentHistory">
+  <ng-container *ngIf="loader.loaderVisible then load; else showForm"></ng-container>
+
+  <ng-template #load>
+    <app-loader></app-loader>
+  </ng-template>
+
+  <ng-template #showForm>
+
+    <form *ngFor="let i=index; let group of paymentHistory.controls" [formGroup]="group">
+      <h5>{{ 'Payment Details ' + (i+1) }}</h5>
+      <hr style="margin-top: 0px;" />
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label [for]="'bank'+i" [class.text-danger]="group.get('bank')?.touched && group.get('bank')?.invalid">Bank</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="group.get('bank')?.touched && group.get('bank')?.invalid"
+            type="text"
+            [id]="'bank'+i"
+            formControlName="bank"
+            (change)="valueChange()">
+            <option [value]="null" selected hidden>Select Bank</option>
+            <option *ngFor="let b of banks" [value]="b._id">{{ b.name }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="group.get('bank')?.touched && group.get('bank')?.invalid">
+            <div *ngIf="group.get('bank')?.errors.required">
+              Select a bank.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label [for]="'paymentDate'+i" [class.text-danger]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
+            Date of Payment
+          </label>
+          <input
+            type="date"
+            [id]="'paymentDate'+i"
+            [class.error-control]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid"
+            class="form-control form-control-sm"
+            formControlName="paymentDate"
+            (change)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
+            <div *ngIf="group.get('paymentDate')?.errors.required">
+              Select a valid date.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label [for]="'tellerNumber'+i" [class.text-danger]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">Teller Number</label>
+          <input
+            type="text"
+            [id]="'tellerNumber'+i"
+            [class.error-control]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid"
+            class="form-control form-control-sm"
+            formControlName="tellerNumber"
+            (keyup)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">
+            <div *ngIf="group.get('tellerNumber')?.errors.required">
+              This field is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label [for]="'receiptNumber'+i" [class.text-danger]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">Receipt Number</label>
+          <input
+            type="text"
+            [id]="'receiptNumber'+i"
+            [class.error-control]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid"
+            class="form-control form-control-sm"
+            formControlName="receiptNumber"
+            (keyup)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">
+            <div *ngIf="group.get('receiptNumber')?.errors.required">
+              This field is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 mx-auto mb-5">
+        <button class="btn-sm btn btn-danger float-right" type="button" (click)="removeFormGroup(i)" *ngIf="paymentHistory.controls.length > 1">
+          Delete Form
+        </button>
+      </div>
+    </form>
+
+    <hr style="margin: 1rem 0rem 0.7rem 0rem!important" />
+    <div class="form-group col-12 mx-auto">
+      <button
+        class="btn btn-success"
+        type="button"
+        (click)="addFormGroup()">
+        Add Form
+      </button>
+    </div>
+
+  </ng-template>
+
+</form>

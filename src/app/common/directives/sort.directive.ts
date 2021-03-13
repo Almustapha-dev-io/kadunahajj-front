@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 import { Sort } from '../util/sort';
 
 @Directive({
@@ -9,7 +9,6 @@ export class SortDirective {
   @Input() appSort: Array<any> | undefined;
 
   constructor(
-    private renderer: Renderer2,
     private targetElem: ElementRef
   ) { }
 

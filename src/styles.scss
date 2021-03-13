@@ -32,3 +32,26 @@ body, html {
 .sort {
   cursor: pointer;
 }
+
+.error-control {
+  border: 1px solid rgb(255 51 102)!important;
+}
+
+.swal-wide{
+  width: 350px!important;
+  height: auto!important;
+  min-height: 0px!important;
+}
+
+.btn-active {
+  background-color: darken($color: rgb(114 124 245), $amount: 30);
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+
+select.form-control {
+  color: black!important;
+}

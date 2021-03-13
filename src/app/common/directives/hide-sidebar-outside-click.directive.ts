@@ -2,7 +2,6 @@ import { Directive, HostListener, NgZone, OnInit, Renderer2 } from '@angular/cor
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
 
 import { AppBreakPointsObserver } from '../../common/AppBreakpointObserver';
-import { SideBarService } from '../../services/side-bar.service';
 
 @Directive({
   selector: '[appHideSidebarOutsideClick]'

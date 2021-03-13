@@ -1,0 +1,99 @@
+<nav class="page-breadcrumb">
+  <ol class="breadcrumb" style="font-size: 150%;">
+    <li class="breadcrumb-item"><a class="text-primary">Pilgrims</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Register Pilgrim</li>
+  </ol>
+</nav>
+
+<div class="row">
+  <div class="col-md-12 stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Pilgrim Registration Form </h4>
+
+        <ng-container [ngSwitch]="fetchedYear">
+          <ng-container *ngSwitchCase="true">
+            <ng-container *ngIf="activeYear.length < 1 then inactive; else active"></ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="false">
+            <ng-container *ngIf="true then load"></ng-container>
+          </ng-container>
+        </ng-container>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #inactive>
+  <div class="col-12 mx-auto d-flex justify-content-center text-danger mb-5">
+    Hajj registration for this year has not been opened yet. Contact Admin.
+  </div>
+</ng-template>
+
+<ng-template #active>
+  <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+</ng-template>
+
+<ng-template #load>
+  <div class="mx-auto">
+    <app-loader></app-loader>
+  </div>
+</ng-template>
+
+<ng-template #show>
+  <div class="row mr-1">
+    <div class="col-sm-3">
+      <app-steps></app-steps>
+    </div>
+    <div style="border: 1px solid #e8eff4; padding: 2rem 1.5rem; border-radius: 0.3rem;" class="col-sm-9 mx-auto">
+      <ng-container [ngSwitch]="(currentStep | async)?.stepIndex">
+        <ng-container *ngSwitchCase="'1'">
+          <app-step-template [step]="(currentStep | async)">
+            <app-enrollment-details [step]="(currentStep | async)"></app-enrollment-details>
+          </app-step-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'2'">
+          <app-step-template [step]="(currentStep | async)">
+            <app-personal-details [step]="(currentStep | async)"></app-personal-details>
+          </app-step-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'3'">
+          <app-step-template [step]="(currentStep | async)">
+            <app-next-of-kin-details [step]="(currentStep | async)"></app-next-of-kin-details>
+          </app-step-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'4'">
+          <app-step-template [step]="(currentStep | async)">
+            <app-document-upload [step]="(currentStep | async)"></app-document-upload>
+          </app-step-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'5'">
+          <app-step-template [step]="(currentStep | async)">
+            <app-payment-history [step]="(currentStep | async)"></app-payment-history>
+          </app-step-template>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="row mr-1">
+    <button
+      class="btn btn-md btn-outline-primary ml-auto mt-3 step-btn"
+      (click)="onPreviousStep()"
+      *ngIf="(currentStep | async)?.stepIndex !== 1">
+      Previous
+    </button>
+
+    <button
+      class="btn btn-md btn-primary ml-3 mt-3 step-btn"
+      (click)="onNextStep()"
+      [class.btn-primary]="!isLastStep"
+      [class.btn-success]="isLastStep"
+      [class.ml-auto]="(currentStep | async)?.stepIndex === 1"
+      [disabled]="!(currentStep | async)?.isComplete">
+      {{ showButtonLabel() }}
+    </button>
+  </div>
+
+</ng-template>
