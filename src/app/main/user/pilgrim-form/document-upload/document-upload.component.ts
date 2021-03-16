@@ -169,6 +169,12 @@ export class DocumentUploadComponent implements OnInit {
     this.valueChange();
   }
 
+  getFile(type) {
+    if (type === 'epass') return 'E-Passport';
+    if (type === 'mou') return 'MOU Form';
+    if (type === 'guarantor') return 'Guarantor Form';
+  }
+
   formatBytes(bytes, decimals = 2) {
     if (bytes === 0) {
       return "0 Bytes";

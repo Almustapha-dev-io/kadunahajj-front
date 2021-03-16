@@ -44,7 +44,7 @@
     <img src="../../../../../assets/images/ic-file.svg" alt="file" width="45px">
     <div class="info">
       <h4 class="name">
-        {{ f?.file.name }}
+        {{ getFile(f?.file.name) }}
       </h4>
       <p class="size">
         {{ formatBytes(f?.file.size) }}
