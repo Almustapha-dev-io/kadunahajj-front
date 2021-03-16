@@ -67,6 +67,7 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
         tellerNumber: new FormControl(null, Validators.required),
         receiptNumber: new FormControl(null, Validators.required),
         paymentDate: new FormControl(null, Validators.required),
+        amount: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+$/)])
       }));
 
       this.valueChange();

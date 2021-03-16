@@ -88,6 +88,31 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label [for]="'amount'+i" [class.text-danger]="group.get('amount')?.touched && group.get('amount')?.invalid">Amount</label>
+          <input
+            type="text"
+            [id]="'amount'+i"
+            [class.error-control]="group.get('amount')?.touched && group.get('amount')?.invalid"
+            class="form-control form-control-sm"
+            formControlName="amount"
+            (keyup)="valueChange()">
+
+          <div class="text-danger mt-1" *ngIf="group.get('amount')?.touched && group.get('amount')?.invalid">
+            <div *ngIf="group.get('amount')?.errors.required">
+              This field is required.
+            </div>
+            <div *ngIf="group.get('amount')?.errors.pattern">
+              Only numbers are allowed
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+        </div>
+      </div>
+
       <div class="form-group col-12 mx-auto mb-5">
         <button class="btn-sm btn btn-danger float-right" type="button" (click)="removeFormGroup(i)" *ngIf="paymentHistory.controls.length > 1">
           Delete Form

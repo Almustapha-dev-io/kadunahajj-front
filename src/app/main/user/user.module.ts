@@ -24,6 +24,7 @@ import { PilgrimReviewerListComponent } from './pilgrim-reviewer-list/pilgrim-re
 import { PilgrimDeletedReviewerListComponent } from './pilgrim-deleted-reviewer-list/pilgrim-deleted-reviewer-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditPilgrimComponent } from './pilgrim-admin-list/edit-pilgrim/edit-pilgrim.component';
+import { ExcelTableComponent } from './excel-table/excel-table.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { EditPilgrimComponent } from './pilgrim-admin-list/edit-pilgrim/edit-pil
     PilgrimReviewerListComponent,
     PilgrimDeletedReviewerListComponent,
     DashboardComponent,
-    EditPilgrimComponent
+    EditPilgrimComponent,
+    ExcelTableComponent
   ],
   imports: [
     CommonModule,

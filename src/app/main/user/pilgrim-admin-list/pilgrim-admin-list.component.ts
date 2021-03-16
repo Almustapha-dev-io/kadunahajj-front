@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { environment } from '@environment';
+import { MatDialog } from '@angular/material/dialog';
+import { NgModel } from '@angular/forms';
+import * as XLSX from 'xlsx';
 
 import { NotificationService } from '../../../services/notification.service';
 import { DataService } from '../../../services/data.service';
 import { LoaderService } from '../../../services/loader.service';
 
-import { environment } from '@environment';
-import { MatDialog } from '@angular/material/dialog';
-import { NgModel } from '@angular/forms';
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
 import { EditPilgrimComponent } from './edit-pilgrim/edit-pilgrim.component';
 
@@ -25,7 +26,7 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
 
   searchText = '';
   years = [];
-
+  banks = [];
   pilgrims = [];
   p: number = 1;
 
@@ -94,6 +95,26 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
       this.pilgrims = [...response];
+      this.getBanks();
+      this.loader.hideLoader();
+    });
+  }
+
+  getBanks() {
+
+    this.loader.showLoader();
+    const uri = environment.banks;
+    const token = sessionStorage.getItem('token');
+
+    this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
+      this.banks = [...response];
+
+      this.pilgrims.forEach(p => {
+        p.paymentHistory.forEach(ph => {
+          ph.bankObject = this.banks.find(b => b._id === ph.bank)
+        })
+      });
+
       this.loader.hideLoader();
     });
   }
@@ -144,5 +165,17 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: pilgrim
     })
+  }
+
+  exportToExcel() {
+    const filename = 'ExcelSheet.xlsx';
+    let element = document.getElementById('excel-table');
+
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+
+    XLSX.writeFile(wb, filename);
   }
 }

@@ -8,15 +8,18 @@ const routes: Routes = [
   { path: 'login', component: AuthComponent },
 
   {
-    path: 'app/admin',
+    path: 'app',
     component: MainComponent,
-    loadChildren: () => import('./main/admin/admin.module').then(module => module.AdminModule)
-  },
-
-  {
-    path: 'app/user',
-    component: MainComponent,
-    loadChildren: () => import('./main/user/user.module').then(module => module.UserModule)
+    children: [
+      {
+        path: 'admin',
+        loadChildren: () => import('./main/admin/admin.module').then(module => module.AdminModule)
+      },
+      {
+        path: 'user',
+        loadChildren: () => import('./main/user/user.module').then(module => module.UserModule)
+      }
+    ]
   },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },

@@ -31,7 +31,7 @@ const PERSONAL_AND_OFFICE: FormGroup = new FormGroup({
     stateOfOrigin: new FormControl(null, Validators.required),
     localGovOfOrigin: new FormControl(null, Validators.required),
     dateOfBirth: new FormControl(null, Validators.required),
-    phone: new FormControl(null, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}/)]),
+    phone: new FormControl(null, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}$/)]),
     alternatePhone: new FormControl('', Validators.pattern(/^[0-9]{11}$/))
   }),
   officeDetails: new FormGroup({
@@ -60,6 +60,7 @@ const PAYMENT_HISTORY: FormArray = new FormArray([new FormGroup({
   tellerNumber: new FormControl(null, Validators.required),
   receiptNumber: new FormControl(null, Validators.required),
   paymentDate: new FormControl(null, Validators.required),
+  amount: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+$/)])
 })]);
 
 const FILES: FileModel[] = [];

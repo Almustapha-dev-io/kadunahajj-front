@@ -5,7 +5,6 @@ import { environment } from '../../environments/environment';
 import { DataService } from '../services/data.service';
 import { LoaderService } from '../services/loader.service';
 import { ChangePasswordComponent } from './change-password/change-password.component';
-
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -22,7 +21,7 @@ export class MainComponent implements OnInit, OnDestroy {
   constructor(
     private dataService: DataService,
     public loader: LoaderService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {

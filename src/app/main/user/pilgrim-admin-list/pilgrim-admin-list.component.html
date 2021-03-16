@@ -31,6 +31,7 @@
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body" style="overflow-x: auto;">
+        <div *ngIf="pilgrims.length > 0" class="float-right"><button class="btn btn-warning" style="color: white;" (click)="exportToExcel()">Export to Excel</button></div>
         <h6 class="card-title">PILGRIMS MASTER LIST</h6>
 
         <select
@@ -72,6 +73,8 @@
               screenReaderCurrentLabel="You're on page">
             </pagination-controls>
           </div>
+
+          <div *ngIf="pilgrims.length > 0" class="col-12 mx-auto d-flex justify-content-center mt-2"><button class="btn btn-warning mx-auto" style="color: white;" (click)="exportToExcel()">Export to Excel</button></div>
         </div>
       </div>
     </div>
@@ -140,3 +143,5 @@
   </tbody>
 
 </ng-template>
+
+<app-excel-table [pilgrims]="pilgrims"></app-excel-table>

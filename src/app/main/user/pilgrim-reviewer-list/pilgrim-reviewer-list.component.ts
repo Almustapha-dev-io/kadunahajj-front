@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { forkJoin, Subscription } from 'rxjs';
+import { environment } from '@environment';
+import { MatDialog } from '@angular/material/dialog';
+import * as XLSX from 'xlsx';
 
 import { DataService } from '../../../services/data.service';
 import { LoaderService } from '../../../services/loader.service';
 
-import { environment } from '@environment';
-import { MatDialog } from '@angular/material/dialog';
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
 
 @Component({
@@ -18,7 +19,7 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
   searchText = '';
   years = [];
   zones = [];
-
+  banks = [];
   pilgrims = [];
   p: number = 1;
 
@@ -61,6 +62,26 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
       this.pilgrims = [...response];
+      this.getBanks();
+      this.loader.hideLoader();
+    });
+  }
+
+  getBanks() {
+
+    this.loader.showLoader();
+    const uri = environment.banks;
+    const token = sessionStorage.getItem('token');
+
+    this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
+      this.banks = [...response];
+
+      this.pilgrims.forEach(p => {
+        p.paymentHistory.forEach(ph => {
+          ph.bankObject = this.banks.find(b => b._id === ph.bank)
+        })
+      });
+
       this.loader.hideLoader();
     });
   }
@@ -73,5 +94,17 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: pilgrim
     });
+  }
+
+  exportToExcel() {
+    const filename = 'ExcelSheet.xlsx';
+    let element = document.getElementById('excel-table');
+
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+
+    XLSX.writeFile(wb, filename);
   }
 }
