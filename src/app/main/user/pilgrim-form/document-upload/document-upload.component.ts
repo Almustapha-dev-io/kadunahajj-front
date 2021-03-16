@@ -22,6 +22,7 @@ export class DocumentUploadComponent implements OnInit {
 
   attachedDocumentsForm: FormGroup;
   selectedDocumentType = '';
+  documentDisplay = '';
 
   files: FileModel[] = [];
 
@@ -170,9 +171,10 @@ export class DocumentUploadComponent implements OnInit {
   }
 
   getFile(type) {
-    if (type === 'epass') return 'E-Passport';
-    if (type === 'mou') return 'MOU Form';
-    if (type === 'guarantor') return 'Guarantor Form';
+    console.log(type);
+    if (type === 'epass') this.documentDisplay = 'E-Passport';
+    if (type === 'mou') this.documentDisplay = 'MOU Form';
+    if (type === 'guarantor') this.documentDisplay = 'Guarantor Form';
   }
 
   formatBytes(bytes, decimals = 2) {
