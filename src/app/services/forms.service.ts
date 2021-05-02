@@ -1,7 +1,9 @@
+
 import { Injectable } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { FileModel } from '../common/models/file.model';
+import { YearValidators } from '../common/Validators/year.vaalidators';
 import * as moment from 'moment';
 
 const MAX_YEAR = parseInt(moment(new Date()).format('YYYY')) - 1;
@@ -9,15 +11,17 @@ const MAX_YEAR = parseInt(moment(new Date()).format('YYYY')) - 1;
 const ENROLLMENT_AND_PASSPORT: FormGroup = new FormGroup({
   enrollmentDetails: new FormGroup({
     hajjExperience: new FormControl(null, [Validators.required, Validators.minLength(4), Validators.maxLength(50)]),
-    lastHajjYear: new FormControl(null, [Validators.required, Validators.min(1901), Validators.max(MAX_YEAR), Validators.pattern(/^[0-9]{4}$/)]),
-    enrollmentZone: new FormControl(null, Validators.required)
+    lastHajjYear: new FormControl(null, [Validators.required, YearValidators.greaterThanCurrentYear, Validators.minLength(4), Validators.maxLength(4)]),
+    enrollmentZone: new FormControl(null, Validators.required),
+    enrollmentYear: new FormControl(null, Validators.required),
+    enrollmentAllocationNumber: new FormControl(null, Validators.required)
   }),
   passportDetails: new FormGroup({
     passportType: new FormControl(null, Validators.required),
     passportNumber: new FormControl(null, Validators.required),
     placeOfIssue: new FormControl(null, Validators.required),
-    dateOfIssue: new FormControl(null, Validators.required),
-    expiryDate: new FormControl(null, Validators.required),
+    dateOfIssue: new FormControl(null, [Validators.required, YearValidators.greaterThanToday]),
+    expiryDate: new FormControl(null, [Validators.required, YearValidators.lessThanToday]),
   })
 });
 
@@ -30,7 +34,7 @@ const PERSONAL_AND_OFFICE: FormGroup = new FormGroup({
     homeAddress: new FormControl(null, [Validators.required, Validators.minLength(5), Validators.maxLength(50)]),
     stateOfOrigin: new FormControl(null, Validators.required),
     localGovOfOrigin: new FormControl(null, Validators.required),
-    dateOfBirth: new FormControl(null, Validators.required),
+    dateOfBirth: new FormControl(null, [Validators.required, YearValidators.greaterThanToday]),
     phone: new FormControl(null, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}$/)]),
     alternatePhone: new FormControl('', Validators.pattern(/^[0-9]{11}$/))
   }),
@@ -59,7 +63,7 @@ const PAYMENT_HISTORY: FormArray = new FormArray([new FormGroup({
   bank: new FormControl(null, Validators.required),
   tellerNumber: new FormControl(null, Validators.required),
   receiptNumber: new FormControl(null, Validators.required),
-  paymentDate: new FormControl(null, Validators.required),
+  paymentDate: new FormControl(null, [Validators.required, YearValidators.greaterThanToday]),
   amount: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+$/)])
 })]);
 

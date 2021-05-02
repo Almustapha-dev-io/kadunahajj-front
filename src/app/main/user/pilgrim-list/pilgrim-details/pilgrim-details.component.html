@@ -14,7 +14,7 @@
         type="text"
         id="registrationCode"
         disabled
-        [value]="enrollmentDetails.code">
+        [value]="enrollmentDetails.code ? enrollmentDetails.code : 'UNASSIGNED'">
     </div>
 
     <div class="form-group col-md-6 col-sm-12 mx-auto">
@@ -364,8 +364,7 @@
 
   <br />
 
-  <h5>Uploaded images</h5>
-  <hr style="margin-top: 0px;" />
+  <h5>Uploaded Documents</h5>
 
   <ul class="list-group">
     <li class="list-group-item">

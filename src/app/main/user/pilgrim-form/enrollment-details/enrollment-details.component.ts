@@ -1,9 +1,9 @@
+import { LoaderService } from './../../../../services/loader.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { environment } from '@environment';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 
-import { LoaderService } from '../../../../services/loader.service';
 import { DataService } from '../../../../services/data.service';
 import { FormsService } from '../../../../services/forms.service';
 import { StepModel } from '../../../../common/models/step.model';
@@ -17,6 +17,12 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
   @Input('step') step: StepModel;
 
   lga = [];
+  years = [];
+  seats = [];
+
+  lgLoader = false;
+  showLga = false;
+
   passportTypes = ['normal', 'official', 'diplomatic'];
 
   enrollmentAndPassport: FormGroup;
@@ -33,7 +39,11 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.enrollmentAndPassport = this.formsService.enrollmentAndPassport;
 
-    this.getLocalGovernment();
+    this.fetchOptions();
+    if (this.enrollmentAllocationNumber.value) {
+      this.showLga = true;
+      this.seats = [...JSON.parse(sessionStorage.getItem('seatsArray'))];
+    }
   }
 
   ngOnDestroy(): void {
@@ -48,21 +58,80 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
     this.step.isComplete = this.enrollmentAndPassport.valid;
   }
 
-  getLocalGovernment() {
+  fetchOptions() {
     this.loader.showLoader();
-    const uri = `${environment.zones}`;
     const token = sessionStorage.getItem('token');
+    const zonesUri = `${environment.zones}`;
+    const yearsUri = `${environment.years}/get-active/all`;
 
-    this.subscription = this.dataService.get(uri, token, this.userLga).subscribe(response => {
-      this.lga.push(response);
+    this.subscription = forkJoin([
+      this.dataService.get(zonesUri, token, this.userLga),
+      this.dataService.get(yearsUri, token)
+    ])
+    .subscribe(response => {
+      const [zone, years] = response;
+      this.years = [...years];
+      this.lga.push(zone);
 
       this.enrollmentDetailsForm.patchValue({
-        enrollmentZone: response._id
+        enrollmentZone: zone._id
       });
 
       this.valueChange();
       this.loader.hideLoader();
-    })
+    });
+  }
+
+  getYearId(yearName) {
+    const year = this.years.find(y => y.year === yearName);
+    return year._id;
+  }
+
+  getYearAllocations(yearName) {
+    const year = this.years.find(y => y.year === yearName);
+    const zoneDetails = year.seatAllocations.find(s => s.zone === this.lga[0]._id);
+    return zoneDetails ? zoneDetails.seatsAllocated : 0;
+  }
+
+  yearSelected() {
+    this.enrollmentAllocationNumber.reset('');
+
+    this.lgLoader = true;
+    const token = sessionStorage.getItem('token');
+    const seatsUri = `${environment.seats}/taken/${this.lga[0]._id}/${this.getYearId(this.enrollmentYear.value)}`;
+
+    this.subscription = this.dataService
+      .get(seatsUri, token)
+      .subscribe(response => {
+
+        const takenSeats = response;
+
+        const allSeats = this.getYearAllocations(this.enrollmentYear.value);
+        this.seats.length = 0;
+
+        for (let i = 1; i <= allSeats; i++) {
+          this.seats.push(i);
+        }
+
+        this.seats.forEach(s => {
+          takenSeats.forEach(ts => {
+            if (ts.seatNumber === s) {
+              const index =  this.seats.findIndex(a => a === s);
+              this.seats.splice(index, 1);
+            }
+          });
+        });
+
+        sessionStorage.setItem('seatsArray', JSON.stringify(this.seats));
+        this.lgLoader = false;
+        this.showLga = true;
+      });
+
+    this.valueChange();
+  }
+
+  get currentYear() {
+    return new Date().getFullYear();
   }
 
   // Enrollment Details Form Getters
@@ -80,6 +149,14 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
 
   get enrollmentZone() {
     return this.enrollmentDetailsForm.get('enrollmentZone');
+  }
+
+  get enrollmentYear() {
+    return this.enrollmentDetailsForm.get('enrollmentYear');
+  }
+
+  get enrollmentAllocationNumber() {
+    return this.enrollmentDetailsForm.get('enrollmentAllocationNumber');
   }
 
   // Passport Details Form Getters

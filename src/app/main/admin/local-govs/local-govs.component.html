@@ -36,7 +36,7 @@
             <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
           </table>
 
-          <div class="col-12 mx-auto mt-3">
+          <div class="col-12 mx-auto mt-3" *ngIf="localGovs.length > 0">
             <pagination-controls class="float-right"
               (pageChange) = "p = $event"
               maxSize="9"
@@ -86,7 +86,7 @@
   </thead>
   <tbody  *ngFor="let i=index; let lg of localGovs | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
     <tr>
-      <td>{{ i+1 }}</td>
+      <td>{{ ((p-1) * 10) + (i+1) }}</td>
       <td>{{ lg.name }}</td>
       <td>
         <button

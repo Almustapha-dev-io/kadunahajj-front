@@ -1,0 +1,55 @@
+<div class="card-container" *ngIf="!loader.loaderVisible">
+  <div class="card dc">
+    <div class="card-body">
+      Pilgrims registered this year<br><br>
+      <h2 class="text-secondary">{{ totalThisYear }}</h2>
+    </div>
+  </div>
+
+  <div class="card dc">
+    <div class="card-body">
+      All pilgrims registered<br><br>
+      <h2 class="text-success">{{ overAllTotal }}</h2>
+    </div>
+  </div>
+</div>
+
+<div class="card-container" *ngIf="!loader.loaderVisible">
+  <div class="card dc">
+    <div class="card-body">
+      Total Pilgrims registered this year:<br><br>
+      <div style="display: block;">
+        <canvas
+          baseChart
+          chartType="bar"
+          [datasets]="allPilgrimsByYearCounts"
+          [labels]="allPilgrimsByYearZones"
+          [options]="chartOptions"
+          [plugins]="chartPlugins"
+          [legend]="chartLegend">
+        </canvas>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card dc">
+    <div class="card-body">
+      Total Pilgrims registered:<br><br>
+      <div style="display: block;">
+        <canvas
+          baseChart
+          chartType="bar"
+          [datasets]="allPilgrimsCounts"
+          [labels]="allPilgrimsZones"
+          [options]="chartOptions"
+          [plugins]="chartPlugins"
+          [legend]="chartLegend">
+        </canvas>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<app-loader *ngIf="loader.loaderVisible"></app-loader>

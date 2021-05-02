@@ -1,0 +1,60 @@
+<p mat-dialog-title style="font-size: 150%;">Edit Seats: {{ data.zone.name | titlecase }}</p>
+
+<mat-dialog-content>
+  <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+</mat-dialog-content>
+
+<ng-template #show>
+  <div class="form-group">
+    <label
+      [class.text-danger]="seatsAllocated.touched && seatsAllocated.invalid"
+      for="seatNumber">New Seat Number</label>
+    <input
+      [class.border-danger]="seatsAllocated.touched && seatsAllocated.invalid"
+      type="number"
+      class="form-control"
+      id="seatNumber"
+      name="seatsAllocated"
+      [(ngModel)]="seatNumber"
+      required
+      min="0"
+      pattern="^[0-9]+$"
+      #seatsAllocated="ngModel">
+
+      <div class="text-danger small mt-1" *ngIf="seatsAllocated.touched && seatsAllocated.invalid">
+        <div *ngIf="seatsAllocated.errors.required">
+          Seat allocated is required
+        </div>
+        <div *ngIf="seatsAllocated.errors.pattern">
+          Enter a valid seat number
+        </div>
+        <div *ngIf="seatsAllocated.errors.min">
+          Seat allocation must be atleast {{ seatsAllocated.errors.min.min }}.
+        </div>
+      </div>
+  </div>
+</ng-template>
+
+<ng-template #load>
+  <app-loader></app-loader>
+</ng-template>
+
+<mat-dialog-actions align="end">
+  <button
+    type="button"
+    (click)="saveChanges()"
+    class="btn-outline-success btn-sm btn"
+    [class.magnifyText]="(!loader.loaderVisible)"
+    [disabled]="loader.loaderVisible">
+    Save
+  </button>
+
+  <button
+    type="button"
+    class="btn-outline-danger btn-sm btn ml-2"
+    [class.magnifyText]="!loader.loaderVisible"
+    [disabled]="loader.loaderVisible"
+    matDialogClose>
+    Cancel
+  </button>
+</mat-dialog-actions>

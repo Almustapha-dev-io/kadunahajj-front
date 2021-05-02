@@ -40,6 +40,7 @@ export class PersonalDetailsComponent implements OnInit, OnDestroy {
 
     this.getStates();
     if (this.localGovOfOrigin.value) {
+      this.showLga = true;
       this.lgas = [...JSON.parse(sessionStorage.getItem('formLg'))];
     }
   }

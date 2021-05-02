@@ -4,6 +4,7 @@ import { LoaderComponent } from '../elements/loader/loader.component';
 import { SortDirective } from '../common/directives/sort.directive';
 import { FilterPipe } from '../common/pipes/filter.pipe';
 import { DragAndDropDirective } from '../common/directives/drag-and-drop.directive';
+import { NumbersOnlyDirective } from '../common/directives/numbers-only.directive';
 
 
 
@@ -12,7 +13,8 @@ import { DragAndDropDirective } from '../common/directives/drag-and-drop.directi
     LoaderComponent,
     SortDirective,
     FilterPipe,
-    DragAndDropDirective
+    DragAndDropDirective,
+    NumbersOnlyDirective
   ],
   imports: [
     CommonModule
@@ -21,7 +23,8 @@ import { DragAndDropDirective } from '../common/directives/drag-and-drop.directi
     LoaderComponent,
     SortDirective,
     FilterPipe,
-    DragAndDropDirective
+    DragAndDropDirective,
+    NumbersOnlyDirective
   ]
 })
 export class AppCommonModule { }

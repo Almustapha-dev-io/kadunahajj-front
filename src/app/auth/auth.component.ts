@@ -65,25 +65,29 @@ export class AuthComponent implements OnInit, OnDestroy {
     switch(userRole) {
       case 'super-admin':
         this.guardService.isSuperAdmin = true;
+        sessionStorage.setItem('isAdmin', 'true');
         this.router.navigate(['/app', 'admin']);
         this.setTitle('Super Administrator Module');
         break;
 
       case 'initiator':
         this.guardService.isInitiator = true;
+        sessionStorage.setItem('isInitiator', 'true');
         this.router.navigate(['/app', 'user']);
         this.setTitle('Initiator Module');
         break;
 
       case 'admin':
         this.guardService.isUserAdmin = true;
-        this.router.navigate(['/app', 'user', 'pilgrims-admin']);
+        sessionStorage.setItem('isUserAdmin', 'true');
+        this.router.navigate(['/app', 'user', 'dashboard']);
         this.setTitle('User Administrator Module');
         break;
 
       case 'reviewer':
         this.guardService.isReviewer = true;
-        this.router.navigate(['/app', 'user', 'pilgrims-reviewer']);
+        sessionStorage.setItem('isReviewer', 'true');
+        this.router.navigate(['/app', 'user', 'dashboard']);
         this.setTitle('Reviewer Module');
         break;
 

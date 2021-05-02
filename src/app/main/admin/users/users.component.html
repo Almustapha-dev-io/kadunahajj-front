@@ -63,8 +63,14 @@
           </table>
 
           <div class="col-12 mx-auto mt-3">
+            <div class="float-left" *ngIf="users.length > 0">
+              <select [(ngModel)]="pageSize" class="form-control" (change)="onPageSizeChange()">
+                <option *ngFor="let page of pages" [value]="page">Show {{ page }} Items</option>
+              </select>
+            </div>
+
             <pagination-controls class="float-right"
-              (pageChange) = "p = $event"
+              (pageChange) = "onNavigate($event)"
               maxSize="9"
               directionLinks="true"
               autoHide="true"
@@ -113,9 +119,9 @@
       <th>Actions</th>
     </tr>
   </thead>
-  <tbody  *ngFor="let i=index; let user of users | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+  <tbody  *ngFor="let i=index; let user of users | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
     <tr>
-      <td>{{ i+1 }}</td>
+      <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
       <td>{{ user.name }}</td>
       <td>{{ user.email }}</td>
       <td>{{ user.localGovernment.name }}</td>

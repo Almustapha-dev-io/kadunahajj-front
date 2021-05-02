@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 import { AdminRoutingModule } from './admin-routing.module';
@@ -20,6 +20,10 @@ import { EditBankComponent } from './banks/edit-bank/edit-bank.component';
 import { EditStateComponent } from './states/edit-state/edit-state.component';
 import { EditLocalGovComponent } from './local-govs/edit-local-gov/edit-local-gov.component';
 import { AppCommonModule } from '../../app-common/app-common.module';
+import { NewHajjYearComponent } from './hajj-year/new-hajj-year/new-hajj-year.component';
+import { ViewHajjYearComponent } from './hajj-year/view-hajj-year/view-hajj-year.component';
+import { AddSeatAllocationsComponent } from './hajj-year/add-seat-allocations/add-seat-allocations.component';
+import { EditSeatComponent } from './hajj-year/edit-seat/edit-seat.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +37,11 @@ import { AppCommonModule } from '../../app-common/app-common.module';
     LocalGovsComponent,
     EditBankComponent,
     EditStateComponent,
-    EditLocalGovComponent
+    EditLocalGovComponent,
+    NewHajjYearComponent,
+    ViewHajjYearComponent,
+    AddSeatAllocationsComponent,
+    EditSeatComponent
   ],
   imports: [
     CommonModule,
@@ -41,6 +49,7 @@ import { AppCommonModule } from '../../app-common/app-common.module';
     NgxPaginationModule,
     NgbModule,
     FormsModule,
+    ReactiveFormsModule,
     MaterialModule,
     AppCommonModule
   ]

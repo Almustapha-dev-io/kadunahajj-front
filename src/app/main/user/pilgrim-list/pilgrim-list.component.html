@@ -37,9 +37,15 @@
             <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
           </table>
 
-          <div class="col-12 mx-auto mt-3">
+          <div class="col-12 mx-auto mt-3" *ngIf="pilgrims.length > 0">
+            <div class="float-left">
+              <select [(ngModel)]="pageSize" class="form-control" (change)="onPageSizeChange()">
+                <option *ngFor="let page of pages" [value]="page">Show {{ page }} Items</option>
+              </select>
+            </div>
+
             <pagination-controls class="float-right"
-              (pageChange) = "p = $event"
+              (pageChange) = "onNavigate($event)"
               maxSize="9"
               directionLinks="true"
               autoHide="true"
@@ -81,17 +87,17 @@
   <thead>
     <tr>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="sn">S/N</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="code">Registration Code</th>
+      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentDetails.code">Registration Code</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="name">Full Name</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="gender">Gender</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentZone">Registration Zone</th>
+      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentDetails.enrollmentZone">Registration Zone</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="dateCreated">Registration Date</th>
       <th>Actions</th>
     </tr>
   </thead>
-  <tbody  *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+  <tbody  *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
     <tr>
-      <td>{{ i+1 }}</td>
+      <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
       <td><b>{{ pilgrim.enrollmentDetails.code }}</b></td>
       <td>{{ pilgrim.personalDetails.surname + ', ' + pilgrim.personalDetails.otherNames | uppercase }}</td>
       <td>{{ pilgrim.personalDetails.sex | uppercase }}</td>

@@ -8,6 +8,13 @@ export class CustomNameValidators {
     return null;
   }
 
+  static cannotContainDecimal(control: AbstractControl): ValidationErrors | null {
+    if ((control.value + '').indexOf('.') >= 0)
+      return { cannotContainDecimal: true }
+
+    return null;
+  }
+
   static shouldBeUnique(control: AbstractControl): Promise<ValidationErrors | null> {
     // Perform call to db and check
     //  if provided username already exists

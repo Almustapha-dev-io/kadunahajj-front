@@ -11,6 +11,7 @@ import { LoaderService } from '../../../services/loader.service';
 
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
 import { EditPilgrimComponent } from './edit-pilgrim/edit-pilgrim.component';
+import { RestorePilgrimComponent } from './restore-pilgrim/restore-pilgrim.component';
 
 @Component({
   selector: 'app-pilgrim-admin-list',
@@ -18,7 +19,6 @@ import { EditPilgrimComponent } from './edit-pilgrim/edit-pilgrim.component';
   styleUrls: ['./pilgrim-admin-list.component.scss']
 })
 export class PilgrimAdminListComponent implements OnInit, OnDestroy {
-
   @ViewChild('yearId') yearId: NgModel;
 
   active = 'active';
@@ -28,7 +28,11 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
   years = [];
   banks = [];
   pilgrims = [];
+
   p: number = 1;
+  pageSize: number = 5;
+  pages = [5, 10, 15, 20];
+  totalItems: number = 0;
 
   subscription = new Subscription();
   token = sessionStorage.getItem('token');
@@ -50,6 +54,8 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
   }
 
   tabClick(change: string) {
+    this.p = 1;
+    this.pageSize = 5;
     this.active = change;
 
     switch(change) {
@@ -63,8 +69,24 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
     }
 
     this.pilgrims = [];
-    this.yearId.reset(this.years[0]._id);
-    this.yearSelected(this.years[0]._id);
+    this.yearSelected(this.yearId.value);
+  }
+
+  onPageSizeChange() {
+    this.onNavigate(1);
+  }
+
+  onNavigate(p?) {
+    if (p) {
+      this.p = p;
+    }
+
+    if (this.active === 'deleted') {
+      this.getPilgrims(this.yearId.value, true, this.pageSize, this.p);
+      return;
+    }
+
+    this.getPilgrims(this.yearId.value, false, this.pageSize, this.p);
   }
 
   yearSelected(yearId) {
@@ -78,7 +100,7 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
 
   getYears() {
     this.loader.showLoader();
-    const uri = environment.years;
+    const uri = environment.years + '/all';
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
       this.years = [...response];
@@ -87,14 +109,18 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
     });
   }
 
-  getPilgrims(yearId, deleted?) {
+  getPilgrims(yearId, deleted?, pageSize?, page?) {
     this.loader.showLoader();
 
+    const params = { pageSize, page };
     let uri = `${environment.pilgrims}/by-year/${yearId}`;
-    if (deleted) uri = `${environment.pilgrims}/deleted-by-year/${yearId}`;
+    if (deleted) {
+      uri = `${environment.pilgrims}/deleted-by-year/${yearId}`;
+    }
 
-    this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
-      this.pilgrims = [...response];
+    this.subscription = this.dataService.get(uri, this.token, null, params).subscribe(response => {
+      this.pilgrims = [...response.pilgrims];
+      this.totalItems = response.totalDocs;
       this.getBanks();
       this.loader.hideLoader();
     });
@@ -132,31 +158,34 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
     this.notifications.prompt(`Are you sure you <br /> want to delete <br />${pilgrim.enrollmentDetails.code} ?`).then(result => {
       if (result.isConfirmed) {
         this.loader.showLoader();
-        const uri = `${environment.pilgrims}/delete`;
-        console.log(this);
-        this.subscription = this.dataService.update(uri, pilgrim._id, {}, this.token).subscribe(response => {
-          this.notifications.successToast(`Pilgrim ${response.enrollmentDetails.code} was deleted successfully.`);
-
-          this.tabClick('active');
+        const uri = environment.pilgrims;
+        this.subscription = this.dataService.delete(uri, pilgrim._id, this.token).subscribe((response: any) => {
+          this.notifications.successToast(`Pilgrim was deleted successfully.`);
+          this.yearSelected(this.yearId.value);
+          this.active = 'deleted';
+          this.display = 'Deleted Pilgrims';
+          this.getPilgrims(this.yearId.value, true);
         });
       }
-    })
+    });
   }
 
   restorePilgrim(pilgrim) {
-    this.notifications.prompt(`Are you sure you <br />want to restore <br /> ${pilgrim.enrollmentDetails.code} ?`).then(result => {
-      if (result.isConfirmed) {
-        this.loader.showLoader();
-        const uri = `${environment.pilgrims}/restore`;
-        console.log(this);
-        this.subscription = this.dataService.update(uri, pilgrim._id, {}, this.token).subscribe(response => {
-          this.notifications.successToast(`Pilgrim ${response.enrollmentDetails.code} was restored successfully.`);
-
-          this.tabClick('deleted');
-        });
+    window.scroll(0, 0);
+    this.dialog.open(RestorePilgrimComponent, {
+      width: '20rem',
+      disableClose: true,
+      data: pilgrim
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.yearSelected(this.yearId.value);
+        this.active = 'active';
+        this.display = 'Active Pilgrims';
+        this.getPilgrims(this.yearId.value);
       }
-    })
+    });
   }
+
 
   editPilgrim(pilgrim) {
     window.scroll(0, 0);
@@ -164,7 +193,7 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
       width: '35rem',
       disableClose: true,
       data: pilgrim
-    })
+    });
   }
 
   exportToExcel() {

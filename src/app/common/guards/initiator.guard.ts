@@ -18,7 +18,8 @@ export class InitiatorGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    if (this.guardsService.isInitiator) return true;
+    const isInitiator = sessionStorage.getItem('isInitiator') === 'true';
+    if (isInitiator) return true;
 
     this.router.navigate(['/']);
     return false;

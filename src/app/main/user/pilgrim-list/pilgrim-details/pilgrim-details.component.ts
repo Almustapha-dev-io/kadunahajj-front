@@ -38,6 +38,7 @@ export class PilgrimDetailsComponent implements OnInit, OnDestroy {
     this.passportDetails = { ...this.data.passportDetails };
     this.getBanks();
     this.attachedDocuments = { ...this.data.attachedDocuments };
+    window.scroll(0, 0);
   }
 
   ngOnDestroy(): void {

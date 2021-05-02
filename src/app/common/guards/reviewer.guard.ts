@@ -17,7 +17,8 @@ export class ReviewerGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    if (this.guardsService.isReviewer) return true;
+    const isReviewer = sessionStorage.getItem('isReviewer') === 'true';
+    if (isReviewer) return true;
 
     this.router.navigate(['/']);
     return false;

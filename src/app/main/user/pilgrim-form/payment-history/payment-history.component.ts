@@ -8,6 +8,7 @@ import { DataService } from '../../../../services/data.service';
 import { FormsService } from '../../../../services/forms.service';
 import { StepModel } from '../../../../common/models/step.model';
 import { NotificationService } from '../../../../services/notification.service';
+import { YearValidators } from 'src/app/common/Validators/year.vaalidators';
 
 @Component({
   selector: 'app-payment-history',
@@ -66,7 +67,7 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
         bank: new FormControl(null, Validators.required),
         tellerNumber: new FormControl(null, Validators.required),
         receiptNumber: new FormControl(null, Validators.required),
-        paymentDate: new FormControl(null, Validators.required),
+        paymentDate: new FormControl(null, [Validators.required, YearValidators.greaterThanToday]),
         amount: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+$/)])
       }));
 

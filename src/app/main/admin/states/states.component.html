@@ -74,7 +74,7 @@
   </thead>
   <tbody  *ngFor="let i=index; let state of states | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
     <tr>
-      <td>{{ i+1 }}</td>
+      <td>{{ ((p-1) * 10) + (i+1) }}</td>
       <td>{{ state.name }}</td>
       <td>
         <button

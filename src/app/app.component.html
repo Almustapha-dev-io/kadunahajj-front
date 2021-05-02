@@ -1,1 +1,10 @@
-<router-outlet></router-outlet>
+<ng-container [ngSwitch]="appLoader">
+  <ng-container *ngSwitchCase="true">
+    <div class="d-flex align-items-center justify-content-center h-100">
+      <app-loader></app-loader>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="false">
+    <router-outlet></router-outlet>
+  </ng-container>
+</ng-container>

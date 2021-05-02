@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class ModalLoaderService {
   loaderVisible: boolean = false;
-
+  lgaLoader = false;
+  
   constructor() { }
 
   showLoader(): void {

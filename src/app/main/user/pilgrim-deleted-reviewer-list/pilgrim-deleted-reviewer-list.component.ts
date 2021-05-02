@@ -21,6 +21,9 @@ export class PilgrimDeletedReviewerListComponent implements OnInit, OnDestroy {
   banks = [];
   pilgrims = [];
   p: number = 1;
+  pageSize: number = 5;
+  pages = [5, 10, 15, 20];
+  totalItems: number = 0;
 
   subscription = new Subscription();
   token = sessionStorage.getItem('token');
@@ -41,7 +44,7 @@ export class PilgrimDeletedReviewerListComponent implements OnInit, OnDestroy {
 
   fetchData() {
     this.loader.showLoader();
-    const yearsUri = environment.years;
+    const yearsUri = `${environment.years}/all`;
     const zoneUri = environment.zones;
 
     this.subscription = forkJoin([this.dataService.get(yearsUri, this.token), this.dataService.get(zoneUri, this.token)])

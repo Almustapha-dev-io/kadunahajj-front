@@ -21,7 +21,7 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   activeYear = [];
   fetchedYear = false;
-
+  seats = [];
 
   constructor(
     private stepsService: StepsService,
@@ -61,7 +61,7 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
   getActiveYear() {
     this.loader.showLoader();
     const token = sessionStorage.getItem('token');
-    const uri = `${environment.years}/get-active`;
+    const uri = `${environment.years}/get-active/all`;
 
     this.subscription = this.dataService.get(uri, token).subscribe(response => {
       this.activeYear = [...response];
@@ -81,6 +81,11 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
     return this.stepsService.isLastStep() && stepComplete;
   }
 
+  resetForm() {
+    this.formsService.reset();
+    this.stepsService.reset();
+  }
+
   onSubmit() {
     this.notifications.prompt('Are you sure you want to submit?<br />This is irreversible.').then(result => {
       if (result.isConfirmed) {
@@ -94,7 +99,7 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
           this.notifications.successToast(`${fileResponse.message} Sending user data...`);
 
           this.subscription = this.dataService.post(uri, this.formsService.formValue, token).subscribe(response => {
-            this.notifications.alert(`Pilgrim registered successfully. <br />Code: <b>${response.enrollmentDetails.code}</b>`).then(result => {
+            this.notifications.alert(`Pilgrim registered successfully. <br />Code: <b>${response.pilgrim.enrollmentDetails.code}</b>`).then(result => {
               this.formsService.reset();
               this.stepsService.reset();
               this.loader.hideLoader();

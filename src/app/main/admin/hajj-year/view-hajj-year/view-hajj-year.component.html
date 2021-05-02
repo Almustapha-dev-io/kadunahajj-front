@@ -1,0 +1,104 @@
+<div mat-dialog-title class="col-12 mx-auto row">
+  <div class="mr-auto">
+    Hajj Year Details
+  </div>
+
+  <div class="ml-auto text-success">
+    Total Slots: {{ totalSeats }}
+  </div>
+</div>
+<mat-dialog-content>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <label
+        for="year">Hajj Year</label>
+      <input
+        type="text"
+        class="form-control"
+        [value]="data.year"
+        disabled>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <label
+        for="status">Status</label>
+        <input
+        type="text"
+        class="form-control"
+        [value]="data.active ? 'Active' : 'Inactive'"
+        disabled>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <label
+        for="dateOpened">Date Opened</label>
+      <input
+        type="text"
+        class="form-control"
+        [value]="data.dateOpened | date: 'longDate'"
+        disabled>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <label
+        for="lastClosed">Last Closed</label>
+        <input
+        type="text"
+        class="form-control"
+        [value]="data.lastClosed | date: 'long'"
+        disabled>
+    </div>
+  </div>
+
+  <div class="row mx-auto my-3 alert alert-info" *ngIf="data.seatAllocations.length < 1 && allowAddAllocation()">
+    <h6>No seats allocated yet, click add allocations to add allocations.</h6>
+  </div>
+
+  <div class="row mx-auto my-3 alert alert-danger" *ngIf="data.seatAllocations.length < 1 && !allowAddAllocation()">
+    <h6>No seats were allocated and registration closed.</h6>
+  </div>
+
+  <div class="row mx-auto my-2 text-secondary" *ngIf="data.seatAllocations.length > 0">
+    <h6>Seat Allocations</h6>
+  </div>
+
+  <div class="cardList py-2">
+    <ng-container *ngFor="let allocation of data.seatAllocations">
+      <div
+        (click)="editZoneSeats(allocation)"
+        matTooltip="Click to edit"
+        matTooltipPosition="above"
+        class="card shadow-lg cardListItem mb-3 border-success" style="padding: 0!important">
+        <div class="card-body" style="padding: 1rem!important;">
+          <h5 class="card-title text-success mb-2">
+            {{ allocation.zone.name }}
+          </h5>
+
+          <p class="card-text">
+            Seats:&nbsp;&nbsp;&nbsp;{{ allocation.seatsAllocated }}
+          </p>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+   <button
+    *ngIf="allowAddAllocation() || loader.loaderVisible"
+    type="button"
+    (click)="addSeatAllocation()"
+    class="btn-success btn-sm btn mr-2">
+    Add Allocation
+  </button>
+
+   <button
+    type="button"
+    class="btn-danger btn-sm btn ml-2"
+    matDialogClose>
+    Close
+  </button>
+</mat-dialog-actions>

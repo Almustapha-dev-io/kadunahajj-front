@@ -25,7 +25,7 @@ const routes: Routes = [
   { path: 'pilgrims-reviewer', canActivate: [AuthGuard, ReviewerGuard], component: PilgrimReviewerListComponent },
   { path: 'pilgrims-deleted-reviewer', canActivate: [AuthGuard, ReviewerGuard], component: PilgrimDeletedReviewerListComponent },
 
-  { path: '', redirectTo: 'pilgrims', pathMatch: 'full' }
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({

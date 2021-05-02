@@ -19,7 +19,6 @@ export class DocumentUploadComponent implements OnInit {
 
   acceptedFileType = ['.jpg', '.jpeg', '.jpe','.png'];
 
-
   attachedDocumentsForm: FormGroup;
   selectedDocumentType = '';
   documentDisplay = '';

@@ -6,6 +6,27 @@
 </nav>
 
 
+<div class="col-12" style="text-align: center;">
+  <div class="btn-group mb-4" role="group">
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'active'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('active')">
+      Active
+    </button>
+    <button
+      type="button"
+      [disabled]="loader.loaderVisible"
+      [class.btn-active]="active === 'inactive'"
+      class="magnifyText btn btn-primary"
+      (click)="tabClick('inactive')">
+      Inactive
+    </button>
+  </div>
+</div>
+
 <div class="row">
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
@@ -13,12 +34,13 @@
         <h6 class="card-title">BANKS MASTER LIST</h6>
 
         <button
-        class="btn btn-success mb-4"
-        [class.magnifyText]="!loader.loaderVisible"
-        [disabled]="loader.loaderVisible"
-        (click)="editBank()">
-        <span>Add New Bank</span>
-      </button>
+          class="btn btn-success mb-4"
+          [class.magnifyText]="!loader.loaderVisible"
+          [disabled]="loader.loaderVisible"
+          (click)="editBank()">
+          <span>Add New Bank</span>
+        </button>
+
 
         <input
           type="search"
@@ -82,7 +104,7 @@
   </thead>
   <tbody  *ngFor="let i=index; let bank of banks | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
     <tr>
-      <td>{{ i+1 }}</td>
+      <td>{{ ((p-1) * 10) + (i+1) }}</td>
       <td>{{ bank.name }}</td>
       <td>
         <button
@@ -90,6 +112,25 @@
           class="btn magnifyText btn-outline-primary btn"
           (click)="editBank(bank)">
           Edit Bank
+        </button>
+
+        <button
+          *ngIf="active === 'inactive'"
+          class="btn btn-outline-success ml-4"
+          [class.magnifyText]="!loader.loaderVisible"
+          [disabled]="loader.loaderVisible"
+          (click)="activateBank(bank)">
+          <span>Activate</span>
+        </button>
+
+
+        <button
+          *ngIf="active === 'active'"
+          class="btn btn-danger ml-4"
+          [class.magnifyText]="!loader.loaderVisible"
+          [disabled]="loader.loaderVisible"
+          (click)="deactivateBank(bank)">
+          <span>Deactivate</span>
         </button>
       </td>
     </tr>

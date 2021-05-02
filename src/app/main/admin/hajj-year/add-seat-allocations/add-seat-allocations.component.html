@@ -1,0 +1,105 @@
+<form [formGroup]="seatAllocations" (ngSubmit)="submit()">
+  <div mat-dialog-title class="col-12 mx-auto row">
+    <div class="mr-auto">
+      Add Seat Allocations
+    </div>
+
+    <div class="ml-auto text-danger">
+      Unallocated centers: {{ data.remainingSlots }}
+    </div>
+  </div>
+
+  <mat-dialog-content>
+    <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+  </mat-dialog-content>
+
+  <ng-template #show>
+    <ng-container *ngFor="let group of seatAllocationForms; let i = index">
+      <form [formGroup]="group" class="card shadow p-3 mb-3">
+        <div class="mx-auto col-12 row">
+          <div class="mr-auto">
+            #{{ i+1 }}
+          </div>
+          <button type="button" (click)="removeSeatAllocation(i)" class="ml-auto btn btn-sm btn-outline-danger">
+            Remove
+          </button>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-6">
+            <label
+              [class.text-danger]="group.get('zone').invalid && group.get('zone').touched"
+              for="zone">Center</label>
+            <select
+              [class.border-danger]="group.get('zone').invalid && group.get('zone').touched"
+              formControlName="zone"
+              id="zone" class="form-control"
+              (change)="exemptZone(group.get('zone').value, i)">
+              <option selected hidden value="">Select center</option>
+              <option *ngFor="let z of zones" [value]="z._id" [hidden]="z.exempted">{{ z.name }}</option>
+            </select>
+
+            <div class="text-danger small mt-1" *ngIf="group.get('zone').touched && group.get('zone').invalid">
+              <div *ngIf="group.get('zone').errors.required">
+                Enrollment center is required
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12 col-md-6">
+            <label
+              [class.text-danger]="group.get('seatsAllocated').touched && group.get('seatsAllocated').invalid"
+              for="group.get('seatsAllocated')">Seats</label>
+            <input
+              [class.border-danger]="group.get('seatsAllocated').touched && group.get('seatsAllocated').invalid"
+              formControlName="seatsAllocated"
+              type="number"
+              class="form-control">
+
+              <div class="text-danger small mt-1" *ngIf="group.get('seatsAllocated').touched && group.get('seatsAllocated').invalid">
+                <div *ngIf="group.get('seatsAllocated').errors.required">
+                  Seat allocated is required
+                </div>
+                <div *ngIf="group.get('seatsAllocated').errors.pattern">
+                  Enter a valid seat number
+                </div>
+                <div *ngIf="group.get('seatsAllocated').errors.min">
+                  Seat allocation must be atleast {{ group.get('seatsAllocated').errors.min.min }}.
+                </div>
+              </div>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+
+    <div class="mx-auto row mb-2">
+      <button type="button" (click)="addSeatAllocation()" class="ml-auto btn btn-sm btn-warning text-white">
+        Add Center
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #load>
+    <app-loader></app-loader>
+  </ng-template>
+
+  <mat-dialog-actions align="end">
+    <button
+      type="submit"
+      class="btn-outline-success btn-sm btn"
+      [class.magnifyText]="(!loader.loaderVisible) && formValid"
+      [disabled]="loader.loaderVisible || !formValid">
+      Save
+    </button>
+
+    <button
+      type="button"
+      class="btn-outline-danger btn-sm btn ml-2"
+      [class.magnifyText]="!loader.loaderVisible"
+      [disabled]="loader.loaderVisible"
+      matDialogClose>
+      Cancel
+    </button>
+  </mat-dialog-actions>
+
+</form>

@@ -11,6 +11,8 @@ export const environment = {
   states: `${endpoint}/api/states`,
   lgas: `${endpoint}/api/local-govs`,
   pilgrims: `${endpoint}/api/pilgrims`,
+  seats: `${endpoint}/api/seats`,
+  analytics: `${endpoint}/api/analytics`,
 
   emailPattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 };

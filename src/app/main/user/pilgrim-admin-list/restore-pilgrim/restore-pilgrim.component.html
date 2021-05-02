@@ -1,0 +1,56 @@
+<form #f="ngForm" (ngSubmit)="submit(f.value)">
+  <p mat-dialog-title style="font-size: 150%;">Restore Pilgrim</p>
+
+  <mat-dialog-content>
+    <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+  </mat-dialog-content>
+
+  <ng-template #show>
+    <div class="form-group">
+      <label
+        [class.text-danger]="slotNumber.touched && slotNumber.invalid"
+        for="slotNumber">New Slot Number</label>
+      <select
+        [class.border-danger]="slotNumber.touched && slotNumber.invalid"
+        type="number"
+        class="form-control"
+        id="slotNumber"
+        name="slotNumber"
+        [(ngModel)]="seatNumber"
+        required
+        #slotNumber="ngModel">
+        <option value="" selected hidden>Select Slot</option>
+        <option *ngFor="let s of seats" [value]="s">Slot #{{ s }}</option>
+      </select>
+
+        <div class="text-danger small mt-1" *ngIf="slotNumber.touched && slotNumber.invalid">
+          <div *ngIf="slotNumber.errors.required">
+            Slot is required
+          </div>
+        </div>
+    </div>
+  </ng-template>
+
+  <ng-template #load>
+    <app-loader></app-loader>
+  </ng-template>
+
+  <mat-dialog-actions align="end">
+    <button
+      type="submit"
+      class="btn-outline-success btn-sm btn"
+      [class.magnifyText]="(!loader.loaderVisible) && f.valid"
+      [disabled]="loader.loaderVisible || f.invalid">
+      Save
+    </button>
+
+    <button
+      type="button"
+      class="btn-outline-danger btn-sm btn ml-2"
+      [class.magnifyText]="!loader.loaderVisible"
+      [disabled]="loader.loaderVisible"
+      matDialogClose>
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</form>

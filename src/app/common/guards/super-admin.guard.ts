@@ -17,7 +17,8 @@ export class SuperAdminGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    if (this.guardsService.isSuperAdmin) return true;
+    const isSuperAdmin = sessionStorage.getItem('isSuperAdmin') === 'true';
+    if (isSuperAdmin) return true;
 
     this.router.navigate(['/']);
     return false;

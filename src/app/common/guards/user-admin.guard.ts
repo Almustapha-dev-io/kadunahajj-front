@@ -17,7 +17,8 @@ export class UserAdminGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    if (this.guardsService.isUserAdmin) return true;
+    const isUserAdmin = sessionStorage.getItem('isUserAdmin') === 'true';
+    if (isUserAdmin) return true;
 
     this.router.navigate(['/']);
     return false;

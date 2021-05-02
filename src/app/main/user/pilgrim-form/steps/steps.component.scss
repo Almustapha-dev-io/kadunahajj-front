@@ -17,12 +17,17 @@
 }
 
 .step {
-  padding: 0rem 1rem;
+  padding: 0.3rem 1rem;
   border-radius: 3px;
   font-size: 90%;
-  line-height: 2.8rem;
-  height: 2.8rem;
+
+  min-height: 2.8rem;
   width: 95%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .inactive:hover {
@@ -31,6 +36,7 @@
 
 .step:last-child {
   margin-top: .4rem;
+  margin-bottom: 1rem;
 }
 
 .step:nth-child(2), .step:nth-child(3) {

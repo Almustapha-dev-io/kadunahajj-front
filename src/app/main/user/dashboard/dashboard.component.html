@@ -1,2 +1,14 @@
-<p>To be implemented soon.</p>
-  
+<h4>Hi {{ name | titlecase }}! <br> Welcome to your dashboard.</h4>
+<br />
+<ng-container *ngIf="isInitiator">
+  <app-initiator></app-initiator>
+</ng-container>
+
+
+<ng-container *ngIf="isUserAdmin">
+  <app-initiator></app-initiator>
+</ng-container>
+
+<ng-container *ngIf="isReviewer">
+  <app-reviewer></app-reviewer>
+</ng-container>

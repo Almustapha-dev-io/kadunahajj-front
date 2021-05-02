@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChartsModule } from '@rinminase/ng-charts';
 
 import { UserRoutingModule } from './user-routing.module';
 import { MaterialModule } from '../../material/material.module';
@@ -25,6 +26,10 @@ import { PilgrimDeletedReviewerListComponent } from './pilgrim-deleted-reviewer-
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditPilgrimComponent } from './pilgrim-admin-list/edit-pilgrim/edit-pilgrim.component';
 import { ExcelTableComponent } from './excel-table/excel-table.component';
+import { RestorePilgrimComponent } from './pilgrim-admin-list/restore-pilgrim/restore-pilgrim.component';
+import { InitiatorComponent } from './dashboard/initiator/initiator.component';
+import { AdminComponent } from './dashboard/admin/admin.component';
+import { ReviewerComponent } from './dashboard/reviewer/reviewer.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +49,11 @@ import { ExcelTableComponent } from './excel-table/excel-table.component';
     PilgrimDeletedReviewerListComponent,
     DashboardComponent,
     EditPilgrimComponent,
-    ExcelTableComponent
+    ExcelTableComponent,
+    RestorePilgrimComponent,
+    InitiatorComponent,
+    AdminComponent,
+    ReviewerComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +63,8 @@ import { ExcelTableComponent } from './excel-table/excel-table.component';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    AppCommonModule
+    AppCommonModule,
+    ChartsModule
   ]
 })
 export class UserModule { }

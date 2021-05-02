@@ -1,7 +1,7 @@
 <nav class="page-breadcrumb">
   <ol class="breadcrumb" style="font-size: 150%;">
-    <li class="breadcrumb-item"><a class="text-primary">Enrollment Zones</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Enrollment Zones</li>
+    <li class="breadcrumb-item"><a class="text-primary">Registration Centers</a></li>
+    <li class="breadcrumb-item active" aria-current="page">All Centers</li>
   </ol>
 </nav>
 
@@ -10,7 +10,7 @@
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body" style="overflow-x: auto;">
-        <h6 class="card-title">ENROLLMENT ZONES MASTER LIST</h6>
+        <h6 class="card-title">REGISTRATION CENTERS MASTER LIST</h6>
 
         <input
           type="search"
@@ -69,14 +69,14 @@
     <tr>
       <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="sn">S/N</th>
       <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="name">Name</th>
-      <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="code">Zone Code</th>
+      <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="code">Center Code</th>
       <!-- <th class="sort" scope="col" [appSort]="zones" data-order="desc" data-name="dateCreated">Date Created</th> -->
       <th>Actions</th>
     </tr>
   </thead>
   <tbody  *ngFor="let i=index; let zone of zones | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
     <tr>
-      <td>{{ i+1 }}</td>
+      <td>{{ ((p-1) * 10) + (i+1) }}</td>
       <td>{{ zone.name }}</td>
       <td>{{ zone.code | uppercase }}</td>
       <!-- <td>{{ zone.dateCreated | date: 'medium' }}</td> -->
@@ -86,7 +86,7 @@
           type="button"
           class="btn magnifyText btn-outline-primary btn"
           (click)="editZone(zone)">
-          Edit Zone
+          Edit Center
         </button>
       </td>
     </tr>

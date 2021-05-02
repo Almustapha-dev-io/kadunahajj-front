@@ -1,0 +1,17 @@
+<div class="card-container" *ngIf="!loader.loaderVisible">
+  <div class="card dc">
+    <div class="card-body">
+      Pilgrims registered this year<br><br>
+      <h2 class="text-secondary">{{ totalThisYear }}</h2>
+    </div>
+  </div>
+
+  <div class="card dc">
+    <div class="card-body">
+      All pilgrims registered<br><br>
+      <h2 class="text-success">{{ overAllTotal }}</h2>
+    </div>
+  </div>
+</div>
+
+<app-loader *ngIf="loader.loaderVisible"></app-loader>

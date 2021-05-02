@@ -19,10 +19,11 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  get(url, token: any, id?: any): Observable<any> {
+  get(url, token: any, id?: any, httpParams?: any): Observable<any> {
     const headers = new HttpHeaders({ 'x-auth-token': token});
+    const params = new HttpParams({ fromObject: httpParams })
 
-    return this.http.get(`${url}/${id ? id: ''}`, { observe: 'response', headers })
+    return this.http.get(`${url}${id ? '/'+id: ''}`, { observe: 'response', headers, params })
       .pipe(
         map(response => response.body),
         catchError(this.handleError)
@@ -47,8 +48,9 @@ export class DataService {
       );
   }
 
-  delete(url, id: string) {
-    return this.http.delete(url + '/' + id, { observe: 'response' })
+  delete(url, id: string, token: any) {
+    const headers = new HttpHeaders({ 'x-auth-token': token});
+    return this.http.delete(`${url}/${id}`, { observe: 'response', headers })
       .pipe(
         map(response => response.body),
         catchError(this.handleError)

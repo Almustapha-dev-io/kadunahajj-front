@@ -17,7 +17,11 @@ export class UserGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    const bool = this.guardsService.isInitiator || this.guardsService.isUserAdmin || this.guardsService.isReviewer;
+    const isUserAdmin = sessionStorage.getItem('isUserAdmin') === 'true';
+    const isReviewer = sessionStorage.getItem('isReviewer') === 'true';
+    const isInitiator = sessionStorage.getItem('isInitiator') === 'true';
+
+    const bool = isInitiator || isUserAdmin || isReviewer;
 
     if (bool)  return true;
 

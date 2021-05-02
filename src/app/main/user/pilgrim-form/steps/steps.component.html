@@ -6,6 +6,6 @@
     'inactive': !step.isComplete,
     'current': (currentStep | async)?.stepIndex === step.stepIndex
   }">
-  {{ step.stepIndex +'. ' + stepIndex(step.stepIndex) }}
+  <p>{{ step.stepIndex +'. ' + stepIndex(step.stepIndex) }}</p>
   </div>
 </ng-container>

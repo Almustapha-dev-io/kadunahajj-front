@@ -19,6 +19,9 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   users = [];
   p: number = 1;
+  pageSize: number = 5;
+  pages = [1, 5, 10, 15, 20];
+  totalItems: number = 0;
 
   active = 'initiators';
   display = 'Initiators List';
@@ -43,6 +46,9 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   tabClick(change: string) {
+    this.p = 1;
+    this.pageSize = 5;
+
     let role;
     this.active = change;
 
@@ -66,17 +72,47 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.getUsers(role._id);
   }
 
+  onPageSizeChange() {
+    this.onNavigate(1);
+  }
+
+  onNavigate(p?) {
+    if (p) {
+      this.p = p;
+    }
+
+    let role;
+    switch(this.active) {
+      case 'initiators':
+        role = this.getRole('initiator');
+        break;
+
+      case 'admins':
+        role = this.getRole('admin');
+        break;
+
+      default:
+        role = this.getRole('reviewer');
+        break;
+    }
+
+    this.getUsers(role._id, this.pageSize, this.p);
+  }
+
   getRole(roleName: string) {
     return this.rolesList.find(r => r.name === roleName);
   }
 
-  getUsers(roleId: string) {
+  getUsers(roleId: string, pageSize?: any, page?: any) {
     this.loader.showLoader();
     const uri = `${environment.users}/by-role`;
     const token = sessionStorage.getItem('token');
+    const params = { pageSize, page };
 
-    this.subscription = this.dataService.get(uri, token, roleId).subscribe(response => {
-      this.users = [...response];
+    this.subscription = this.dataService.get(uri, token, roleId, params).subscribe(response => {
+      this.users = [...response.users];
+      this.totalItems = response.totalDocs;
+
       this.loader.hideLoader();
     });
   }

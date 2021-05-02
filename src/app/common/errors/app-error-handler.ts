@@ -33,8 +33,9 @@ export class AppErrorHandler extends ErrorHandler {
       this.loaderService.hideLoader();
       this.loaderService.mainLoader = false;
       this.modalLoader.hideLoader();
-
-      if ((error instanceof SessionTimeoutError) || (error instanceof UnknownServerError)) {
+      this.modalLoader.lgaLoader = false;
+      
+      if ((error instanceof SessionTimeoutError)) {
         sessionStorage.clear();
         this.router.navigateByUrl('/');
         return;

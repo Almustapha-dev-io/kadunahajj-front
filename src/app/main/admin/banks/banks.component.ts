@@ -17,6 +17,8 @@ import { EditBankComponent } from './edit-bank/edit-bank.component';
 export class BanksComponent implements OnInit, OnDestroy {
 
   searchText = '';
+  active = 'active';
+  display = 'Active Banks';
 
   banks = [];
   p: number = 1;
@@ -40,17 +42,72 @@ export class BanksComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  tabClick(change: string) {
+    this.p = 1;
 
-  getBanks() {
+    let inactive;
+    this.active = change;
+
+    switch(change) {
+      case 'active':
+        inactive = false;
+        this.display = 'Active Banks';
+        break;
+
+      case 'inactive':
+        inactive = true;
+        this.display = 'Inactive Banks';
+        break;
+    }
+
+    this.getBanks(inactive);
+  }
+
+
+  getBanks(inactive?: boolean) {
     this.loader.showLoader();
-    const uri = `${environment.banks}`;
+
+    let uri = `${environment.banks}`;
+    if (inactive) {
+      uri = `${environment.banks}/inactive`;
+    }
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
       this.banks = [...response];
-
       this.loader.hideLoader();
     });
   }
+
+  deactivateBank(bank) {
+    this.notifications.prompt(`Are you sure you want to deactivate ${bank.name}?`).then(result => {
+      if (result.isConfirmed) {
+        this.loader.showLoader();
+        const uri = `${environment.banks}/deactivate`;
+
+        this.subscription = this.dataService.update(uri, bank._id, {}, this.token).subscribe(response => {
+          this.notifications.successToast(`Bank successfully deactivated.`);
+          console.log(response);
+          this.tabClick('active');
+        });
+      }
+    });
+  }
+
+  activateBank(bank) {
+   this.notifications.prompt(`Are you sure you want to activate ${bank.name}?`).then(result => {
+    if (result.isConfirmed) {
+      this.loader.showLoader();
+      const uri = `${environment.banks}/activate`;
+
+      this.subscription = this.dataService.update(uri, bank._id, {}, this.token).subscribe(response => {
+        this.notifications.successToast(`Bank successfully activated.`);
+
+        this.tabClick('inactive')
+      });
+    }
+   });
+  }
+
 
   editBank(bank?) {
     window.scroll(0, 0);

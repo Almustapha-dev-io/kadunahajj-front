@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { forkJoin, Subscription } from 'rxjs';
 import { environment } from '@environment';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,13 +16,18 @@ import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim
 })
 export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
 
+  @ViewChild('yearId') year: HTMLInputElement;
+  @ViewChild('zoneId') zone: HTMLInputElement;
+
   searchText = '';
   years = [];
   zones = [];
   banks = [];
   pilgrims = [];
   p: number = 1;
-
+  pageSize: number = 5;
+  pages = [5, 10, 15, 20];
+  totalItems: number = 0;
   subscription = new Subscription();
   token = sessionStorage.getItem('token');
 
@@ -43,7 +48,7 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
 
   fetchData() {
     this.loader.showLoader();
-    const yearsUri = environment.years;
+    const yearsUri = `${environment.years}/all`;
     const zoneUri = environment.zones;
 
     this.subscription = forkJoin([this.dataService.get(yearsUri, this.token), this.dataService.get(zoneUri, this.token)])
@@ -56,12 +61,26 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
       });
   }
 
-  fetchPilgrims(yearId, zoneId) {
+  onPageSizeChange() {
+    this.onNavigate(1);
+  }
+
+  onNavigate(p?) {
+    if (p) {
+      this.p = p;
+    }
+
+    this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p);
+  }
+
+  fetchPilgrims(yearId, zoneId, pageSize?, page?) {
     this.loader.showLoader();
     const uri = `${environment.pilgrims}/reviewer/by-year-and-lga/${zoneId}/${yearId}`;
+    const params = { pageSize, page };
 
-    this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
-      this.pilgrims = [...response];
+    this.subscription = this.dataService.get(uri, this.token, null, params).subscribe(response => {
+      this.pilgrims = [...response.pilgrims];
+      this.totalItems = response.totalDocs;
       this.getBanks();
       this.loader.hideLoader();
     });

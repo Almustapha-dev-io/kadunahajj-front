@@ -33,6 +33,7 @@
         <div class="form-group col-md-6 col-sm-12 mx-auto">
           <label for="lastHajjYear" [class.text-danger]="lastHajjYear.touched && lastHajjYear.invalid">Last Hajj Year</label>
           <input
+            appNumbersOnly
             type="text"
             id="lastHajjYear"
             [class.error-control]="lastHajjYear.touched && lastHajjYear.invalid"
@@ -47,11 +48,14 @@
             <div *ngIf="lastHajjYear.errors.pattern">
               Please enter a valid year.
             </div>
-            <div *ngIf="lastHajjYear.errors.min">
-              Last hajj year must be minimum {{ lastHajjYear.errors.min.min }}.
+            <div *ngIf="lastHajjYear.errors.greaterThanCurrentYear">
+              Last hajj year must be a year before {{ currentYear }}
             </div>
-            <div *ngIf="lastHajjYear.errors.max">
-              Last hajj year must be maximum {{ lastHajjYear.errors.max.max }}.
+            <div *ngIf="lastHajjYear.errors.minlength">
+              Enter a valid year
+            </div>
+            <div *ngIf="lastHajjYear.errors.maxlength">
+              Enter a valid year
             </div>
           </div>
         </div>
@@ -73,12 +77,73 @@
                 This field is required.
               </div>
               <div *ngIf="hajjExperience.errors.minlength">
-                Last hajj year must be minimum {{ hajjExperience.errors.minlength.requiredLength }}.
+                Hajj experience must be minimum {{ hajjExperience.errors.minlength.requiredLength }}.
               </div>
               <div *ngIf="hajjExperience.errors.maxlength">
-                Last hajj year must be maximum {{ hajjExperience.errors.maxlength.requiredLength }}.
+                Hajj experience must be maximum {{ hajjExperience.errors.maxlength.requiredLength }}.
               </div>
             </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="enrollmentYear" [class.text-danger]="enrollmentYear.touched && enrollmentYear.invalid">Enrollment Year</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="enrollmentYear.touched && enrollmentYear.invalid"
+            type="text"
+            id="enrollmentYear"
+            formControlName="enrollmentYear"
+            (change)="yearSelected()">
+            <option *ngFor="let y of years" [value]="y.year">{{ y.year }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="enrollmentYear.touched && enrollmentYear.invalid">
+            <div *ngIf="enrollmentYear.errors.required">
+              Select an enrollment zone.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <ng-container [ngSwitch]="lgLoader">
+            <ng-container *ngSwitchCase="true">
+              <label></label>
+              <div class="d-flex justify-content-center mt-3">
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="false">
+              <label [hidden]="!showLga" for="enrollmentAllocationNumber" [class.text-danger]="enrollmentAllocationNumber.touched && enrollmentAllocationNumber.invalid">Enrollment Allocation Number</label>
+              <select
+                [hidden]="!showLga"
+                class="form-control form-control-sm"
+                [class.error-control]="enrollmentAllocationNumber.touched && enrollmentAllocationNumber.invalid"
+                type="text"
+                id="enrollmentAllocationNumber"
+                formControlName="enrollmentAllocationNumber">
+                <option *ngFor="let s of seats" [value]="s">slot #{{ s }}</option>
+              </select>
+
+              <div class="text-danger mt-1" *ngIf="enrollmentAllocationNumber.touched && enrollmentAllocationNumber.invalid">
+                <div *ngIf="enrollmentAllocationNumber.errors.required">
+                  Select an allocation Number.
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
         </div>
 
         <div class="form-group col-md-6 col-sm-12 mx-auto">
@@ -149,7 +214,7 @@
             (change)="valueChange()">
 
           <div class="text-danger mt-1" *ngIf="dateOfIssue.touched && dateOfIssue.invalid">
-            <div *ngIf="dateOfIssue.errors.required">
+            <div *ngIf="dateOfIssue.errors.required || dateOfIssue.errors.greaterThanToday">
               Select a valid date.
             </div>
           </div>
