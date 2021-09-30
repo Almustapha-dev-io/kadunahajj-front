@@ -24,7 +24,7 @@ import { PilgrimAdminListComponent } from './pilgrim-admin-list/pilgrim-admin-li
 import { PilgrimReviewerListComponent } from './pilgrim-reviewer-list/pilgrim-reviewer-list.component';
 import { PilgrimDeletedReviewerListComponent } from './pilgrim-deleted-reviewer-list/pilgrim-deleted-reviewer-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { EditPilgrimComponent } from './pilgrim-admin-list/edit-pilgrim/edit-pilgrim.component';
+import { EditPilgrimComponent } from './pilgrim-list/edit-pilgrim/edit-pilgrim.component';
 import { ExcelTableComponent } from './excel-table/excel-table.component';
 import { RestorePilgrimComponent } from './pilgrim-admin-list/restore-pilgrim/restore-pilgrim.component';
 import { InitiatorComponent } from './dashboard/initiator/initiator.component';
@@ -48,12 +48,13 @@ import { ReviewerComponent } from './dashboard/reviewer/reviewer.component';
     PilgrimReviewerListComponent,
     PilgrimDeletedReviewerListComponent,
     DashboardComponent,
-    EditPilgrimComponent,
+    // EditPilgrimComponent,
     ExcelTableComponent,
     RestorePilgrimComponent,
     InitiatorComponent,
     AdminComponent,
-    ReviewerComponent
+    ReviewerComponent,
+    EditPilgrimComponent
   ],
   imports: [
     CommonModule,

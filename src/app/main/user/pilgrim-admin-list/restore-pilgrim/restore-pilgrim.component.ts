@@ -53,8 +53,15 @@ export class RestorePilgrimComponent implements OnInit {
     .subscribe(response => {
       this.loader.hideLoader();
       const [year, takenSeats] = response;
+      console.log('yearsss', year, takenSeats, this.zone);
 
-      const allSeats = year.seatAllocations.find(s => s.zone._id === this.zone).seatsAllocated;
+      let allSeats;
+
+      if (this.data.isReviewer) {
+        allSeats = year.seatAllocations.find(s => s.zone._id === this.data.zone).seatsAllocated;
+      } else {
+        allSeats = year.seatAllocations.find(s => s.zone._id === this.zone).seatsAllocated;
+      }
 
       for (let i = 1; i <= allSeats; i++) {
         this.seats.push(i);

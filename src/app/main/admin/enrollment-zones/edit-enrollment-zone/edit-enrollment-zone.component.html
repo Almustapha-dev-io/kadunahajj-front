@@ -1,6 +1,6 @@
 
 <form #f="ngForm" (ngSubmit)="submit(f.value)">
-  <p mat-dialog-title style="font-size: 150%;">Edit Enrollment Zone</p>
+  <p mat-dialog-title style="font-size: 150%;">{{ data ? 'Edit ' : 'New '}} Enrollment Zone</p>
 
   <mat-dialog-content>
     <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
@@ -9,7 +9,9 @@
   <mat-dialog-actions align="end">
     <button
       type="submit"
-      class="btn-primary btn-sm btn"
+      class="btn-sm btn"
+      [class.btn-primary]="data"
+      [class.btn-success]="!data"
       [class.magnifyText]="(!loader.loaderVisible) || f.valid"
       [disabled]="loader.loaderVisible || f.invalid">
       Save

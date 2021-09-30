@@ -61,4 +61,21 @@ export class NotificationService {
       confirmButtonText: 'Continue'
     });
   }
+
+  input(message) {
+    return Swal.fire({
+      html: message,
+      allowOutsideClick: false,
+      customClass: {
+        popup: 'swal-wide',
+        confirmButton: 'magnifyText'
+      },
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Continue',
+    });
+  }
 }

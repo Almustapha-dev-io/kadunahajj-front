@@ -9,6 +9,7 @@ import { environment } from '@environment';
 import { MatDialog } from '@angular/material/dialog';
 import { PilgrimDetailsComponent } from './pilgrim-details/pilgrim-details.component';
 import { NgModel } from '@angular/forms';
+import { EditPilgrimComponent } from './edit-pilgrim/edit-pilgrim.component';
 
 @Component({
   selector: 'app-pilgrim-list',
@@ -88,9 +89,20 @@ export class PilgrimListComponent implements OnInit, OnDestroy {
   viewPilgrim(pilgrim) {
     window.scroll(0, 0);
     this.dialog.open(PilgrimDetailsComponent, {
-      width: '35rem',
+      width: '45rem',
       disableClose: true,
       data: pilgrim
-    })
+    });
   }
+
+  editPilgrim(pilgrim) {
+    window.scroll(0, 0);
+    this.dialog.open(EditPilgrimComponent, {
+      width: '45rem',
+      disableClose: true,
+      data: pilgrim
+    }).afterClosed().subscribe(r => r ? this.getPilgrims(this.yearId.value, this.pageSize, this.p) : '');
+  }
+
+
 }

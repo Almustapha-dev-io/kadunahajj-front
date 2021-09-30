@@ -31,8 +31,10 @@ export class EditEnrollmentZoneComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.zoneName = this.data.name;
-    this.zoneCode = this.data.code;
+    if (this.data) {
+      this.zoneName = this.data.name;
+      this.zoneCode = this.data.code;
+    }
   }
 
   ngOnDestroy(): void {
@@ -41,16 +43,26 @@ export class EditEnrollmentZoneComponent implements OnInit, OnDestroy {
   }
 
   submit(f) {
-    this.notifications.prompt('Save changes made?').then(result => {
+    this.notifications.prompt('Are you sure you want to proceed?').then(result => {
       if (result.isConfirmed) {
         this.loader.showLoader();
         const uri = environment.zones;
 
-        this.subscription = this.dataService.update(uri, this.data._id, f, this.token).subscribe(response => {
-          this.notifications.successToast(`${response.name} (${response.code}) updated.`);
-          this.loader.hideLoader();
-          this.dialogRef.close(true);
-        });
+        if (this.data) {
+          this.subscription = this.dataService.update(uri, this.data._id, f, this.token).subscribe(response => {
+            this.notifications.successToast(`${response.name} (${response.code}) updated.`);
+            this.loader.hideLoader();
+            this.dialogRef.close(true);
+          });
+
+        } else {
+          this.subscription = this.dataService.post(uri, f, this.token).subscribe(response => {
+            this.notifications.successToast(`${response.name} (${response.code}) updated.`);
+            this.loader.hideLoader();
+            this.dialogRef.close(true);
+          });
+
+        }
       }
     });
   }

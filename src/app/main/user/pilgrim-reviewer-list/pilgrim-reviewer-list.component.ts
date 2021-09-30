@@ -8,6 +8,8 @@ import { DataService } from '../../../services/data.service';
 import { LoaderService } from '../../../services/loader.service';
 
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
+import { EditPilgrimComponent } from '../pilgrim-list/edit-pilgrim/edit-pilgrim.component';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-pilgrim-reviewer-list',
@@ -34,7 +36,8 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
   constructor(
     public loader: LoaderService,
     private dataService: DataService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notifications: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -109,9 +112,34 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
   viewPilgrim(pilgrim) {
     window.scroll(0, 0);
     this.dialog.open(PilgrimDetailsComponent, {
-      width: '35rem',
+      width: '45rem',
       disableClose: true,
       data: pilgrim
+    });
+  }
+
+  editPilgrim(pilgrim) {
+    window.scroll(0, 0);
+    this.dialog.open(EditPilgrimComponent, {
+      width: '45rem',
+      disableClose: true,
+      data: pilgrim
+    }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
+  }
+
+  deletePilgrim(pilgrim) {
+    this.notifications.input(`Are you sure you <br /> want to delete <br />${pilgrim.enrollmentDetails.code} ?`).then(result => {
+        console.log(result);
+      if (result.isConfirmed) {
+        this.loader.showLoader();
+        const deletionReason = result.value;
+
+        const uri = environment.pilgrims;
+        this.subscription = this.dataService.delete(uri, pilgrim._id, this.token, { deletionReason }).subscribe((response: any) => {
+          this.notifications.successToast(`Pilgrim was deleted successfully.`);
+          this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p);
+        });
+      }
     });
   }
 

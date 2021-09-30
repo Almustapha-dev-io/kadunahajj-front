@@ -360,13 +360,19 @@
           [value]="payment.bankObject.name">
       </div>
     </div>
+
+    <div class="row">
+        <div class="form-group col-sm-12 mx-auto">
+            <h5>Amount: <span class="text-success">{{ payment.amount | currency: 'NGN': 'symbol-narrow' }}</span></h5>
+        </div>
+    </div>
   </div>
 
   <br />
 
   <h5>Uploaded Documents</h5>
 
-  <ul class="list-group">
+  <ul class="list-group mb-3">
     <li class="list-group-item">
       Guarantor Form&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.guarantorFormUrl)" target="_blank">View</a>
     </li>

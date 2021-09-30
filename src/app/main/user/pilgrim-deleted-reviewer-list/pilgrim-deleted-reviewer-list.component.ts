@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import { DataService } from '../../../services/data.service';
 import { LoaderService } from '../../../services/loader.service';
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
+import { RestorePilgrimComponent } from '../pilgrim-admin-list/restore-pilgrim/restore-pilgrim.component';
 
 @Component({
   selector: 'app-pilgrim-deleted-reviewer-list',
@@ -24,6 +25,8 @@ export class PilgrimDeletedReviewerListComponent implements OnInit, OnDestroy {
   pageSize: number = 5;
   pages = [5, 10, 15, 20];
   totalItems: number = 0;
+	year = '';
+	zone = '';
 
   subscription = new Subscription();
   token = sessionStorage.getItem('token');
@@ -62,7 +65,8 @@ export class PilgrimDeletedReviewerListComponent implements OnInit, OnDestroy {
     const uri = `${environment.pilgrims}/reviewer/deleted-by-year-and-lga/${zoneId}/${yearId}`;
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
-      this.pilgrims = [...response];
+			console.log(this.pilgrims, response);
+      this.pilgrims = [...response.pilgrims];
       this.getBanks();
       this.loader.hideLoader();
     });
@@ -93,6 +97,21 @@ export class PilgrimDeletedReviewerListComponent implements OnInit, OnDestroy {
       width: '35rem',
       disableClose: true,
       data: pilgrim
+    });
+  }
+
+	restorePilgrim(pilgrim) {
+		pilgrim.zone = this.zone;
+		pilgrim.isReviewer = true;
+    window.scroll(0, 0);
+    this.dialog.open(RestorePilgrimComponent, {
+      width: '20rem',
+      disableClose: true,
+      data: pilgrim
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchPilgrims(this.year, this.zone);
+      }
     });
   }
 

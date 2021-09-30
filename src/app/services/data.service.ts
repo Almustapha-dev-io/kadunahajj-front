@@ -48,9 +48,11 @@ export class DataService {
       );
   }
 
-  delete(url, id: string, token: any) {
+  delete(url, id: string, token: any, httpParams?: any) {
     const headers = new HttpHeaders({ 'x-auth-token': token});
-    return this.http.delete(`${url}/${id}`, { observe: 'response', headers })
+    const params = httpParams ? new HttpParams({ fromObject: httpParams }) : {};
+
+    return this.http.delete(`${url}/${id}`, { observe: 'response', headers, params })
       .pipe(
         map(response => response.body),
         catchError(this.handleError)

@@ -87,7 +87,7 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.notifications.prompt('Are you sure you want to submit?<br />This is irreversible.').then(result => {
+    this.notifications.prompt('Are you sure you want to submit?').then(result => {
       if (result.isConfirmed) {
 
         this.loader.showLoader();

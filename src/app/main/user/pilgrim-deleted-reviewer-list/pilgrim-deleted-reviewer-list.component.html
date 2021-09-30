@@ -1,7 +1,7 @@
 <nav class="page-breadcrumb">
   <ol class="breadcrumb" style="font-size: 150%;">
     <li class="breadcrumb-item"><a class="text-primary">Pilgrims</a></li>
-    <li class="breadcrumb-item active" aria-current="page">All Active Pilgrims</li>
+    <li class="breadcrumb-item active" aria-current="page">All Deleted Pilgrims</li>
   </ol>
 </nav>
 
@@ -19,7 +19,7 @@
           id="yearId"
           class="form-control col-sm-12 col-md-3 col-lg-2 float-left mr-2 mb-4"
           name="yearId"
-          ngModel
+          [(ngModel)]="year"
           #yearId="ngModel"
           required>
           <option value="" selected hidden>Select Year</option>
@@ -31,8 +31,8 @@
           id="zoneId"
           class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4"
           name="zoneId"
-          ngModel
           #zoneId="ngModel"
+          [(ngModel)]="zone"
           required>
           <option value="" selected hidden>Select Zone</option>
           <option *ngFor="let z of zones" [value]="z._id">{{ z.name }}</option>
@@ -112,6 +112,7 @@
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="name">Full Name</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="gender">Gender</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentZone">Registration Zone</th>
+      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="deletionReason">Reason for Deletion</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="dateCreated">Registration Date</th>
       <th>Actions</th>
     </tr>
@@ -119,10 +120,11 @@
   <tbody  *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
     <tr>
       <td>{{ i+1 }}</td>
-      <td><b>{{ pilgrim.enrollmentDetails.code }}</b></td>
+      <td><b>{{ pilgrim.enrollmentDetails.code || 'Not Available' }}</b></td>
       <td>{{ pilgrim.personalDetails.surname + ', ' + pilgrim.personalDetails.otherNames | uppercase }}</td>
       <td>{{ pilgrim.personalDetails.sex | uppercase }}</td>
       <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
+      <td>{{ pilgrim.deletionReason }}</td>
       <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
       <td>
         <button
@@ -131,6 +133,12 @@
           (click)="viewPilgrim(pilgrim)">
           View
         </button>
+
+        <button 
+          class="btn btn-outline-success btn-sm magnifyText ml-2" 
+          (click)="restorePilgrim(pilgrim)">
+            Restore
+          </button>
       </td>
     </tr>
   </tbody>

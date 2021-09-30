@@ -104,11 +104,17 @@
       <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
       <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
       <td>
+        <button 
+            type="button"
+            (click)="editPilgrim(pilgrim)"
+            class="btn btn-success magnifyText mr-2">
+            Edit
+        </button>
         <button
           type="button"
           class="btn magnifyText btn-outline-primary btn"
           (click)="viewPilgrim(pilgrim)">
-          View Details
+          View
         </button>
       </td>
     </tr>

@@ -19,7 +19,10 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
   lga = [];
   years = [];
   seats = [];
+  states = [];
 
+  token = sessionStorage.getItem('token');
+  
   lgLoader = false;
   showLga = false;
 
@@ -27,6 +30,8 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
 
   enrollmentAndPassport: FormGroup;
   userLga = sessionStorage.getItem('localGov');
+
+  hajjExperienceShown = false;
 
   subscription: Subscription = new Subscription();
 
@@ -37,8 +42,9 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.getStates();
     this.enrollmentAndPassport = this.formsService.enrollmentAndPassport;
-
+    
     this.fetchOptions();
     if (this.enrollmentAllocationNumber.value) {
       this.showLga = true;
@@ -128,6 +134,29 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
       });
 
     this.valueChange();
+  }
+
+  toggleHajjExperience() {
+    if (this.lastHajjYear.valid) {
+        if (this.lastHajjYear.value === '0000') {
+            this.hajjExperienceShown = false;
+            this.hajjExperience.patchValue('Inexperienced');
+        } else {
+            this.hajjExperienceShown = true;
+        }
+    } else {
+        this.hajjExperienceShown = false;
+    }
+  }
+
+  getStates() {
+    this.loader.showLoader();
+    const uri = environment.states;
+
+    this.subscription = this.dataService.get(uri, this.token, '').subscribe(response => {
+      this.states = response.filter(s => s.name !== 'default');
+      this.loader.hideLoader();
+    });
   }
 
   get currentYear() {
