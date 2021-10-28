@@ -53,7 +53,6 @@ export class RestorePilgrimComponent implements OnInit {
     .subscribe(response => {
       this.loader.hideLoader();
       const [year, takenSeats] = response;
-      console.log('yearsss', year, takenSeats, this.zone);
 
       let allSeats;
 

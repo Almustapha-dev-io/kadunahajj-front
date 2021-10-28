@@ -2,7 +2,8 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 // const endpoint = 'https://kaduna-hajj-app-api.herokuapp.com';
-const endpoint = 'http://localhost:3000';
+// const endpoint = 'http://localhost:3000';
+const endpoint = 'https://kaduna-hajj-app-api.herokuapp.com';
 
 export const environment = {
   production: false,

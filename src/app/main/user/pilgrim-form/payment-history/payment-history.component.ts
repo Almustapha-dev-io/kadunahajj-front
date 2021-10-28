@@ -46,7 +46,7 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
     this.formsService.paymentHistory$.next(this.paymentHistory);
     this.paymentHistory = this.formsService.paymentHistory;
 
-    this.step.isComplete = this.paymentHistory.valid;
+    this.step.isComplete = this.paymentHistory.controls.every(c => c.valid);
   }
 
   getBanks() {

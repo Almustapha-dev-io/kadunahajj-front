@@ -12,6 +12,7 @@ import { LoaderService } from '../../../services/loader.service';
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
 import { EditPilgrimComponent } from '../pilgrim-list/edit-pilgrim/edit-pilgrim.component';
 import { RestorePilgrimComponent } from './restore-pilgrim/restore-pilgrim.component';
+import { PilgrimDeleteComponent } from '../pilgrim-delete/pilgrim-delete.component';
 
 @Component({
   selector: 'app-pilgrim-admin-list',
@@ -58,7 +59,7 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
     this.pageSize = 5;
     this.active = change;
 
-    switch(change) {
+    switch (change) {
       case 'active':
         this.display = 'Active Pilgrims';
         break;
@@ -155,22 +156,21 @@ export class PilgrimAdminListComponent implements OnInit, OnDestroy {
   }
 
   deletePilgrim(pilgrim) {
-    this.notifications.input(`Are you sure you <br /> want to delete <br />${pilgrim.enrollmentDetails.code} ?`).then(result => {
-        console.log(result);
-      if (result.isConfirmed) {
-        this.loader.showLoader();
-        const deletionReason = result.value;
-
-        const uri = environment.pilgrims;
-        this.subscription = this.dataService.delete(uri, pilgrim._id, this.token, { deletionReason }).subscribe((response: any) => {
+    window.scroll(0, 0);
+    this.dialog.open(PilgrimDeleteComponent, {
+      width: '400px',
+      disableClose: true,
+      data: pilgrim
+    }).afterClosed()
+      .subscribe(r => {
+        if (r) {
           this.notifications.successToast(`Pilgrim was deleted successfully.`);
           this.yearSelected(this.yearId.value);
           this.active = 'deleted';
           this.display = 'Deleted Pilgrims';
           this.getPilgrims(this.yearId.value, true);
-        });
-      }
-    });
+        }
+      });
   }
 
   restorePilgrim(pilgrim) {

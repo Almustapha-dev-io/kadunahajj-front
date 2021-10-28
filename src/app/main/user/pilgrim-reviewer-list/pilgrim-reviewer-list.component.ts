@@ -10,6 +10,7 @@ import { LoaderService } from '../../../services/loader.service';
 import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
 import { EditPilgrimComponent } from '../pilgrim-list/edit-pilgrim/edit-pilgrim.component';
 import { NotificationService } from 'src/app/services/notification.service';
+import { PilgrimDeleteComponent } from '../pilgrim-delete/pilgrim-delete.component';
 
 @Component({
   selector: 'app-pilgrim-reviewer-list',
@@ -37,7 +38,6 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
     public loader: LoaderService,
     private dataService: DataService,
     private dialog: MatDialog,
-    private notifications: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -120,6 +120,7 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
 
   editPilgrim(pilgrim) {
     window.scroll(0, 0);
+    pilgrim.isReviewer = true;
     this.dialog.open(EditPilgrimComponent, {
       width: '45rem',
       disableClose: true,
@@ -128,19 +129,12 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
   }
 
   deletePilgrim(pilgrim) {
-    this.notifications.input(`Are you sure you <br /> want to delete <br />${pilgrim.enrollmentDetails.code} ?`).then(result => {
-        console.log(result);
-      if (result.isConfirmed) {
-        this.loader.showLoader();
-        const deletionReason = result.value;
-
-        const uri = environment.pilgrims;
-        this.subscription = this.dataService.delete(uri, pilgrim._id, this.token, { deletionReason }).subscribe((response: any) => {
-          this.notifications.successToast(`Pilgrim was deleted successfully.`);
-          this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p);
-        });
-      }
-    });
+    window.scroll(0, 0);
+    this.dialog.open(PilgrimDeleteComponent, {
+      width: '450px',
+      disableClose: true,
+      data: pilgrim
+    }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
   }
 
   exportToExcel() {

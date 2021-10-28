@@ -19,40 +19,53 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./edit-pilgrim.component.scss']
 })
 export class EditPilgrimComponent implements OnInit {
+  personalDetails;
+  officeDetails;
   passportDetails;
+  nextOfKinDetails;
   paymentHistory = [];
   attachedDocuments;
 
   banks = [];
+  states = [];
+  lgas = [];
+  lgLoader = false;
+  showLga = false;
   subscription = new Subscription();
 
   editPilgrimForm: FormGroup;
   passportTypes = ['normal', 'official', 'diplomatic'];
-
+  token = sessionStorage.getItem('token');
   uploadedDocuments = {};
+  relationships = ['mother', 'father', 'sibling', 'grand parent', 'uncle',
+    'aunt', 'cousin', 'niece', 'nephew', 'child', 'spouse'];
+  maritalStatuses = ['single', 'married', 'divorced', 'widow', 'widower'];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
     public loader: ModalLoaderService,
-		private fb: FormBuilder,
+    private fb: FormBuilder,
     private notifications: NotificationService,
     private sanitizer: DomSanitizer,
     private dialogRef: MatDialogRef<EditPilgrimComponent>
   ) { }
 
   ngOnInit(): void {
-		this.getBanks();
-		
-		this.passportDetails = { ...this.data.passportDetails };
+    console.log(this.data);
+    this.getBanks();
+    this.personalDetails = { ...this.data.personalDetails };
+    this.officeDetails = { ...this.data.officeDetails };
+    this.passportDetails = { ...this.data.passportDetails };
     this.attachedDocuments = { ...this.data.attachedDocuments };
-		this.paymentHistory = [...this.data.paymentHistory];
-		
-		this.initializeForm();
-		console.log(this.editPilgrimForm);
+    this.paymentHistory = [...this.data.paymentHistory];
+    this.nextOfKinDetails = { ...this.data.nextOfKinDetails };
+    this.initializeForm();
+
+    this.getStates();
   }
 
-	getBanks() {
+  getBanks() {
     this.paymentHistory = [...this.data.paymentHistory];
 
     this.loader.showLoader();
@@ -65,44 +78,72 @@ export class EditPilgrimComponent implements OnInit {
     });
   }
 
-	imageFile(name) {
-    window.scroll(0,0);
+  imageFile(name) {
+    window.scroll(0, 0);
     return `${environment.pilgrims}/image/${name}`;
   }
 
-	initializeForm(): void {
-		this.editPilgrimForm = this.fb.group({
-			passportDetails: this.fb.group({
-				passportType: [this.passportDetails.passportType, Validators.required],
-				passportNumber: [this.passportDetails.passportNumber, Validators.required],
-				placeOfIssue: [this.passportDetails.placeOfIssue, Validators.required],
-				dateOfIssue: [moment(new Date(this.passportDetails.dateOfIssue)).format('YYYY-MM-DD'), [
-          Validators.required, 
+  initializeForm(): void {
+    this.editPilgrimForm = this.fb.group({
+      // enrollmentDetails: this.fb.group({
+      //   hajjExperience: [null, [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+      //   lastHajjYear: [null, [Validators.required, YearValidators.greaterThanCurrentYear, Validators.minLength(4), Validators.maxLength(4)]]
+      // }),
+      personalDetails: this.fb.group({
+        surname: [this.personalDetails.surname, [Validators.required, Validators.minLength(2), Validators.maxLength(24)]],
+        otherNames: [this.personalDetails.otherNames, [Validators.required, Validators.minLength(2), Validators.maxLength(150)]],
+        sex: [this.personalDetails.sex, Validators.required],
+        maritalStatus: [this.personalDetails.maritalStatus, Validators.required],
+        homeAddress: [this.personalDetails.homeAddress, [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
+        stateOfOrigin: [this.personalDetails.stateOfOrigin._id, Validators.required],
+        localGovOfOrigin: [this.personalDetails.localGovOfOrigin._id, Validators.required],
+        dateOfBirth: [moment(new Date(this.personalDetails.dateOfBirth)).format('YYYY-MM-DD'), [Validators.required, YearValidators.greaterThanToday]],
+        phone: [this.personalDetails.phone, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}$/)]],
+        alternatePhone: [this.personalDetails.alternatePhone, Validators.pattern(/^[0-9]{11}$/)]
+      }),
+      officeDetails: this.fb.group({
+        occupation: [this.officeDetails.occupation, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+        placeOfWork: [this.officeDetails.placeOfWork, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+        officeAddress: [this.officeDetails.officeAddress, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+        profession: [this.officeDetails.profession, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      }),
+      nextOfKinDetails: this.fb.group({
+        fullName: [this.nextOfKinDetails.fullName, [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
+        address: [this.nextOfKinDetails.address, [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
+        phone: [this.nextOfKinDetails.phone, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}/)]],
+        relationship: [this.nextOfKinDetails.relationship, Validators.required]
+      }),
+      passportDetails: this.fb.group({
+        passportType: [this.passportDetails.passportType, Validators.required],
+        passportNumber: [this.passportDetails.passportNumber, Validators.required],
+        placeOfIssue: [this.passportDetails.placeOfIssue, Validators.required],
+        dateOfIssue: [moment(new Date(this.passportDetails.dateOfIssue)).format('YYYY-MM-DD'), [
+          Validators.required,
           YearValidators.greaterThanToday
         ]],
-				expiryDate: [moment(new Date(this.passportDetails.expiryDate)).format('YYYY-MM-DD'), [Validators.required, YearValidators.lessThanToday]]
-			}),
-			paymentHistory: this.fb.array([]),
-			attachedDocuments: this.fb.group({
-				guarantorFormUrl: [this.attachedDocuments.guarantorFormUrl, Validators.required],
-				passportUrl: [this.attachedDocuments.passportUrl, Validators.required],
-				mouUrl: [this.attachedDocuments.mouUrl, Validators.required]
-			})
-		});
+        expiryDate: [moment(new Date(this.passportDetails.expiryDate)).format('YYYY-MM-DD'), [Validators.required, YearValidators.lessThanToday]]
+      }),
+      paymentHistory: this.fb.array([]),
+      attachedDocuments: this.fb.group({
+        guarantorFormUrl: [this.attachedDocuments.guarantorFormUrl, Validators.required],
+        passportUrl: [this.attachedDocuments.passportUrl, Validators.required],
+        mouUrl: [this.attachedDocuments.mouUrl, Validators.required]
+      })
+    });
 
-		const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
-		this.paymentHistory.forEach(payment => paymentHistory.push(this.getPaymentHistoryForm(payment)));
-	}
+    const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
+    this.paymentHistory.forEach(payment => paymentHistory.push(this.getPaymentHistoryForm(payment)));
+  }
 
-	getPaymentHistoryForm(data?) {
-		return this.fb.group({
-			bank: [data && data.bank ? data.bank : '', Validators.required],
-			tellerNumber: [data && data.tellerNumber ? data.tellerNumber : '', Validators.required],
-			receiptNumber: [data && data.receiptNumber ? data.receiptNumber : '', Validators.required],
-			paymentDate: [data && data.paymentDate ? moment(data.paymentDate).format('YYYY-MM-DD') : '', [Validators.required, YearValidators.greaterThanToday]],
-			amount: [data && data.amount ? data.amount : '', [Validators.required, Validators.pattern(/^[0-9]+$/)]]
-		});
-	}
+  getPaymentHistoryForm(data?) {
+    return this.fb.group({
+      bank: [data && data.bank ? data.bank : '', Validators.required],
+      tellerNumber: [data && data.tellerNumber ? data.tellerNumber : '', Validators.required],
+      receiptNumber: [data && data.receiptNumber ? data.receiptNumber : '', Validators.required],
+      paymentDate: [data && data.paymentDate ? moment(data.paymentDate).format('YYYY-MM-DD') : '', [Validators.required, YearValidators.greaterThanToday]],
+      amount: [data && data.amount ? data.amount : '', [Validators.required, Validators.pattern(/^[0-9]+$/)]]
+    });
+  }
 
   addPaymentForm() {
     const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
@@ -114,25 +155,92 @@ export class EditPilgrimComponent implements OnInit {
     paymentHistory.removeAt(index);
   }
 
-	get passportDetailsForm() {
-		return this.editPilgrimForm.get('passportDetails') as FormGroup;
-	}
+  get personalDetailsForm() {
+    return this.editPilgrimForm.get('personalDetails') as FormGroup;
+  }
+  get officeDetailsForm() {
+    return this.editPilgrimForm.get('officeDetails') as FormGroup;
+  }
+  get passportDetailsForm() {
+    return this.editPilgrimForm.get('passportDetails') as FormGroup;
+  }
+  get nextOfKinDetailsForm() {
+    return this.editPilgrimForm.get('nextOfKinDetails') as FormGroup;
+  }
 
-	get passportType(): FormControl {
-		return this.passportDetailsForm.get('passportType') as FormControl;
-	}
+  get surname(): FormControl {
+    return this.personalDetailsForm.get('surname') as FormControl;
+  }
+  get otherNames(): FormControl {
+    return this.personalDetailsForm.get('otherNames') as FormControl;
+  }
+  get sex(): FormControl {
+    return this.personalDetailsForm.get('sex') as FormControl;
+  }
+  get maritalStatus(): FormControl {
+    return this.personalDetailsForm.get('maritalStatus') as FormControl;
+  }
+  get homeAddress(): FormControl {
+    return this.personalDetailsForm.get('homeAddress') as FormControl;
+  }
+  get stateOfOrigin(): FormControl {
+    return this.personalDetailsForm.get('stateOfOrigin') as FormControl;
+  }
+  get localGovOfOrigin(): FormControl {
+    return this.personalDetailsForm.get('localGovOfOrigin') as FormControl;
+  }
+  get dateOfBirth(): FormControl {
+    return this.personalDetailsForm.get('dateOfBirth') as FormControl;
+  }
+  get phone(): FormControl {
+    return this.personalDetailsForm.get('phone') as FormControl;
+  }
+  get alternatePhone(): FormControl {
+    return this.personalDetailsForm.get('alternatePhone') as FormControl;
+  }
+  get occupation(): FormControl {
+    return this.officeDetailsForm.get('occupation') as FormControl;
+  }
+  get placeOfWork(): FormControl {
+    return this.officeDetailsForm.get('placeOfWork') as FormControl;
+  }
+  get officeAddress(): FormControl {
+    return this.officeDetailsForm.get('officeAddress') as FormControl;
+  }
+  get profession(): FormControl {
+    return this.officeDetailsForm.get('profession') as FormControl;
+  }
 
-	get passportNumber(): FormControl {
-		return this.passportDetailsForm.get('passportNumber') as FormControl;
-	}
+  get passportType(): FormControl {
+    return this.passportDetailsForm.get('passportType') as FormControl;
+  }
 
-	get dateOfIssue(): FormControl {
-		return this.passportDetailsForm.get('dateOfIssue') as FormControl;
-	}
+  get passportNumber(): FormControl {
+    return this.passportDetailsForm.get('passportNumber') as FormControl;
+  }
 
-	get expiryDate(): FormControl {
-		return this.passportDetailsForm.get('expiryDate') as FormControl;
-	}
+  get dateOfIssue(): FormControl {
+    return this.passportDetailsForm.get('dateOfIssue') as FormControl;
+  }
+
+  get expiryDate(): FormControl {
+    return this.passportDetailsForm.get('expiryDate') as FormControl;
+  }
+  get nextOfKinFullName(): FormControl {
+    return this.nextOfKinDetailsForm.get('fullName') as FormControl;
+  }
+
+  get nextOfKinAddress(): FormControl {
+    return this.nextOfKinDetailsForm.get('address') as FormControl;
+  }
+
+  get nextOfKinPhone(): FormControl {
+    return this.nextOfKinDetailsForm.get('phone') as FormControl;
+  }
+
+  get nextOfKinRelationship(): FormControl {
+    return this.nextOfKinDetailsForm.get('relationship') as FormControl;
+  }
 
   get paymentHistoryForms() {
     return (this.editPilgrimForm.get('paymentHistory') as FormArray).controls as FormGroup[];
@@ -150,7 +258,7 @@ export class EditPilgrimComponent implements OnInit {
     }
     const fr = new FileReader();
     fr.readAsDataURL(file);
-    
+
     fr.onload = () => {
       const dataUrl = fr.result.toString();
       const id = uuid();
@@ -161,16 +269,13 @@ export class EditPilgrimComponent implements OnInit {
         dataUrl: this.sanitizer.bypassSecurityTrustUrl(dataUrl)
       };
       this.notifications.successToast('File attached!');
-
-      console.log(this.attachDocumentsForm);
-      console.log(this.uploadedDocuments);
     }
   }
 
   submit() {
     const fd = new FormData();
     const files = this.attachDocumentsForm.value;
-    
+
     for (let file in files) {
       if (file in this.uploadedDocuments) {
         fd.append('files', this.uploadedDocuments[file].file, files[file]);
@@ -191,7 +296,7 @@ export class EditPilgrimComponent implements OnInit {
         if (Object.keys(this.uploadedDocuments).length > 0) {
           this.subscription = this.dataService.post(imageUri, fd, token).subscribe(fileRes => {
             this.notifications.successToast(`${fileRes.message} Sending user data...`);
-  
+
             this.subscription = this.dataService.update(uri, this.data._id, body, token).subscribe(response => {
               this.notifications.alert(`Pilgrim updated successfully. <br />Code: <b>${response.enrollmentDetails.code}</b>`).then(result => {
                 this.loader.hideLoader();
@@ -208,11 +313,36 @@ export class EditPilgrimComponent implements OnInit {
           })
         }
       }
-    })
-    console.log(body)
+    });
   }
 
   get formsValid() {
     return this.passportDetailsForm.valid && this.paymentHistoryForms.every(f => f.valid);
+  }
+
+  getStates() {
+    this.loader.showLoader();
+    const uri = environment.states;
+
+    this.subscription = this.dataService.get(uri, this.token, '').subscribe(response => {
+      this.states = response.filter(s => s.name !== 'default');
+      this.loader.hideLoader();
+      this.getLocalGovs(this.stateOfOrigin.value);
+    });
+  }
+
+  getLocalGovs(stateId) {
+    this.lgLoader = true;
+    const uri = `${environment.lgas}/by-state`;
+    this.subscription = this.dataService.get(uri, this.token, stateId).subscribe(response => {
+      this.lgas = [...response];
+      sessionStorage.setItem('formLg', JSON.stringify(this.lgas));
+      this.lgLoader = false;
+      this.showLga = true;
+    });
+  }
+
+  get isReviewer() {
+    return this.data.isReviewer;
   }
 }

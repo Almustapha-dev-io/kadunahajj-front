@@ -1,258 +1,678 @@
 <form [formGroup]="editPilgrimForm" (ngSubmit)="submit()">
-    <app-loader *ngIf="loader.loaderVisible"></app-loader>
+  <app-loader *ngIf="loader.loaderVisible"></app-loader>
+
+  <p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Edit Pilgrim</p>
+
+  <mat-dialog-content *ngIf="!loader.loaderVisible">
+    <form [formGroup]="personalDetailsForm" *ngIf="isReviewer">
+      <h5>Personal details</h5>
+      <hr style="margin-top: 0px;" />
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="surname" [class.text-danger]="surname.touched && surname.invalid">Surname</label>
+          <input
+            type="text"
+            id="surname"
+            [class.error-control]="surname.touched && surname.invalid"
+            class="form-control form-control-sm"
+            formControlName="surname">
+
+          <div class="text-danger mt-1" *ngIf="surname.touched && surname.invalid">
+            <div *ngIf="surname.errors.required">
+              This field is required.
+            </div>
+            <div *ngIf="surname.errors.minlength">
+              Surname must be minimum {{ surname.errors.minlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="surname.errors.maxlength">
+              Surname must be maximum {{ surname.errors.maxlength.requiredLength }} characters.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="otherNames" [class.text-danger]="otherNames.touched && otherNames.invalid">Other Names</label>
+          <input
+            type="text"
+            id="otherNames"
+            [class.error-control]="otherNames.touched && otherNames.invalid"
+            class="form-control form-control-sm"
+            formControlName="otherNames">
+
+          <div class="text-danger mt-1" *ngIf="otherNames.touched && otherNames.invalid">
+            <div *ngIf="otherNames.errors.required">
+              This field is required.
+            </div>
+            <div *ngIf="otherNames.errors.minlength">
+              Other names must be minimum {{ otherNames.errors.minlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="otherNames.errors.maxlength">
+              Other names must be maximum {{ otherNames.errors.maxlength.requiredLength }} characters.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="sex" [class.text-danger]="sex.touched && sex.invalid">Sex</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="sex.touched && sex.invalid"
+            type="text"
+            id="sex"
+            formControlName="sex">
+            <option [value]="null" selected hidden>Select sex</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="sex.touched && sex.invalid">
+            <div *ngIf="sex.errors.required">
+              Select pilgrim's gender.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="maritalStatus" [class.text-danger]="maritalStatus.touched && maritalStatus.invalid">Marital Status</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="maritalStatus.touched && maritalStatus.invalid"
+            type="text"
+            id="maritalStatus"
+            formControlName="maritalStatus">
+            <option [value]="null" selected hidden>Select marital status</option>
+            <option *ngFor="let ms of maritalStatuses" [value]="ms">{{ ms | uppercase }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="maritalStatus.touched && maritalStatus.invalid">
+            <div *ngIf="maritalStatus.errors.required">
+              Select pilgrim's marital status.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="stateOfOrigin" [class.text-danger]="stateOfOrigin.touched && stateOfOrigin.invalid">State of Origin</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="stateOfOrigin.touched && stateOfOrigin.invalid"
+            type="text"
+            id="stateOfOrigin"
+            (change)="getLocalGovs(stateOfOrigin.value)"
+            formControlName="stateOfOrigin">
+            <option [value]="null" selected hidden>Select state of origin</option>
+            <option *ngFor="let s of states" [value]="s._id">{{ s.name }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="stateOfOrigin.touched && stateOfOrigin.invalid">
+            <div *ngIf="stateOfOrigin.errors.required">
+              Select pilgrim's state of origin.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <ng-container [ngSwitch]="lgLoader">
+            <ng-container *ngSwitchCase="true">
+              <label></label>
+              <div class="d-flex justify-content-center mt-3">
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-grow spinner-grow-sm mx-2 text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="false">
+              <label for="localGovOfOrigin" [hidden]="!showLga" [class.text-danger]="localGovOfOrigin.touched && localGovOfOrigin.invalid">Local Government</label>
+              <select
+                [hidden]="!showLga"
+                class="form-control form-control-sm"
+                [class.error-control]="localGovOfOrigin.touched && localGovOfOrigin.invalid"
+                type="text"
+                id="localGovOfOrigin"
+                formControlName="localGovOfOrigin">
+                <option [value]="null" selected hidden>Select local government</option>
+                <option *ngFor="let lg of lgas" [value]="lg._id">{{ lg.name }}</option>
+              </select>
+
+              <div [hidden]="lgas.length < 1" class="text-danger mt-1" *ngIf="localGovOfOrigin.touched && localGovOfOrigin.invalid">
+                <div *ngIf="localGovOfOrigin.errors.required">
+                  Select pilgrim's marital status.
+                </div>
+              </div>
+            </ng-container>
+
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="form-group row mx-auto">
+        <label for="homeAddress" [class.text-danger]="homeAddress.touched && homeAddress.invalid">Residential Address</label>
+        <textarea
+          type="text"
+          id="homeAddress"
+          [class.error-control]="homeAddress.touched && homeAddress.invalid"
+          class="form-control form-control-sm"
+          formControlName="homeAddress"
+          rows="3">
+        </textarea>
+
+        <div class="text-danger mt-1" *ngIf="homeAddress.touched && homeAddress.invalid">
+          <div *ngIf="homeAddress.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="homeAddress.errors.minlength">
+            Address must be minimum {{ homeAddress.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="homeAddress.errors.maxlength">
+            Address must be maximum {{ homeAddress.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="dateOfBirth" [class.text-danger]="dateOfBirth.touched && dateOfBirth.invalid">
+            Date of Birth
+          </label>
+          <input
+            type="date"
+            id="dateOfBirth"
+            [class.error-control]="dateOfBirth.touched && dateOfBirth.invalid"
+            class="form-control form-control-sm"
+            formControlName="dateOfBirth">
+
+          <div class="text-danger mt-1" *ngIf="dateOfBirth.touched && dateOfBirth.invalid">
+            <div *ngIf="dateOfBirth.errors.required">
+              Select a valid date.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="phone" [class.text-danger]="phone.touched && phone.invalid">
+            Phone
+          </label>
+          <input
+            type="text"
+            id="phone"
+            [class.error-control]="phone.touched && phone.invalid"
+            class="form-control form-control-sm"
+            formControlName="phone">
+
+          <div class="text-danger mt-1" *ngIf="phone.touched && phone.invalid">
+            <div *ngIf="phone.errors.required">
+              This Field is required
+            </div>
+            <div *ngIf="phone.errors.minlength">
+              Phone must be minimum {{ phone.errors.minlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="phone.errors.maxlength">
+              Phone must be maximum {{ phone.errors.maxlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="phone.errors.pattern">
+              Please enter a valid phone number.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="alternatePhone" [class.text-danger]="alternatePhone.touched && alternatePhone.invalid">
+            Alternate Phone
+          </label>
+          <input
+            type="text"
+            id="alternatePhone"
+            [class.error-control]="alternatePhone.touched && alternatePhone.invalid"
+            class="form-control form-control-sm"
+            formControlName="alternatePhone">
+
+          <div class="text-danger mt-1" *ngIf="alternatePhone.touched && alternatePhone.invalid">
+            <div *ngIf="alternatePhone.errors.pattern">
+              Please enter a valid phone number.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="officeDetailsForm">
+      <br />
+      <h5>Office details</h5>
+      <hr style="margin-top: 0px;" />
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="occupation" [class.text-danger]="occupation.touched && occupation.invalid">Occupation</label>
+          <input
+            type="text"
+            id="occupation"
+            [class.error-control]="occupation.touched && occupation.invalid"
+            class="form-control form-control-sm"
+            formControlName="occupation"
+          >
+
+          <div class="text-danger mt-1" *ngIf="occupation.touched && occupation.invalid">
+            <div *ngIf="occupation.errors.required">
+              This field is required.
+            </div>
+            <div *ngIf="occupation.errors.minlength">
+              Occupation must be minimum {{ occupation.errors.minlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="occupation.errors.maxlength">
+              Occupation must be maximum {{ occupation.errors.maxlength.requiredLength }} characters.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="profession" [class.text-danger]="profession.touched && profession.invalid">Profession</label>
+          <input
+            type="text"
+            id="profession"
+            [class.error-control]="profession.touched && profession.invalid"
+            class="form-control form-control-sm"
+            formControlName="profession"
+          >
+
+          <div class="text-danger mt-1" *ngIf="profession.touched && profession.invalid">
+            <div *ngIf="profession.errors.required">
+              This field is required.
+            </div>
+            <div *ngIf="profession.errors.minlength">
+              Profession must be minimum {{ profession.errors.minlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="profession.errors.maxlength">
+              Profession must be maximum {{ profession.errors.maxlength.requiredLength }} characters.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row mx-auto">
+        <label for="placeOfWork" [class.text-danger]="placeOfWork.touched && placeOfWork.invalid">Place of Work</label>
+        <input
+          type="text"
+          id="placeOfWork"
+          [class.error-control]="placeOfWork.touched && placeOfWork.invalid"
+          class="form-control form-control-sm"
+          formControlName="placeOfWork"
+        >
+
+        <div class="text-danger mt-1" *ngIf="placeOfWork.touched && placeOfWork.invalid">
+          <div *ngIf="placeOfWork.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="placeOfWork.errors.minlength">
+            Place of work must be minimum {{ placeOfWork.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="placeOfWork.errors.maxlength">
+            Place of work must be maximum {{ placeOfWork.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row mx-auto">
+        <label for="officeAddress" [class.text-danger]="officeAddress.touched && officeAddress.invalid">Office Address</label>
+        <textarea
+          type="text"
+          id="officeAddress"
+          [class.error-control]="officeAddress.touched && officeAddress.invalid"
+          class="form-control form-control-sm"
+          formControlName="officeAddress"
+        
+          rows="3">
+        </textarea>
+
+        <div class="text-danger mt-1" *ngIf="officeAddress.touched && officeAddress.invalid">
+          <div *ngIf="officeAddress.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="officeAddress.errors.minlength">
+            Office address must be minimum {{ officeAddress.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="officeAddress.errors.maxlength">
+            Office address must be maximum {{ officeAddress.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="nextOfKinDetailsForm">
+      <br />
+
+      <h5>Next of kin details</h5>
+      <hr style="margin-top: 0px; margin-bottom: 0px;" />
+
+      <div class="form-group row mx-auto">
+        <label for="fullName" [class.text-danger]="nextOfKinFullName.touched && nextOfKinFullName.invalid">Full Name</label>
+        <input
+          type="text"
+          id="fullName"
+          [class.error-control]="nextOfKinFullName.touched && nextOfKinFullName.invalid"
+          class="form-control form-control-sm"
+          formControlName="fullName">
     
-    <p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Edit Pilgrim</p>
+        <div class="text-danger mt-1" *ngIf="nextOfKinFullName.touched && nextOfKinFullName.invalid">
+          <div *ngIf="nextOfKinFullName.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="nextOfKinFullName.errors.minlength">
+            Next of kin name must be minimum {{ nextOfKinFullName.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="nextOfKinFullName.errors.maxlength">
+            Next of kin name must be maximum {{ nextOfKinFullName.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+      </div>
     
-    <mat-dialog-content *ngIf="!loader.loaderVisible">
-      <form [formGroup]="passportDetailsForm">
-        <h5>E-Passport details</h5>
-        <hr style="margin-top: 0px;" />
-      
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="relationship" [class.text-danger]="nextOfKinRelationship.touched && nextOfKinRelationship.invalid">Relationship</label>
+          <select
+            class="form-control form-control-sm"
+            [class.error-control]="nextOfKinRelationship.touched && nextOfKinRelationship.invalid"
+            type="text"
+            id="relationship"
+            formControlName="relationship">
+            <option [value]="null" selected hidden>Select relationship</option>
+            <option *ngFor="let r of relationships" [value]="r">{{ r | uppercase }}</option>
+          </select>
+    
+          <div class="text-danger mt-1" *ngIf="nextOfKinRelationship.touched && nextOfKinRelationship.invalid">
+            <div *ngIf="nextOfKinRelationship.errors.required">
+              Select pilgrim's next of kin nextOfKinRelationship.
+            </div>
+          </div>
+        </div>
+    
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="phone" [class.text-danger]="nextOfKinPhone.touched && nextOfKinPhone.invalid">
+            Phone
+          </label>
+          <input
+            type="text"
+            id="phone"
+            [class.error-control]="nextOfKinPhone.touched && nextOfKinPhone.invalid"
+            class="form-control form-control-sm"
+            formControlName="phone">
+    
+          <div class="text-danger mt-1" *ngIf="nextOfKinPhone.touched && nextOfKinPhone.invalid">
+            <div *ngIf="nextOfKinPhone.errors.required">
+              This Field is required
+            </div>
+            <div *ngIf="nextOfKinPhone.errors.minlength">
+              Phone must be minimum {{ nextOfKinPhone.errors.minlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="nextOfKinPhone.errors.maxlength">
+              Phone must be maximum {{ nextOfKinPhone.errors.maxlength.requiredLength }} characters.
+            </div>
+            <div *ngIf="nextOfKinPhone.errors.pattern">
+              Please enter a valid phone number.
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="form-group row mx-auto">
+        <label for="address" [class.text-danger]="nextOfKinAddress.touched && nextOfKinAddress.invalid">Residential Address</label>
+        <textarea
+          type="text"
+          id="address"
+          [class.error-control]="nextOfKinAddress.touched && nextOfKinAddress.invalid"
+          class="form-control form-control-sm"
+          formControlName="address"
+          rows="3">
+        </textarea>
+    
+        <div class="text-danger mt-1" *ngIf="nextOfKinAddress.touched && nextOfKinAddress.invalid">
+          <div *ngIf="nextOfKinAddress.errors.required">
+            This field is required.
+          </div>
+          <div *ngIf="nextOfKinAddress.errors.minlength">
+            Address must be minimum {{ nextOfKinAddress.errors.minlength.requiredLength }} characters.
+          </div>
+          <div *ngIf="nextOfKinAddress.errors.maxlength">
+            Address must be maximum {{ nextOfKinAddress.errors.maxlength.requiredLength }} characters.
+          </div>
+        </div>
+      </div>
+    </form>
+    <form [formGroup]="passportDetailsForm">
+      <br />
+      <h5>E-Passport details</h5>
+      <hr style="margin-top: 0px;" />
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="passportNumber" [class.text-danger]="passportNumber.touched && passportNumber.invalid">
+            Passport Number
+          </label>
+          <input type="text" id="passportNumber"
+            [class.error-control]="passportNumber.touched && passportNumber.invalid"
+            class="form-control form-control-sm" formControlName="passportNumber">
+
+          <div class="text-danger mt-1" *ngIf="passportNumber.touched && passportNumber.invalid">
+            <div *ngIf="passportNumber.errors.required">
+              This field is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="passportType" [class.text-danger]="passportType.touched && passportType.invalid">
+            Passport Type
+          </label>
+          <select class="form-control form-control-sm"
+            [class.error-control]="passportType.touched && passportType.invalid" type="text" id="passportType"
+            formControlName="passportType">
+            <option [value]="null" selected hidden>Select passport type</option>
+            <option *ngFor="let p of passportTypes" [value]="p">{{ p | uppercase }}</option>
+          </select>
+
+          <div class="text-danger mt-1" *ngIf="passportType.touched && passportType.invalid">
+            <div *ngIf="passportType.errors.required">
+              Select pilgrim's passport type.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="dateOfIssue" [class.text-danger]="dateOfIssue.touched && dateOfIssue.invalid">
+            Date of Issue
+          </label>
+          <input type="date" id="dateOfIssue" [class.error-control]="dateOfIssue.touched && dateOfIssue.invalid"
+            class="form-control form-control-sm" formControlName="dateOfIssue">
+
+          <div class="text-danger mt-1" *ngIf="dateOfIssue.touched && dateOfIssue.invalid">
+            <div *ngIf="dateOfIssue.errors.required || dateOfIssue.errors.greaterThanToday">
+              Select a valid date.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+          <label for="expiryDate" [class.text-danger]="expiryDate.touched && expiryDate.invalid">
+            Expiry Date
+          </label>
+          <input type="date" id="expiryDate" [class.error-control]="expiryDate.touched && expiryDate.invalid"
+            class="form-control form-control-sm" formControlName="expiryDate">
+
+          <div class="text-danger mt-1" *ngIf="expiryDate.touched && expiryDate.invalid">
+            <div *ngIf="expiryDate.errors.required">
+              Select a valid date.
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <br />
+
+    <h5>Payment history</h5>
+    <hr style="margin-top: 0px;" />
+
+    <div *ngFor="let group of paymentHistoryForms; let i = index">
+      <form [formGroup]="group">
+        <div class="row col-12 mx-auto">
+          <h4>{{ i+1 }}.</h4>
+          <a *ngIf="i !== 0" href="javascript:void(0)" (click)="removePaymentForm(i)" class="small ml-auto">Remove</a>
+        </div>
+
         <div class="row">
           <div class="form-group col-md-6 col-sm-12 mx-auto">
-            <label for="passportNumber" [class.text-danger]="passportNumber.touched && passportNumber.invalid">
-              Passport Number
-            </label>
-            <input
-              type="text"
-              id="passportNumber"
-              [class.error-control]="passportNumber.touched && passportNumber.invalid"
-              class="form-control form-control-sm"
-              formControlName="passportNumber"
-              (keyup)="valueChange()">
-  
-            <div class="text-danger mt-1" *ngIf="passportNumber.touched && passportNumber.invalid">
-              <div *ngIf="passportNumber.errors.required">
+            <label [for]="'receiptNumber'+i"
+              [class.text-danger]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">Receipt
+              Number</label>
+            <input type="text" [id]="'receiptNumber'+i"
+              [class.error-control]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid"
+              class="form-control form-control-sm" formControlName="receiptNumber">
+
+            <div class="text-danger mt-1"
+              *ngIf="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">
+              <div *ngIf="group.get('receiptNumber')?.errors.required">
                 This field is required.
               </div>
             </div>
           </div>
-      
-          <div class="form-group col-md-6 col-sm-12 mx-auto">
-            <label for="passportType" [class.text-danger]="passportType.touched && passportType.invalid">
-              Passport Type
-            </label>
-            <select
-              class="form-control form-control-sm"
-              [class.error-control]="passportType.touched && passportType.invalid"
-              type="text"
-              id="passportType"
-              formControlName="passportType"
-              (change)="valueChange()">
-              <option [value]="null" selected hidden>Select passport type</option>
-              <option *ngFor="let p of passportTypes" [value]="p">{{ p | uppercase }}</option>
-            </select>
 
-            <div class="text-danger mt-1" *ngIf="passportType.touched && passportType.invalid">
-              <div *ngIf="passportType.errors.required">
-                Select pilgrim's passport type.
+          <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label [for]="'tellerNumber'+i"
+              [class.text-danger]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">Teller
+              Number</label>
+            <input type="text" [id]="'tellerNumber'+i"
+              [class.error-control]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid"
+              class="form-control form-control-sm" formControlName="tellerNumber">
+
+            <div class="text-danger mt-1"
+              *ngIf="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">
+              <div *ngIf="group.get('tellerNumber')?.errors.required">
+                This field is required.
               </div>
             </div>
           </div>
         </div>
-      
+
         <div class="row">
           <div class="form-group col-md-6 col-sm-12 mx-auto">
-            <label for="dateOfIssue" [class.text-danger]="dateOfIssue.touched && dateOfIssue.invalid">
-              Date of Issue
+            <label [for]="'paymentDate'+i"
+              [class.text-danger]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
+              Date of Payment
             </label>
-            <input
-              type="date"
-              id="dateOfIssue"
-              [class.error-control]="dateOfIssue.touched && dateOfIssue.invalid"
-              class="form-control form-control-sm"
-              formControlName="dateOfIssue"
-              (change)="valueChange()">
-  
-            <div class="text-danger mt-1" *ngIf="dateOfIssue.touched && dateOfIssue.invalid">
-              <div *ngIf="dateOfIssue.errors.required || dateOfIssue.errors.greaterThanToday">
+            <input type="date" [id]="'paymentDate'+i"
+              [class.error-control]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid"
+              class="form-control form-control-sm" formControlName="paymentDate">
+
+            <div class="text-danger mt-1"
+              *ngIf="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
+              <div *ngIf="group.get('paymentDate')?.errors.required">
                 Select a valid date.
               </div>
             </div>
           </div>
-      
+
           <div class="form-group col-md-6 col-sm-12 mx-auto">
-            <label for="expiryDate" [class.text-danger]="expiryDate.touched && expiryDate.invalid">
-              Expiry Date
-            </label>
-            <input
-              type="date"
-              id="expiryDate"
-              [class.error-control]="expiryDate.touched && expiryDate.invalid"
-              class="form-control form-control-sm"
-              formControlName="expiryDate"
-              (change)="valueChange()">
-  
-            <div class="text-danger mt-1" *ngIf="expiryDate.touched && expiryDate.invalid">
-              <div *ngIf="expiryDate.errors.required">
-                Select a valid date.
+            <label [for]="'bank'+i"
+              [class.text-danger]="group.get('bank')?.touched && group.get('bank')?.invalid">Bank</label>
+            <select class="form-control form-control-sm"
+              [class.error-control]="group.get('bank')?.touched && group.get('bank')?.invalid" type="text"
+              [id]="'bank'+i" formControlName="bank">
+              <option [value]="null" selected hidden>Select Bank</option>
+              <option *ngFor="let b of banks" [value]="b._id">{{ b.name }}</option>
+            </select>
+
+            <div class="text-danger mt-1" *ngIf="group.get('bank')?.touched && group.get('bank')?.invalid">
+              <div *ngIf="group.get('bank')?.errors.required">
+                Select a bank.
               </div>
             </div>
           </div>
         </div>
+
+        <div class="row">
+          <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label [for]="'amount'+i"
+              [class.text-danger]="group.get('amount')?.touched && group.get('amount')?.invalid">Amount</label>
+            <input type="text" [id]="'amount'+i"
+              [class.error-control]="group.get('amount')?.touched && group.get('amount')?.invalid"
+              class="form-control form-control-sm" formControlName="amount">
+
+            <div class="text-danger mt-1" *ngIf="group.get('amount')?.touched && group.get('amount')?.invalid">
+              <div *ngIf="group.get('amount')?.errors.required">
+                This field is required.
+              </div>
+              <div *ngIf="group.get('amount')?.errors.pattern">
+                Only numbers are allowed
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6 col-sm-12 mx-auto">
+          </div>
+        </div>
+
       </form>
-    
-      <br />
-    
-      <h5>Payment history</h5>
-      <hr style="margin-top: 0px;" />
-    
-      <div *ngFor="let group of paymentHistoryForms; let i = index">
-        <form [formGroup]="group">
-          <div class="row col-12 mx-auto">
-            <h4>{{ i+1 }}.</h4>
-            <a *ngIf="i !== 0" href="javascript:void(0)" (click)="removePaymentForm(i)" class="small ml-auto">Remove</a>
-          </div>
-      
-          <div class="row">
-            <div class="form-group col-md-6 col-sm-12 mx-auto">
-              <label [for]="'receiptNumber'+i" [class.text-danger]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">Receipt Number</label>
-              <input
-                type="text"
-                [id]="'receiptNumber'+i"
-                [class.error-control]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid"
-                class="form-control form-control-sm"
-                formControlName="receiptNumber">
+    </div>
 
-              <div class="text-danger mt-1" *ngIf="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">
-                <div *ngIf="group.get('receiptNumber')?.errors.required">
-                  This field is required.
-                </div>
-              </div>
-            </div>
-      
-            <div class="form-group col-md-6 col-sm-12 mx-auto">
-              <label [for]="'tellerNumber'+i" [class.text-danger]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">Teller Number</label>
-              <input
-                type="text"
-                [id]="'tellerNumber'+i"
-                [class.error-control]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid"
-                class="form-control form-control-sm"
-                formControlName="tellerNumber">
+    <button type="button" (click)="addPaymentForm()" class="mb-5 btn btn-warning btn-sm float-right text-white">
+      Add Payment
+    </button>
+    <br />
+    <hr />
 
-              <div class="text-danger mt-1" *ngIf="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">
-                <div *ngIf="group.get('tellerNumber')?.errors.required">
-                  This field is required.
-                </div>
-              </div>
-            </div>
-          </div>
-      
-          <div class="row">
-            <div class="form-group col-md-6 col-sm-12 mx-auto">
-              <label [for]="'paymentDate'+i" [class.text-danger]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
-                Date of Payment
-              </label>
-              <input
-                type="date"
-                [id]="'paymentDate'+i"
-                [class.error-control]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid"
-                class="form-control form-control-sm"
-                formControlName="paymentDate"
-                (change)="valueChange()">
-    
-              <div class="text-danger mt-1" *ngIf="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
-                <div *ngIf="group.get('paymentDate')?.errors.required">
-                  Select a valid date.
-                </div>
-              </div>
-            </div>
-          
-            <div class="form-group col-md-6 col-sm-12 mx-auto">
-              <label [for]="'bank'+i" [class.text-danger]="group.get('bank')?.touched && group.get('bank')?.invalid">Bank</label>
-              <select
-                class="form-control form-control-sm"
-                [class.error-control]="group.get('bank')?.touched && group.get('bank')?.invalid"
-                type="text"
-                [id]="'bank'+i"
-                formControlName="bank"
-                (change)="valueChange()">
-                <option [value]="null" selected hidden>Select Bank</option>
-                <option *ngFor="let b of banks" [value]="b._id">{{ b.name }}</option>
-              </select>
-    
-              <div class="text-danger mt-1" *ngIf="group.get('bank')?.touched && group.get('bank')?.invalid">
-                <div *ngIf="group.get('bank')?.errors.required">
-                  Select a bank.
-                </div>
-              </div>
-            </div>
-          </div>
+    <h5>Uploaded Documents</h5>
 
-          <div class="row">
-            <div class="form-group col-md-6 col-sm-12 mx-auto">
-              <label [for]="'amount'+i" [class.text-danger]="group.get('amount')?.touched && group.get('amount')?.invalid">Amount</label>
-              <input
-                type="text"
-                [id]="'amount'+i"
-                [class.error-control]="group.get('amount')?.touched && group.get('amount')?.invalid"
-                class="form-control form-control-sm"
-                formControlName="amount"
-                (keyup)="valueChange()">
-    
-              <div class="text-danger mt-1" *ngIf="group.get('amount')?.touched && group.get('amount')?.invalid">
-                <div *ngIf="group.get('amount')?.errors.required">
-                  This field is required.
-                </div>
-                <div *ngIf="group.get('amount')?.errors.pattern">
-                  Only numbers are allowed
-                </div>
-              </div>
-            </div>
-    
-            <div class="form-group col-md-6 col-sm-12 mx-auto">
-            </div>
-          </div>
-    
-        </form>
-      </div>
-      
-      <button 
-          type="button"
-          (click)="addPaymentForm()"
-          class="mb-5 btn btn-warning btn-sm float-right">
-          Add Payment
-        </button>
-      <br />
-      <hr />
-    
-      <h5>Uploaded Documents</h5>
-    
-      <ul class="list-group mb-3">
-        <li class="list-group-item">
-          Guarantor Form&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.guarantorFormUrl)" target="_blank">Original</a>
-          <!-- <a *ngIf="uploadedDocuments.guarantorFormUrl" class="float-right mr-3" [href]="uploadedDocuments.guarantorFormUrl.dataUrl" target="_blank">Current Upload</a> -->
-          <a class="float-right mr-3" href="javascript:void(0)" (click)="guarantorPicker.click()">Change</a>
-          <input type="file" #guarantorPicker hidden (change)="fileChanged($event.target.files[0], 'guarantorFormUrl')">
-        </li>
-        <li class="list-group-item">
-          MOU&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.mouUrl)" target="_blank">Original</a>
-          <a class="float-right mr-3" href="javascript:void(0)" (click)="mouUrl.click()">Change</a>
-          <input type="file" #mouUrl hidden (change)="fileChanged($event.target.files[0], 'mouUrl')">
-        </li>
-        <li class="list-group-item">
-          E-Passport&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.passportUrl)" target="_blank">Original</a>
-          <a class="float-right mr-3" href="javascript:void(0)" (click)="passportPicker.click()">Change</a>
-          <input type="file" #passportPicker hidden (change)="fileChanged($event.target.files[0], 'passportUrl')">
-        </li>
-      </ul>
-    
-    </mat-dialog-content>
-    
-    <mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
-       <button
-        [disabled]="loader.loaderVisible"
-        type="button"
-        class="btn-outline-primary btn-sm btn ml-2"
-        matDialogClose>
-        Close
-      </button>
+    <ul class="list-group mb-3 col-12 mx-auto px-0">
+      <li class="list-group-item">
+        Guarantor Form&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.guarantorFormUrl)"
+          target="_blank">Original</a>
+        <!-- <a *ngIf="uploadedDocuments.guarantorFormUrl" class="float-right mr-3" [href]="uploadedDocuments.guarantorFormUrl.dataUrl" target="_blank">Current Upload</a> -->
+        <a class="float-right mr-3" href="javascript:void(0)" (click)="guarantorPicker.click()">Change</a>
+        <input type="file" #guarantorPicker hidden (change)="fileChanged($event.target.files[0], 'guarantorFormUrl')">
+      </li>
+      <li class="list-group-item">
+        MOU&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.mouUrl)" target="_blank">Original</a>
+        <a class="float-right mr-3" href="javascript:void(0)" (click)="mouUrl.click()">Change</a>
+        <input type="file" #mouUrl hidden (change)="fileChanged($event.target.files[0], 'mouUrl')">
+      </li>
+      <li class="list-group-item">
+        E-Passport&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.passportUrl)"
+          target="_blank">Original</a>
+        <a class="float-right mr-3" href="javascript:void(0)" (click)="passportPicker.click()">Change</a>
+        <input type="file" #passportPicker hidden (change)="fileChanged($event.target.files[0], 'passportUrl')">
+      </li>
+    </ul>
 
-      <button
-        [disabled]="loader.loaderVisible || !formsValid"
-        type="submit"
-        class="btn-success btn-sm btn ml-2">
-        Save
-      </button>
-    </mat-dialog-actions>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
+    <button [disabled]="loader.loaderVisible" type="button" class="btn-outline-primary btn-sm btn ml-2" matDialogClose>
+      Close
+    </button>
+
+    <button [disabled]="loader.loaderVisible || !formsValid" type="submit" class="btn-success btn-sm btn ml-2">
+      Save
+    </button>
+  </mat-dialog-actions>
 </form>

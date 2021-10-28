@@ -30,6 +30,7 @@ import { RestorePilgrimComponent } from './pilgrim-admin-list/restore-pilgrim/re
 import { InitiatorComponent } from './dashboard/initiator/initiator.component';
 import { AdminComponent } from './dashboard/admin/admin.component';
 import { ReviewerComponent } from './dashboard/reviewer/reviewer.component';
+import { PilgrimDeleteComponent } from './pilgrim-delete/pilgrim-delete.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { ReviewerComponent } from './dashboard/reviewer/reviewer.component';
     InitiatorComponent,
     AdminComponent,
     ReviewerComponent,
-    EditPilgrimComponent
+    EditPilgrimComponent,
+    PilgrimDeleteComponent
   ],
   imports: [
     CommonModule,

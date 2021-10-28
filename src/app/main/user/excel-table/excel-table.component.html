@@ -71,7 +71,7 @@
     <td>
       <ul *ngFor="let ph of p.paymentHistory">
         {{ '{'}}
-        <li>Bank: {{ ph.bankObject.name }},&nbsp;&nbsp;<br /></li>
+        <li>Bank: {{ ph.bankObject?.name }},&nbsp;&nbsp;<br /></li>
         <li>Teller: {{ ph.tellerNumber }},&nbsp;&nbsp;<br /></li>
         <li>Receipt: {{ ph.receiptNumber }},&nbsp;&nbsp;<br /></li>
         <li>Date: {{ ph.paymentDate | date: 'shortDate' }},&nbsp;&nbsp;<br /></li>
