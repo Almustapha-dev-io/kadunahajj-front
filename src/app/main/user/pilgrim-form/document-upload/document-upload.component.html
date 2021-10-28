@@ -32,7 +32,7 @@
       id="fileDropRef"
       (change)="fileDropped($event.target.files)" />
 
-    <img src="../../../../../assets/images/upload.svg" alt="" />
+    <img src="assets/images/upload.svg" alt="" />
     <h3>Drag and drop file here</h3>
     <h3>or</h3>
     <label for="fileDropRef">Browse for file</label>
@@ -41,7 +41,7 @@
 
 <div class="files-list">
   <div class="single-file" *ngFor="let f of files; let i=index">
-    <img src="../../../../../assets/images/ic-file.svg" alt="file" width="45px">
+    <img src="assets/images/ic-file.svg" alt="file" width="45px">
     <div class="info">
       <h4 class="name">
         {{ f?.file.name }}
@@ -51,7 +51,7 @@
       </p>
       <app-progress [progress]="f?.progress"></app-progress>
     </div>
-    <img src="../../../../../assets/images/ic-delete-file.svg" class="delete" width="20px" alt="file"
+    <img src="assets/images/ic-delete-file.svg" class="delete" width="20px" alt="file"
       (click)="removeUploadedDocument(f.documentType)">
   </div>
 </div>
