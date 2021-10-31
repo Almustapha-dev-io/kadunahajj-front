@@ -55,7 +55,7 @@ import { ProfileComponent } from './main/profile/profile.component';
     DataService,
     LoaderService,
     ModalLoaderService,
-    // { provide: ErrorHandler, useClass: AppErrorHandler}
+    { provide: ErrorHandler, useClass: AppErrorHandler}
   ],
   bootstrap: [AppComponent]
 })
