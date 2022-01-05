@@ -7,6 +7,7 @@ import { DataService } from '../../../../services/data.service';
 import { ModalLoaderService } from '../../../../services/modal-loader.service';
 import { AddSeatAllocationsComponent } from '../add-seat-allocations/add-seat-allocations.component';
 import { EditSeatComponent } from '../edit-seat/edit-seat.component';
+import { ViewUpdateHistoryComponent } from '../view-update-history/view-update-history.component';
 
 @Component({
   selector: 'app-view-hajj-year',
@@ -46,9 +47,7 @@ export class ViewHajjYearComponent implements OnInit, OnDestroy {
   }
 
   get totalSeats() {
-    let sum = 0;
-    this.data.seatAllocations.forEach(a => sum += +a.seatsAllocated);
-    return sum;
+    return this.data.seatAllocations.reduce((prev, cur) => prev + cur.seatsAllocated, 0);
   }
 
   getZones() {
@@ -105,8 +104,16 @@ export class ViewHajjYearComponent implements OnInit, OnDestroy {
     });
   }
 
+  viewEditHistory() {
+    window.scroll(0, 0);
+    this.dialog.open(ViewUpdateHistoryComponent, {
+      width: '70rem',
+      disableClose: true,
+      data: this.data._id
+    });
+  }
+
   editZoneSeats(allocation) {
-    console.log(allocation);
     window.scroll(0, 0);
     this.dialog.open(EditSeatComponent, {
       width: '25rem',

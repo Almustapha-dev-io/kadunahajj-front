@@ -50,6 +50,12 @@
         [value]="data.lastClosed | date: 'long'"
         disabled>
     </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <button class="btn btn-primary btn-sm" (click)="viewEditHistory()">
+        View update history
+      </button>
+    </div>
   </div>
 
   <div class="row mx-auto my-3 alert alert-info" *ngIf="data.seatAllocations.length < 1 && allowAddAllocation()">
@@ -70,7 +76,7 @@
         (click)="editZoneSeats(allocation)"
         matTooltip="Click to edit"
         matTooltipPosition="above"
-        class="card shadow-lg cardListItem mb-3 border-success" style="padding: 0!important">
+        class="card cardListItem mb-3 border-success" style="padding: 0!important">
         <div class="card-body" style="padding: 1rem!important;">
           <h5 class="card-title text-success mb-2">
             {{ allocation.zone.name }}

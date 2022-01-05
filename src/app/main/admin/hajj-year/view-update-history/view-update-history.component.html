@@ -1,0 +1,96 @@
+<div mat-dialog-title class="col-12 mx-auto row">
+  <div class="mr-auto">
+    Update History
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body" style="overflow-x: auto;">
+          <h6 class="card-title">HISTORY</h6>
+  
+          <input
+            type="search"
+            name="search"
+            [(ngModel)]="searchText"
+            class="form-control col-sm-12 col-md-3 float-right mb-3"
+            placeholder="Search">
+  
+          <div class="table-responsive" style="overflow-y: hidden!important;">
+            <table class="table">
+              <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+            </table>
+  
+            <div class="col-12 mx-auto mt-3">
+              <pagination-controls class="float-right"
+                (pageChange) = "p = $event"
+                maxSize="9"
+                directionLinks="true"
+                autoHide="true"
+                responsive="true"
+                previousLabel="Previous"
+                nextLabel="Next"
+                screenReaderPaginationLabel="Pagination"
+                screenReaderPageLabel="page"
+                screenReaderCurrentLabel="You're on page">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #load>
+    <thead>
+      <tr>
+        <td>
+          <app-loader>Fetching data...</app-loader>
+        </td>
+      </tr>
+    </thead>
+  </ng-template>
+
+  <ng-template #show>
+    <ng-container *ngIf="history.length > 0 then tableData; else noData"></ng-container>
+  </ng-template>
+
+  <ng-template #noData>
+    <thead>
+      <tr>
+        <td>No record(s) to display</td>
+      </tr>
+    </thead>
+  </ng-template>
+
+  <ng-template #tableData>
+    <thead>
+      <tr>
+        <th class="sort" scope="col" [appSort]="history" data-order="desc" data-name="sn">S/N</th>
+        <th class="sort" scope="col" [appSort]="history" data-order="desc" data-name="previousSeatNumber">Previous</th>
+        <th class="sort" scope="col" [appSort]="history" data-order="desc" data-name="newSeatNumber">Current</th>
+        <th class="sort" scope="col">Update</th>
+        <th class="sort" scope="col">Center</th>
+        <th class="sort" scope="col" [appSort]="history" data-order="desc" data-name="date">Date Modified</th>
+      </tr>
+    </thead>
+    <tbody  *ngFor="let i=index; let h of history | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+      <tr>
+        <td>{{ ((p-1) * 10) + (i+1) }}</td>
+        <td>{{ h.previousSeatNumber }}</td>
+        <td>{{ h.newSeatNumber }}</td>
+        <td>{{ h.difference }}</td>
+        <td>{{ h.zone.name }}</td>
+        <td>{{ h.date ? (h.date | date: 'medium') : 'Unavailable' }}</td>
+      </tr>
+    </tbody>
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button type="button" class="btn-danger btn-sm btn ml-2" matDialogClose>
+    Close
+  </button>
+</mat-dialog-actions>

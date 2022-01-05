@@ -53,10 +53,18 @@ const NEXT_OF_KIN_DETAILS: FormGroup = new FormGroup({
   relationship: new FormControl(null, Validators.required)
 });
 
+const MAHRIM_DETAILS: FormGroup = new FormGroup({
+  fullName: new FormControl(null, [Validators.required, Validators.minLength(5), Validators.maxLength(50)]),
+  address: new FormControl(null, [Validators.required, Validators.minLength(5), Validators.maxLength(50)]),
+  phone: new FormControl(null, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}/)]),
+  relationship: new FormControl(null, Validators.required)
+});
+
 const ATTACHED_DOCUMENTS: FormGroup = new FormGroup({
   guarantorFormUrl: new FormControl(null, Validators.required),
   passportUrl: new FormControl(null, Validators.required),
-  mouUrl: new FormControl(null, Validators.required)
+  mouUrl: new FormControl(null, Validators.required),
+  otherDocuments: new FormArray([])
 });
 
 const PAYMENT_HISTORY: FormArray = new FormArray([new FormGroup({
@@ -73,6 +81,7 @@ const FORMS = {
   enrollmentAndPassport: ENROLLMENT_AND_PASSPORT,
   personalAndOffice: PERSONAL_AND_OFFICE,
   nextOfKinDetails: NEXT_OF_KIN_DETAILS,
+  mahrimDetails: MAHRIM_DETAILS,
   attachedDocuments: ATTACHED_DOCUMENTS,
   paymentHistory: PAYMENT_HISTORY
 };
@@ -85,6 +94,7 @@ export class FormsService {
   enrollmentAndPassport$: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
   personalAndOffice$: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
   nextOfKinDetails$: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
+  mahrimDetails$: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
   attachedDocuments$: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
   paymentHistory$: BehaviorSubject<FormArray> = new BehaviorSubject<FormArray>(null);
   files$: BehaviorSubject<FileModel[]> = new BehaviorSubject<FileModel[]>(FILES);
@@ -97,6 +107,7 @@ export class FormsService {
     this.enrollmentAndPassport$.next(FORMS.enrollmentAndPassport);
     this.personalAndOffice$.next(FORMS.personalAndOffice);
     this.nextOfKinDetails$.next(FORMS.nextOfKinDetails);
+    this.mahrimDetails$.next(FORMS.mahrimDetails);
     this.attachedDocuments$.next(FORMS.attachedDocuments);
     this.paymentHistory$.next(FORMS.paymentHistory);
   }
@@ -113,6 +124,10 @@ export class FormsService {
     return this.nextOfKinDetails$.value;
   }
 
+  get mahrimDetails(): FormGroup {
+    return this.mahrimDetails$.value;
+  }
+
   get attachedDocuments(): FormGroup {
     return this.attachedDocuments$.value;
   }
@@ -125,13 +140,20 @@ export class FormsService {
     return this.files$.value;
   }
 
+  get docForm(): FormGroup {
+    return new FormGroup({
+      documentName: new FormControl(''),
+      docUrl: new FormControl('')
+    });
+  }
+
   reset() {
     FORMS.enrollmentAndPassport.reset();
     FORMS.personalAndOffice.reset();
     FORMS.nextOfKinDetails.reset();
     FORMS.attachedDocuments.reset();
     FORMS.paymentHistory.reset();
-
+    FORMS.mahrimDetails.reset();
     FILES.splice(0, FILES.length);
 
     this.init();
@@ -148,7 +170,7 @@ export class FormsService {
   }
 
   get formValue() {
-    return {
+    const val: any = {
       enrollmentDetails: this.enrollmentAndPassport.get('enrollmentDetails').value,
       passportDetails: this.enrollmentAndPassport.get('passportDetails').value,
       personalDetails: this.personalAndOffice.get('personalDetails').value,
@@ -157,6 +179,13 @@ export class FormsService {
       attachedDocuments: this.attachedDocuments.value,
       paymentHistory: [...this.paymentArray]
     };
+
+    if (val.personalDetails.sex === 'female') {
+      val.mahrimDetails = this.mahrimDetails.value;
+    } else {
+      val.mahrimDetails = null;
+    }
+    return val;
   }
 
   get formData(): FormData {

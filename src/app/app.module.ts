@@ -47,7 +47,7 @@ import { ProfileComponent } from './main/profile/profile.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxPaginationModule,
+    NgxPaginationModule, 
     BrowserAnimationsModule,
     AppCommonModule
   ],
@@ -59,4 +59,4 @@ import { ProfileComponent } from './main/profile/profile.component';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

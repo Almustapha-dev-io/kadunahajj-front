@@ -25,6 +25,7 @@ import { ViewHajjYearComponent } from './hajj-year/view-hajj-year/view-hajj-year
 import { AddSeatAllocationsComponent } from './hajj-year/add-seat-allocations/add-seat-allocations.component';
 import { EditSeatComponent } from './hajj-year/edit-seat/edit-seat.component';
 import { NewZoneComponent } from './enrollment-zones/new-zone/new-zone.component';
+import { ViewUpdateHistoryComponent } from './hajj-year/view-update-history/view-update-history.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { NewZoneComponent } from './enrollment-zones/new-zone/new-zone.component
     ViewHajjYearComponent,
     AddSeatAllocationsComponent,
     EditSeatComponent,
-    NewZoneComponent
+    NewZoneComponent,
+    ViewUpdateHistoryComponent
   ],
   imports: [
     CommonModule,
