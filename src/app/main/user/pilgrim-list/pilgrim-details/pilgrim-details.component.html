@@ -261,6 +261,14 @@
     <li class="list-group-item">
       E-Passport&nbsp;<a class="float-right" [href]="imageFile(attachedDocuments.passportUrl)" target="_blank">View</a>
     </li>
+    
+    <ng-container *ngIf="attachedDocuments.otherDocuments">
+        <ng-container *ngFor="let f of attachedDocuments.otherDocuments">
+            <li class="list-group-item">
+              {{ f.documentName | titlecase }}&nbsp;<a class="float-right" [href]="imageFile(f.docUrl)" target="_blank">View</a>
+            </li>
+        </ng-container>
+    </ng-container>
   </ul>
 
   <ng-container *ngIf="data.deleted">

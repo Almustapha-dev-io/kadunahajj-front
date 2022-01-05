@@ -97,7 +97,7 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
 
         this.subscription = this.dataService.post(imageUri, this.formsService.formData, token).subscribe(fileResponse => {
           this.notifications.successToast(`${fileResponse.message} Sending user data...`);
-
+            console.log(this.formsService.formValue);
           this.subscription = this.dataService.post(uri, this.formsService.formValue, token).subscribe(response => {
             this.notifications.alert(`Pilgrim registered successfully. <br />Code: <b>${response.pilgrim.enrollmentDetails.code}</b>`).then(result => {
               this.formsService.reset();

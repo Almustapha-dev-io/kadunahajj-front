@@ -1,156 +1,141 @@
 <nav class="page-breadcrumb">
-  <ol class="breadcrumb" style="font-size: 150%;">
-    <li class="breadcrumb-item"><a class="text-primary">Pilgrims</a></li>
-    <li class="breadcrumb-item active" aria-current="page">All Active Pilgrims</li>
-  </ol>
+    <ol class="breadcrumb" style="font-size: 150%;">
+        <li class="breadcrumb-item"><a class="text-primary">Pilgrims</a></li>
+        <li class="breadcrumb-item active" aria-current="page">All Active Pilgrims</li>
+    </ol>
 </nav>
 
 
 <div class="row">
-  <div class="col-md-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body" style="overflow-x: auto;">
-        <div *ngIf="pilgrims.length > 0" class="float-right"><button class="btn btn-warning" style="color: white;" (click)="exportToExcel()">Export to Excel</button></div>
-        <h6 class="card-title">PILGRIMS MASTER LIST</h6>
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body" style="overflow-x: auto;">
+                <div *ngIf="pilgrims.length > 0" class="float-right"><button class="btn btn-warning"
+                        style="color: white;" (click)="exportToExcel()">Export to Excel</button></div>
+                <h6 class="card-title">PILGRIMS MASTER LIST</h6>
 
 
-        <select
-          style="border-radius: 2px;"
-          id="yearId"
-          class="form-control col-sm-12 col-md-3 col-lg-2 float-left mr-2 mb-4"
-          name="yearId"
-          ngModel
-          #yearId="ngModel"
-          required>
-          <option value="" selected hidden>Select Year</option>
-          <option *ngFor="let year of years" [value]="year._id">{{ year.year | uppercase }} <span class="text-success" *ngIf="year.active">&nbsp;&nbsp;&nbsp;Active</span></option>
-        </select>
+                <select style="border-radius: 2px;" id="yearId"
+                    class="form-control col-sm-12 col-md-3 col-lg-2 float-left mr-2 mb-4" name="yearId" ngModel
+                    #yearId="ngModel" required>
+                    <option value="" selected hidden>Select Year</option>
+                    <option *ngFor="let year of years" [value]="year._id">{{ year.year | uppercase }} <span
+                            class="text-success" *ngIf="year.active">&nbsp;&nbsp;&nbsp;Active</span></option>
+                </select>
 
-        <select
-          style="border-radius: 2px;"
-          id="zoneId"
-          class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4"
-          name="zoneId"
-          ngModel
-          #zoneId="ngModel"
-          required>
-          <option value="" selected hidden>Select Zone</option>
-          <option *ngFor="let z of zones" [value]="z._id">{{ z.name }}</option>
-        </select>
+                <select style="border-radius: 2px;" id="zoneId"
+                    class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4" name="zoneId" ngModel
+                    #zoneId="ngModel" required>
+                    <option value="" selected hidden>Select Zone</option>
+                    <option *ngFor="let z of zones" [value]="z._id">{{ z.name }}</option>
+                </select>
 
-        <button
-          class="btn btn btn-success ml-3"
-          style="height: calc(1.5em + 0.75rem + 2px);"
-          (click)="fetchPilgrims(yearId.value, zoneId.value)"
-          [disabled]="zoneId.value === '' || yearId.value === ''">
-          Query
-        </button>
+                <button class="btn btn btn-success ml-3" style="height: calc(1.5em + 0.75rem + 2px);"
+                    (click)="fetchPilgrims(yearId.value, zoneId.value)"
+                    [disabled]="zoneId.value === '' || yearId.value === ''">
+                    Query
+                </button>
 
-        <input
-          type="search"
-          name="search"
-          [(ngModel)]="searchText"
-          class="form-control col-sm-12 col-md-3 float-right mb-4"
-          placeholder="Search">
+                <input type="search" name="search" [(ngModel)]="searchText"
+                    class="form-control col-sm-12 col-md-3 float-right mb-4" placeholder="Search">
 
-        <div class="table-responsive" style="overflow-y: hidden!important;">
-          <table class="table">
-            <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
-          </table>
+                <div class="table-responsive" style="overflow-y: hidden!important;">
+                    <table class="table">
+                        <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+                    </table>
 
-          <div class="col-12 mx-auto mt-3" *ngIf="pilgrims.length > 0">
-            <div class="float-left">
-              <select [(ngModel)]="pageSize" class="form-control" (change)="onPageSizeChange()">
-                <option *ngFor="let page of pages" [value]="page">Show {{ page }} Items</option>
-              </select>
+                    <div class="col-12 mx-auto mt-3" *ngIf="pilgrims.length > 0">
+                        <div class="float-left">
+                            <select [(ngModel)]="pageSize" class="form-control" (change)="onPageSizeChange()">
+                                <option *ngFor="let page of pages" [value]="page">Show {{ page }} Items</option>
+                            </select>
+                        </div>
+
+                        <pagination-controls class="float-right" (pageChange)="onNavigate($event)" maxSize="9"
+                            directionLinks="true" autoHide="true" responsive="true" previousLabel="Previous"
+                            nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                            screenReaderCurrentLabel="You're on page">
+                        </pagination-controls>
+                    </div>
+
+                    <div *ngIf="pilgrims.length > 0" class="col-12 mx-auto d-flex justify-content-center mt-2"><button
+                            class="btn btn-warning mx-auto" style="color: white;" (click)="exportToExcel()">Export to
+                            Excel</button></div>
+                </div>
             </div>
-
-            <pagination-controls class="float-right"
-              (pageChange) = "onNavigate($event)"
-              maxSize="9"
-              directionLinks="true"
-              autoHide="true"
-              responsive="true"
-              previousLabel="Previous"
-              nextLabel="Next"
-              screenReaderPaginationLabel="Pagination"
-              screenReaderPageLabel="page"
-              screenReaderCurrentLabel="You're on page">
-            </pagination-controls>
-          </div>
-
-          <div *ngIf="pilgrims.length > 0" class="col-12 mx-auto d-flex justify-content-center mt-2"><button class="btn btn-warning mx-auto" style="color: white;" (click)="exportToExcel()">Export to Excel</button></div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <ng-template #load>
-  <thead>
-    <tr>
-      <td><app-loader>Fetching data...</app-loader></td>
-    </tr>
-  </thead>
+    <thead>
+        <tr>
+            <td>
+                <app-loader>Fetching data...</app-loader>
+            </td>
+        </tr>
+    </thead>
 </ng-template>
 
 <ng-template #show>
-  <ng-container *ngIf="pilgrims.length > 0 then tableData; else noData"></ng-container>
+    <ng-container *ngIf="pilgrims.length > 0 then tableData; else noData"></ng-container>
 </ng-template>
 
 <ng-template #noData>
-  <thead>
-    <tr>
-      <td>
-        No record(s) to display.
-        <span *ngIf="(!yearId.touched) || (!zoneId.touched)">Select a year and zone.</span>
-        <span *ngIf=""></span>
-      </td>
-    </tr>
-  </thead>
+    <thead>
+        <tr>
+            <td>
+                No record(s) to display.
+                <span *ngIf="(!yearId.touched) || (!zoneId.touched)">Select a year and zone.</span>
+                <span *ngIf=""></span>
+            </td>
+        </tr>
+    </thead>
 </ng-template>
 
 <ng-template #tableData>
-  <thead>
-    <tr>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="sn">S/N</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="code">Registration Code</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="name">Full Name</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="gender">Gender</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentZone">Registration Zone</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="dateCreated">Registration Date</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody  *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
-    <tr>
-      <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
-      <td><b>{{ pilgrim.enrollmentDetails.code }}</b></td>
-      <td>{{ pilgrim.personalDetails.surname + ', ' + pilgrim.personalDetails.otherNames | uppercase }}</td>
-      <td>{{ pilgrim.personalDetails.sex | uppercase }}</td>
-      <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
-      <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
-      <td>
-        <button
-          type="button"
-          class="btn magnifyText btn-primary btn btn-sm"
-          (click)="viewPilgrim(pilgrim)">
-          View
-        </button>
+    <thead>
+        <tr>
+            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="sn">S/N</th>
+            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="code">Registration Code</th>
+            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="name">Full Name</th>
+            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="gender">Gender</th>
+            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentZone">Registration
+                Zone</th>
+            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="dateCreated">Registration
+                Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody
+        *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
+        <tr>
+            <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
+            <td><b>{{ pilgrim.enrollmentDetails.code }}</b></td>
+            <td>{{ pilgrim.personalDetails.surname + ', ' + pilgrim.personalDetails.otherNames | uppercase }}</td>
+            <td>{{ pilgrim.personalDetails.sex | uppercase }}</td>
+            <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
+            <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
+            <td>
+                <button type="button" class="btn magnifyText btn-primary btn btn-sm" (click)="viewPilgrim(pilgrim)">
+                    View
+                </button>
 
-        <button
-          type="button"
-          class="btn magnifyText btn-success btn btn-sm ml-2"
-          (click)="editPilgrim(pilgrim)">
-          Edit
-        </button>
+                <button type="button" class="btn magnifyText btn-success btn btn-sm ml-2"
+                    (click)="editPilgrim(pilgrim)">
+                    Edit
+                </button>
 
-        <button class="btn btn-danger btn-sm magnifyText ml-2" (click)="deletePilgrim(pilgrim)">
-            Delete
-          </button>
-      </td>
-    </tr>
-  </tbody>
+                <button class="btn btn-danger btn-sm magnifyText ml-2" (click)="deletePilgrim(pilgrim)">
+                    Delete
+                </button>
+                <br />
+                <button type="button" class="btn magnifyText btn-warning btn mt-2" (click)="migratePilgrim(pilgrim)">
+                    Migrate
+                </button>
+            </td>
+        </tr>
+    </tbody>
 
 </ng-template>
 

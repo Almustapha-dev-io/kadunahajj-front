@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PilgrimDetailsComponent } from './pilgrim-details/pilgrim-details.component';
 import { NgModel } from '@angular/forms';
 import { EditPilgrimComponent } from './edit-pilgrim/edit-pilgrim.component';
+import { PilgrimMigrateComponent } from '../pilgrim-migrate/pilgrim-migrate.component';
 
 @Component({
   selector: 'app-pilgrim-list',
@@ -31,6 +32,7 @@ export class PilgrimListComponent implements OnInit, OnDestroy {
 
   subscription = new Subscription();
   token = sessionStorage.getItem('token');
+    selectedYear = '';
 
   constructor(
     public loader: LoaderService,
@@ -75,6 +77,7 @@ export class PilgrimListComponent implements OnInit, OnDestroy {
   }
 
   getPilgrims(yearId, pageSize?, page?) {
+    this.selectedYear = yearId;
     this.loader.showLoader();
     const uri = `${environment.pilgrims}/by-year/${yearId}`;
     const params = { pageSize, page };
@@ -104,5 +107,16 @@ export class PilgrimListComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(r => r ? this.getPilgrims(this.yearId.value, this.pageSize, this.p) : '');
   }
 
+  migratePilgrim(pilgrim) {
+      window.scroll(0, 0);
+      this.dialog.open(PilgrimMigrateComponent, {
+        width: '25rem',
+        disableClose: true,
+        data: { pilgrim, years: this.years.filter(y => {
+            console.log({ y: y._id, s: this.selectedYear});
+            return y._id !== this.selectedYear;
+        }) }
+      }).afterClosed().subscribe(r => r ? this.getPilgrims(this.yearId.value, this.pageSize, this.p) : '');
+  }
 
 }

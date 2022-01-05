@@ -35,9 +35,9 @@ export class StepsComponent implements OnInit {
       return;
     }
 
-    if (!steps[previousIndex].isComplete) {
-      return;
-    }
+    // if (!steps[previousIndex].isComplete) {
+    //   return;
+    // }
     this.stepsService.setCurrentStep(step);
   }
 
@@ -50,11 +50,11 @@ export class StepsComponent implements OnInit {
         break;
 
       case 2:
-        display = 'Personal & Office';
+        display = 'Personal Details';
         break;
 
       case 3:
-        display = 'Next of Kin';
+        display = 'Next of Kin & Mahrim';
         break;
 
       case 4:

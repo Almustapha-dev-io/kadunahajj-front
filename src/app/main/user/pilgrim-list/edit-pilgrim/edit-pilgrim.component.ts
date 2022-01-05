@@ -12,6 +12,7 @@ import { YearValidators } from 'src/app/common/Validators/year.vaalidators';
 
 import { NotificationService } from 'src/app/services/notification.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormsService } from 'src/app/services/forms.service';
 
 @Component({
   selector: 'app-edit-pilgrim',
@@ -44,6 +45,7 @@ export class EditPilgrimComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
+    private formsService: FormsService,
     public loader: ModalLoaderService,
     private fb: FormBuilder,
     private notifications: NotificationService,
@@ -127,12 +129,26 @@ export class EditPilgrimComponent implements OnInit {
       attachedDocuments: this.fb.group({
         guarantorFormUrl: [this.attachedDocuments.guarantorFormUrl, Validators.required],
         passportUrl: [this.attachedDocuments.passportUrl, Validators.required],
-        mouUrl: [this.attachedDocuments.mouUrl, Validators.required]
+        mouUrl: [this.attachedDocuments.mouUrl, Validators.required],
+        otherDocuments: this.fb.array([])
       })
+    });
+
+    const otherDocsForm = this.editPilgrimForm.get('attachedDocuments').get('otherDocuments') as FormArray;
+    console.log({ otherDocsForm })
+    this.attachedDocuments.otherDocuments.forEach(doc => {
+        const form = this.formsService.docForm;
+        form.patchValue({
+            documentName: doc.documentName,
+            docUrl: doc.docUrl
+        });
+        otherDocsForm.push(form);
     });
 
     const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
     this.paymentHistory.forEach(payment => paymentHistory.push(this.getPaymentHistoryForm(payment)));
+
+    console.log(this.editPilgrimForm.value)
   }
 
   getPaymentHistoryForm(data?) {
@@ -250,10 +266,12 @@ export class EditPilgrimComponent implements OnInit {
     return this.editPilgrimForm.get('attachedDocuments') as FormGroup;
   }
 
+
+
   fileChanged(file, type) {
-    const fileTypes = ['jpeg', 'jpg', 'png'];
+    const fileTypes = ['jpeg', 'jpg', 'png', '.pdf'];
     if (!fileTypes.includes(file.name.split('.').pop())) {
-      this.notifications.errorToast('Please attach an image file');
+      this.notifications.errorToast('Please attach an image or pdf file');
       return;
     }
     const fr = new FileReader();
@@ -266,24 +284,46 @@ export class EditPilgrimComponent implements OnInit {
       this.attachDocumentsForm.get(type).patchValue(fileName);
       this.uploadedDocuments[type] = {
         file,
-        dataUrl: this.sanitizer.bypassSecurityTrustUrl(dataUrl)
+        dataUrl: this.sanitizer.bypassSecurityTrustUrl(dataUrl),
+        fileName
       };
       this.notifications.successToast('File attached!');
     }
   }
 
-  submit() {
-    const fd = new FormData();
-    const files = this.attachDocumentsForm.value;
-
-    for (let file in files) {
-      if (file in this.uploadedDocuments) {
-        fd.append('files', this.uploadedDocuments[file].file, files[file]);
-      }
+  otherFilesChanged(index, file) {
+    const fileTypes = ['jpeg', 'jpg', 'png', '.pdf'];
+    if (!fileTypes.includes(file.name.split('.').pop())) {
+      this.notifications.errorToast('Please attach an image or pdf file');
+      return;
     }
 
-    fd.forEach((c, e) => console.log(c, e));
+    const fr = new FileReader();
+    fr.readAsDataURL(file);
+    fr.onload = () => {
+        const dataUrl = fr.result.toString();
+        const id = uuid();
+        const fileName = id + '.' + file.name.split('.').pop();
+        const otherDocs = this.attachDocumentsForm.get('otherDocuments') as FormArray;
+        const form = otherDocs.controls[index];
+        form.patchValue({ docUrl: fileName })
+        
+        this.uploadedDocuments[form.get('documentName').value] = {
+          file,
+          dataUrl: this.sanitizer.bypassSecurityTrustUrl(dataUrl),
+          fileName
+        };
 
+        this.notifications.successToast('File attached!');
+    }
+  }
+
+  submit() {
+    const fd = new FormData();
+
+    for (let f in this.uploadedDocuments) {
+        fd.append('files', this.uploadedDocuments[f].file, this.uploadedDocuments[f].fileName)
+    }
     const body = this.editPilgrimForm.value;
 
     this.notifications.prompt('Are you sure you want to submit?').then(res => {

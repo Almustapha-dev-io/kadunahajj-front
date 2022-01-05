@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { v4 as uuid } from 'uuid';
 
 import { FormsService } from '../../../../services/forms.service';
@@ -17,13 +17,14 @@ export class DocumentUploadComponent implements OnInit {
 
   @Input('step') step: StepModel;
 
-  acceptedFileType = ['.jpg', '.jpeg', '.jpe','.png'];
+  acceptedFileType = ['.jpg', '.jpeg', '.jpe', '.png', '.pdf'];
 
   attachedDocumentsForm: FormGroup;
   selectedDocumentType = '';
   documentDisplay = '';
 
   files: FileModel[] = [];
+  otherDocName = '';
 
   constructor(private formsService: FormsService, private notifications: NotificationService) { }
 
@@ -39,7 +40,7 @@ export class DocumentUploadComponent implements OnInit {
     this.formsService.files$.next(this.files);
     this.files = this.formsService.files;
 
-    this.step.isComplete = (this.attachedDocumentsForm.valid) && (this.files.length === 3);
+    this.step.isComplete = (this.attachedDocumentsForm.valid) && (this.files.length >= 3);
   }
 
   docChange($event) {
@@ -59,6 +60,9 @@ export class DocumentUploadComponent implements OnInit {
     return this.attachedDocumentsForm.get('guarantorFormUrl');
   }
 
+  get otherDocsForm() {
+      return this.attachedDocumentsForm.get('otherDocuments') as FormArray;
+  }
 
   fileDropped($event) {
     //  Check if user Selected a document
@@ -78,7 +82,7 @@ export class DocumentUploadComponent implements OnInit {
 
     //  Validate that user uploaded a file that is
     //  <= 500kb, show error message if not
-    const maxFileSize = 10000000;
+    const maxFileSize = 5 * 1024 * 1024;
     const fileSize = $event[0].size;
     if (fileSize > maxFileSize) return this.notifications.errorToast('File too large. (Max size is 5MB)');
 
@@ -89,6 +93,7 @@ export class DocumentUploadComponent implements OnInit {
     if (index >= 0) this.removeDocument(this.selectedDocumentType);
 
     //  Prepare list of selected files
+    if (this.selectedDocumentType === 'others' && !this.otherDocName) return this.notifications.errorToast('Enter other document type!');
     this.prepareFilesList($event);
   }
 
@@ -96,15 +101,17 @@ export class DocumentUploadComponent implements OnInit {
     const file = files[0];
     const nameArray =  file.name.split('.');
     const fileName = uuid() + '_.' + nameArray[nameArray.length - 1];
-    const fileObject ={ documentType: this.selectedDocumentType, file, fileName, progress: 0 };
+    const fileObject = {
+        documentType: this.selectedDocumentType === 'others' ? this.otherDocName : this.selectedDocumentType,
+        file,
+        fileName,
+        progress: 0
+    };
 
     this.files.push(fileObject);
-
     this.setDocumentValue(this.selectedDocumentType, fileName);
-
     this.valueChange();
-
-    this.fileDropEl.nativeElement.value = "";
+    this.fileDropEl.nativeElement.value = '';
     this.uploadFilesSimulator(this.findDocumentIndex(fileObject.documentType));
   }
 
@@ -125,6 +132,17 @@ export class DocumentUploadComponent implements OnInit {
       this.attachedDocumentsForm.patchValue({
         guarantorFormUrl: fileName
       });
+    }
+
+    if (documentType === 'others') {
+        const form = this.formsService.docForm;
+        form.patchValue({
+            docUrl: fileName,
+            documentName: this.otherDocName
+        });
+        this.otherDocsForm.push(form);
+        this.otherDocName = '';
+        console.log(this.attachedDocumentsForm.value);
     }
   }
 

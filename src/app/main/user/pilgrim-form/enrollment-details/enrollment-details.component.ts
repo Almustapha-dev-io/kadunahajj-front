@@ -109,26 +109,16 @@ export class EnrollmentDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.dataService
       .get(seatsUri, token)
       .subscribe(response => {
-
-        const takenSeats = response;
-
+        const takenSeats = new Set(response.map(s => s.seatNumber));
         const allSeats = this.getYearAllocations(this.enrollmentYear.value);
         this.seats.length = 0;
 
         for (let i = 1; i <= allSeats; i++) {
-          this.seats.push(i);
+            if (!takenSeats.has(i)) {
+                this.seats.push(i);
+            }
         }
 
-        this.seats.forEach(s => {
-          takenSeats.forEach(ts => {
-            if (ts.seatNumber === s) {
-              const index =  this.seats.findIndex(a => a === s);
-              this.seats.splice(index, 1);
-            }
-          });
-        });
-
-        sessionStorage.setItem('seatsArray', JSON.stringify(this.seats));
         this.lgLoader = false;
         this.showLga = true;
       });

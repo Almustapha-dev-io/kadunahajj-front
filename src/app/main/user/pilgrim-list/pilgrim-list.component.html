@@ -104,17 +104,23 @@
       <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
       <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
       <td>
+          <button
+          type="button"
+          class="btn magnifyText btn-outline-primary btn mr-1"
+          (click)="viewPilgrim(pilgrim)">
+          View
+        </button>
         <button 
             type="button"
             (click)="editPilgrim(pilgrim)"
-            class="btn btn-success magnifyText mr-2">
+            class="btn btn-success magnifyText mr-1">
             Edit
         </button>
         <button
           type="button"
-          class="btn magnifyText btn-outline-primary btn"
-          (click)="viewPilgrim(pilgrim)">
-          View
+          class="btn magnifyText btn-warning btn"
+          (click)="migratePilgrim(pilgrim)">
+          Migrate
         </button>
       </td>
     </tr>

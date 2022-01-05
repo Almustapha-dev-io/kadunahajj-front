@@ -31,6 +31,7 @@ import { InitiatorComponent } from './dashboard/initiator/initiator.component';
 import { AdminComponent } from './dashboard/admin/admin.component';
 import { ReviewerComponent } from './dashboard/reviewer/reviewer.component';
 import { PilgrimDeleteComponent } from './pilgrim-delete/pilgrim-delete.component';
+import { PilgrimMigrateComponent } from './pilgrim-migrate/pilgrim-migrate.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { PilgrimDeleteComponent } from './pilgrim-delete/pilgrim-delete.componen
     AdminComponent,
     ReviewerComponent,
     EditPilgrimComponent,
-    PilgrimDeleteComponent
+    PilgrimDeleteComponent,
+    PilgrimMigrateComponent
   ],
   imports: [
     CommonModule,

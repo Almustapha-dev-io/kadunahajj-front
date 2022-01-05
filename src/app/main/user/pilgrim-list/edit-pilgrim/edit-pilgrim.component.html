@@ -4,7 +4,7 @@
   <p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Edit Pilgrim</p>
 
   <mat-dialog-content *ngIf="!loader.loaderVisible">
-    <form [formGroup]="personalDetailsForm" *ngIf="isReviewer">
+    <form [formGroup]="personalDetailsForm">
       <h5>Personal details</h5>
       <hr style="margin-top: 0px;" />
 
@@ -662,6 +662,18 @@
         <a class="float-right mr-3" href="javascript:void(0)" (click)="passportPicker.click()">Change</a>
         <input type="file" #passportPicker hidden (change)="fileChanged($event.target.files[0], 'passportUrl')">
       </li>
+
+      <ng-container *ngIf="attachedDocuments.otherDocuments">
+          <ng-container *ngFor="let f of attachedDocuments.otherDocuments; let i = index">
+              <li class="list-group-item">
+                  {{ f.documentName + ' ' | uppercase }}
+                  <a class="float-right" [href]="imageFile(f.docUrl)"
+                    target="_blank">Original</a>
+                    <a class="float-right mr-3" href="javascript:void(0)" (click)="otherDoc.click()">Change</a>
+                    <input type="file" #otherDoc hidden (change)="otherFilesChanged(i, $event.target.files[0])">
+              </li>
+          </ng-container>
+      </ng-container>
     </ul>
 
   </mat-dialog-content>

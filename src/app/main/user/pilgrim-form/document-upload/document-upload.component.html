@@ -16,10 +16,15 @@
       <option value="ePass">E-Passport</option>
       <option value="mou">MOU Form</option>
       <option value="guarantor">Guarantor Form</option>
+      <option value="others">Others</option>
     </select>
   </div>
 
   <div class="form-group col-md-6 col-sm-12 mx-auto">
+      <ng-container *ngIf="docType.value === 'others'">
+          <label>Document name</label>
+          <input type="text" class="form-control form-control-sm" [(ngModel)]="otherDocName"/>
+      </ng-container>
   </div>
 </div>
 
@@ -33,9 +38,9 @@
       (change)="fileDropped($event.target.files)" />
 
     <img src="assets/images/upload.svg" alt="" />
-    <h3>Drag and drop file here</h3>
-    <h3>or</h3>
-    <label for="fileDropRef">Browse for file</label>
+    <h3>Drag and drop file here or</h3>
+    <label for="fileDropRef" style="margin-top: 5px;">Browse for file</label>
+    <P>Maximum file size 5mb</P>
   </div>
 </form>
 

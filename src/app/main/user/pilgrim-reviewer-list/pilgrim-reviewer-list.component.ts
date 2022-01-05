@@ -11,6 +11,7 @@ import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim
 import { EditPilgrimComponent } from '../pilgrim-list/edit-pilgrim/edit-pilgrim.component';
 import { NotificationService } from 'src/app/services/notification.service';
 import { PilgrimDeleteComponent } from '../pilgrim-delete/pilgrim-delete.component';
+import { PilgrimMigrateComponent } from '../pilgrim-migrate/pilgrim-migrate.component';
 
 @Component({
   selector: 'app-pilgrim-reviewer-list',
@@ -136,6 +137,18 @@ export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
       data: pilgrim
     }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
   }
+
+  migratePilgrim(pilgrim) {
+    window.scroll(0, 0);
+    this.dialog.open(PilgrimMigrateComponent, {
+      width: '25rem',
+      disableClose: true,
+      data: { pilgrim, years: this.years.filter(y => {
+          console.log({ y: y._id, s: this.year.value});
+          return y._id !== this.year.value;
+      }) }
+    }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
+}
 
   exportToExcel() {
     const filename = 'ExcelSheet.xlsx';

@@ -16,20 +16,35 @@ export class NextOfKinDetailsComponent implements OnInit {
   'aunt', 'cousin', 'niece', 'nephew', 'child', 'spouse'];
 
   nextOfKinDetailsForm: FormGroup;
+  mahrimDetailsForm: FormGroup;
 
   constructor(private formsService: FormsService) { }
 
   ngOnInit(): void {
     this.nextOfKinDetailsForm = this.formsService.nextOfKinDetails;
+    this.mahrimDetailsForm = this.formsService.mahrimDetails;
+   
+    this.formsService.personalAndOffice.get('personalDetails').valueChanges.subscribe(this.valueChange);
   }
 
   valueChange() {
     this.formsService.nextOfKinDetails$.next(this.nextOfKinDetailsForm);
     this.nextOfKinDetailsForm = this.formsService.nextOfKinDetails;
 
-    this.step.isComplete = this.nextOfKinDetailsForm.valid;
+    this.formsService.mahrimDetails$.next(this.mahrimDetailsForm);
+    this.mahrimDetailsForm = this.formsService.mahrimDetails;
+
+    let isValid = this.nextOfKinDetailsForm.valid;
+    if (!this.isMale) {
+      isValid = isValid && this.mahrimDetailsForm.valid;
+    }
+    this.step.isComplete = isValid;
   }
 
+  get isMale() {
+    const personalDetails = this.formsService.personalAndOffice.value.personalDetails;
+    return personalDetails.sex === 'male';
+  }
   // Next of Kin Details from getters
   get fullName() {
     return this.nextOfKinDetailsForm.get('fullName');
@@ -45,5 +60,22 @@ export class NextOfKinDetailsComponent implements OnInit {
 
   get phone() {
     return this.nextOfKinDetailsForm.get('phone');
+  }
+
+  // Next of Kin Details from getters
+  get mahrimFullName() {
+    return this.mahrimDetailsForm.get('fullName');
+  }
+
+  get mahrimRelationship() {
+    return this.mahrimDetailsForm.get('relationship');
+  }
+
+  get mahrimAddress() {
+    return this.mahrimDetailsForm.get('address');
+  }
+
+  get mahrimPhone() {
+    return this.mahrimDetailsForm.get('phone');
   }
 }
