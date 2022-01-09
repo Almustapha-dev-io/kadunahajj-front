@@ -89,7 +89,6 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
   onSubmit() {
     this.notifications.prompt('Are you sure you want to submit?').then(result => {
       if (result.isConfirmed) {
-
         this.loader.showLoader();
         const token = sessionStorage.getItem('token');
         const imageUri = `${environment.pilgrims}/image`;
@@ -97,9 +96,8 @@ export class PilgrimFormComponent implements OnInit, OnDestroy {
 
         this.subscription = this.dataService.post(imageUri, this.formsService.formData, token).subscribe(fileResponse => {
           this.notifications.successToast(`${fileResponse.message} Sending user data...`);
-            console.log(this.formsService.formValue);
           this.subscription = this.dataService.post(uri, this.formsService.formValue, token).subscribe(response => {
-            this.notifications.alert(`Pilgrim registered successfully. <br />Code: <b>${response.pilgrim.enrollmentDetails.code}</b>`).then(result => {
+            this.notifications.alert(`Pilgrim registered successfully. <br />Proceed to seat allocations</b>`).then(_ => {
               this.formsService.reset();
               this.stepsService.reset();
               this.loader.hideLoader();

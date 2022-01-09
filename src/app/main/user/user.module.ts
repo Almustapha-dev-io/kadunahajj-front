@@ -32,6 +32,16 @@ import { AdminComponent } from './dashboard/admin/admin.component';
 import { ReviewerComponent } from './dashboard/reviewer/reviewer.component';
 import { PilgrimDeleteComponent } from './pilgrim-delete/pilgrim-delete.component';
 import { PilgrimMigrateComponent } from './pilgrim-migrate/pilgrim-migrate.component';
+import { HajjAllocationListComponent } from './hajj-allocation-list/hajj-allocation-list.component';
+import { AddHajjAllocationComponent } from './add-hajj-allocation/add-hajj-allocation.component';
+import { ViewHajjAllocationComponent } from './view-hajj-allocation/view-hajj-allocation.component';
+import { EditHajjAllocationComponent } from './edit-hajj-allocation/edit-hajj-allocation.component';
+import { MigrateHajjAllocationComponent } from './migrate-hajj-allocation/migrate-hajj-allocation.component';
+import { DeleteHajjAllocationComponent } from './delete-hajj-allocation/delete-hajj-allocation.component';
+import { MigratedHajjAllocationListComponent } from './migrated-hajj-allocation-list/migrated-hajj-allocation-list.component';
+import { PilgrimExportComponent } from './pilgrim-export/pilgrim-export.component';
+import { AllocationExportComponent } from './allocation-export/allocation-export.component';
+import { ReviewerAllocationExportComponent } from './reviewer-allocation-export/reviewer-allocation-export.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +68,17 @@ import { PilgrimMigrateComponent } from './pilgrim-migrate/pilgrim-migrate.compo
     ReviewerComponent,
     EditPilgrimComponent,
     PilgrimDeleteComponent,
-    PilgrimMigrateComponent
+    PilgrimMigrateComponent,
+    HajjAllocationListComponent,
+    AddHajjAllocationComponent,
+    ViewHajjAllocationComponent,
+    EditHajjAllocationComponent,
+    MigrateHajjAllocationComponent,
+    DeleteHajjAllocationComponent,
+    MigratedHajjAllocationListComponent,
+    PilgrimExportComponent,
+    AllocationExportComponent,
+    ReviewerAllocationExportComponent
   ],
   imports: [
     CommonModule,

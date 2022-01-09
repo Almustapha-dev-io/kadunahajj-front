@@ -1,7 +1,7 @@
 <nav class="page-breadcrumb">
     <ol class="breadcrumb" style="font-size: 150%;">
-        <li class="breadcrumb-item"><a class="text-primary">Pilgrims</a></li>
-        <li class="breadcrumb-item active" aria-current="page">All Active Pilgrims</li>
+        <li class="breadcrumb-item"><a class="text-primary">Allocations</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Active Allocations</li>
     </ol>
 </nav>
 
@@ -10,9 +10,7 @@
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body" style="overflow-x: auto;">
-                <div *ngIf="pilgrims.length > 0" class="float-right"><button class="btn btn-warning"
-                        style="color: white;" (click)="exportToExcel()">Export to Excel</button></div>
-                <h6 class="card-title">PILGRIMS MASTER LIST</h6>
+                <h6 class="card-title">ALLOCATIONS MASTER LIST</h6>
 
 
                 <select style="border-radius: 2px;" id="yearId"
@@ -31,7 +29,7 @@
                 </select>
 
                 <button class="btn btn btn-success ml-3" style="height: calc(1.5em + 0.75rem + 2px);"
-                    (click)="fetchPilgrims(yearId.value, zoneId.value)"
+                    (click)="fetchAllocations(yearId.value, zoneId.value)"
                     [disabled]="zoneId.value === '' || yearId.value === ''">
                     Query
                 </button>
@@ -44,7 +42,7 @@
                         <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
                     </table>
 
-                    <div class="col-12 mx-auto mt-3" *ngIf="pilgrims.length > 0">
+                    <div class="col-12 mx-auto mt-3" *ngIf="allocations.length > 0">
                         <div class="float-left">
                             <select [(ngModel)]="pageSize" class="form-control" (change)="onPageSizeChange()">
                                 <option *ngFor="let page of pages" [value]="page">Show {{ page }} Items</option>
@@ -57,10 +55,6 @@
                             screenReaderCurrentLabel="You're on page">
                         </pagination-controls>
                     </div>
-
-                    <div *ngIf="pilgrims.length > 0" class="col-12 mx-auto d-flex justify-content-center mt-2"><button
-                            class="btn btn-warning mx-auto" style="color: white;" (click)="exportToExcel()">Export to
-                            Excel</button></div>
                 </div>
             </div>
         </div>
@@ -78,7 +72,7 @@
 </ng-template>
 
 <ng-template #show>
-    <ng-container *ngIf="pilgrims.length > 0 then tableData; else noData"></ng-container>
+    <ng-container *ngIf="allocations.length > 0 then tableData; else noData"></ng-container>
 </ng-template>
 
 <ng-template #noData>
@@ -96,47 +90,61 @@
 <ng-template #tableData>
     <thead>
         <tr>
-            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="sn">S/N</th>
-            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="code">Registration Code</th>
-            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="name">Full Name</th>
-            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="gender">Gender</th>
-            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentZone">Registration
-                Zone</th>
-            <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="dateCreated">Registration
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc" data-name="sn">S/N</th>
+            <th class="sort" scope="col">Pilgrim</th>
+            <th class="sort" scope="col">Pilgrim Passport</th>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc"
+                data-name="enrollmentAllocationNumber">Allocated Number</th>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc" data-name="code">Registration Number
+            </th>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc" data-name="dateCreated">Registration
                 Date</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody
-        *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
+        *ngFor="let i=index; let a of allocations | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
         <tr>
             <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
-            <td><b>{{ pilgrim.enrollmentDetails.code }}</b></td>
-            <td>{{ pilgrim.personalDetails.surname + ', ' + pilgrim.personalDetails.otherNames | uppercase }}</td>
-            <td>{{ pilgrim.personalDetails.sex | uppercase }}</td>
-            <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
-            <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
+            <td>{{ a.pilgrim.personalDetails.surname + ', ' + a.pilgrim.personalDetails.otherNames | uppercase }}</td>
+            <td>{{ a.pilgrim.passportDetails.passportNumber }}</td>
+            <td><b>{{ a.enrollmentAllocationNumber }}</b></td>
+            <td>{{ a.code }}</td>
+            <td>{{ a.createdAt | date: 'medium' }}</td>
             <td>
-                <button type="button" class="btn magnifyText btn-primary btn btn-sm" (click)="viewPilgrim(pilgrim)">
-                    View
-                </button>
+                <div class="d-inline-block" ngbDropdown container="body" #moreActionsDrop="ngbDropdown">
+                    <button class="magnifyText btn btn-sm btn-outline-primary" id="moredropDown" ngbDropdownAnchor
+                        (focus)="moreActionsDrop.open()">Actions
+                    </button>
+                    
+                    <div ngbDropdownMenu aria-labelledby="moredropDown">
+                        <button 
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="viewAllocation(a)">
+                            View
+                        </button>
+                        
+                        <button 
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="editAllocation(a)">
+                            Edit
+                        </button>
 
-                <button type="button" class="btn magnifyText btn-success btn btn-sm ml-2"
-                    (click)="editPilgrim(pilgrim)">
-                    Edit
-                </button>
+                        <button 
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="deleteAllocation(a)">
+                            Delete
+                        </button>
 
-                <button class="btn btn-danger btn-sm magnifyText ml-2" (click)="deletePilgrim(pilgrim)">
-                    Delete
-                </button>
-                <br />
-                <button type="button" class="btn magnifyText btn-warning btn mt-2" (click)="migratePilgrim(pilgrim)">
-                    Migrate
-                </button>
+                        <button
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="migrateAllocation(a)">
+                            Migrate Allocation
+                        </button>
+                    </div>
+                </div>
             </td>
         </tr>
     </tbody>
 
 </ng-template>
-
-<app-excel-table [pilgrims]="pilgrims"></app-excel-table>

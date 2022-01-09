@@ -1,0 +1,129 @@
+<form [formGroup]="editAllocationForm" (ngSubmit)="submit()">
+    <app-loader *ngIf="loader.loaderVisible"></app-loader>
+    <p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Edit Allocation</p>
+
+    <mat-dialog-content *ngIf="!loader.loaderVisible">
+        <h5>Payment history</h5>
+        <hr style="margin-top: 0px;" />
+
+        <div *ngFor="let group of paymentHistoryForms; let i = index">
+            <form [formGroup]="group">
+                <div class="row col-12 mx-auto">
+                    <h4>{{ i+1 }}.</h4>
+                    <a *ngIf="i !== 0" href="javascript:void(0)" (click)="removePaymentForm(i)"
+                        class="small ml-auto">Remove</a>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 mx-auto">
+                        <label [for]="'receiptNumber'+i"
+                            [class.text-danger]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">Receipt
+                            Number</label>
+                        <input type="text" [id]="'receiptNumber'+i"
+                            [class.error-control]="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid"
+                            class="form-control form-control-sm" formControlName="receiptNumber">
+
+                        <div class="text-danger mt-1"
+                            *ngIf="group.get('receiptNumber')?.touched && group.get('receiptNumber')?.invalid">
+                            <div *ngIf="group.get('receiptNumber')?.errors.required">
+                                This field is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6 col-sm-12 mx-auto">
+                        <label [for]="'tellerNumber'+i"
+                            [class.text-danger]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">Teller
+                            Number</label>
+                        <input type="text" [id]="'tellerNumber'+i"
+                            [class.error-control]="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid"
+                            class="form-control form-control-sm" formControlName="tellerNumber">
+
+                        <div class="text-danger mt-1"
+                            *ngIf="group.get('tellerNumber')?.touched && group.get('tellerNumber')?.invalid">
+                            <div *ngIf="group.get('tellerNumber')?.errors.required">
+                                This field is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 mx-auto">
+                        <label [for]="'paymentDate'+i"
+                            [class.text-danger]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
+                            Date of Payment
+                        </label>
+                        <input type="date" [id]="'paymentDate'+i"
+                            [class.error-control]="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid"
+                            class="form-control form-control-sm" formControlName="paymentDate">
+
+                        <div class="text-danger mt-1"
+                            *ngIf="group.get('paymentDate')?.touched && group.get('paymentDate')?.invalid">
+                            <div *ngIf="group.get('paymentDate')?.errors.required">
+                                Select a valid date.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6 col-sm-12 mx-auto">
+                        <label [for]="'bank'+i"
+                            [class.text-danger]="group.get('bank')?.touched && group.get('bank')?.invalid">Bank</label>
+                        <select class="form-control form-control-sm"
+                            [class.error-control]="group.get('bank')?.touched && group.get('bank')?.invalid" type="text"
+                            [id]="'bank'+i" formControlName="bank">
+                            <option [value]="null" selected hidden>Select Bank</option>
+                            <option *ngFor="let b of banks" [value]="b._id">{{ b.name }}</option>
+                        </select>
+
+                        <div class="text-danger mt-1" *ngIf="group.get('bank')?.touched && group.get('bank')?.invalid">
+                            <div *ngIf="group.get('bank')?.errors.required">
+                                Select a bank.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 mx-auto">
+                        <label [for]="'amount'+i"
+                            [class.text-danger]="group.get('amount')?.touched && group.get('amount')?.invalid">Amount</label>
+                        <input type="text" [id]="'amount'+i"
+                            [class.error-control]="group.get('amount')?.touched && group.get('amount')?.invalid"
+                            class="form-control form-control-sm" formControlName="amount">
+
+                        <div class="text-danger mt-1"
+                            *ngIf="group.get('amount')?.touched && group.get('amount')?.invalid">
+                            <div *ngIf="group.get('amount')?.errors.required">
+                                This field is required.
+                            </div>
+                            <div *ngIf="group.get('amount')?.errors.pattern">
+                                Only numbers are allowed
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6 col-sm-12 mx-auto">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <button type="button" (click)="addPaymentForm()" class="mb-5 btn btn-warning btn-sm text-white">
+            Add Payment
+        </button>     
+    </mat-dialog-content>
+
+
+    <mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
+        <button [disabled]="loader.loaderVisible" type="button" class="btn-outline-primary btn-sm btn ml-2"
+            matDialogClose>
+            Close
+        </button>
+
+        <button [disabled]="loader.loaderVisible || !formsValid" type="submit" class="btn-success btn-sm btn ml-2">
+            Save
+        </button>
+    </mat-dialog-actions>
+</form>

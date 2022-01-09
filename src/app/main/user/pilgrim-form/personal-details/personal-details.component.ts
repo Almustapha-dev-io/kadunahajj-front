@@ -127,6 +127,10 @@ export class PersonalDetailsComponent implements OnInit, OnDestroy {
   get alternatePhone() {
     return this.personalDetailsForm.get('alternatePhone');
   }
+  
+  get email() {
+    return this.personalDetailsForm.get('email');
+  }
 
   // Office Details Form Getters
   get officeDetailsForm(): FormGroup {

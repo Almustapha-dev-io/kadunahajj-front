@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import * as moment from 'moment';
-import { v4 as uuid } from 'uuid';
+
 import { ModalLoaderService } from '../../../services/modal-loader.service';
 import { DataService } from '../../../services/data.service';
 import { environment } from '@environment';
@@ -35,7 +34,6 @@ export class PilgrimMigrateComponent implements OnInit {
         this.lgaId = this.data.pilgrim.enrollmentDetails.enrollmentZone._id;
         this.pilgrimId = this.data.pilgrim._id;
         this.years = this.data.years;
-        console.log({ lga: this.lgaId });
     }
 
     getYearAllocations(yearId) {

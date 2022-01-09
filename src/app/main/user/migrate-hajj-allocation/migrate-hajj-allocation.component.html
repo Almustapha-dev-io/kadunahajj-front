@@ -1,0 +1,35 @@
+<app-loader *ngIf="loader.loaderVisible"></app-loader>
+<p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Migrate Allocation</p>
+
+<mat-dialog-content *ngIf="!loader.loaderVisible">
+    <div class="form-group col-sm-12 mx-auto">
+        <label for="year">Year</label>
+        <select (change)="yearSelected()" class="form-control form-control-sm" [(ngModel)]="yearId" id="year">
+            <option value="" selected hidden>Select year</option>
+            <ng-container *ngFor="let y of years">
+                <option [value]="y._id">{{ y.year }}</option>
+            </ng-container>
+        </select>
+    </div>
+
+    <div class="form-group col-sm-12 mx-auto">
+        <label for="seat">Allocation Number</label>
+        <select class="form-control form-control-sm" [(ngModel)]="allocationNumber" id="seat">
+            <option value="" selected hidden>Select allocation number</option>
+            <ng-container *ngFor="let s of seats">
+                <option [value]="s">Slot #{{ s }}</option>
+            </ng-container>
+        </select>
+    </div>
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
+    <button [disabled]="loader.loaderVisible" type="button" class="btn-outline-primary btn-sm btn ml-2" matDialogClose>
+        Close
+    </button>
+
+    <button type="button" [disabled]="loader.loaderVisible || !yearId || !allocationNumber" type="submit" class="btn-success btn-sm btn ml-2" (click)="submit()">
+        Save
+    </button>
+</mat-dialog-actions>

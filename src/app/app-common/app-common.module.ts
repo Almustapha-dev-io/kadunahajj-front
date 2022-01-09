@@ -5,8 +5,7 @@ import { SortDirective } from '../common/directives/sort.directive';
 import { FilterPipe } from '../common/pipes/filter.pipe';
 import { DragAndDropDirective } from '../common/directives/drag-and-drop.directive';
 import { NumbersOnlyDirective } from '../common/directives/numbers-only.directive';
-
-
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -17,14 +16,16 @@ import { NumbersOnlyDirective } from '../common/directives/numbers-only.directiv
     NumbersOnlyDirective
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    NgSelectModule
   ],
   exports: [
     LoaderComponent,
     SortDirective,
     FilterPipe,
     DragAndDropDirective,
-    NumbersOnlyDirective
+    NumbersOnlyDirective,
+    NgSelectModule
   ]
 })
 export class AppCommonModule { }

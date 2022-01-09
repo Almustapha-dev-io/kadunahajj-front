@@ -1,0 +1,94 @@
+<form [formGroup]="deleteAllocationForm">
+    <p mat-dialog-title style="font-size: 150%;">Delete Allocation</p>
+
+    <mat-dialog-content>
+        <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button type="submit" class="btn-primary btn-sm btn" [class.magnifyText]="(!loader.loaderVisible)"
+            (click)="deleteAllocation()" [disabled]="loader.loaderVisible || deleteAllocationForm.invalid">
+            Proceed
+        </button>
+
+        <button type="button" class="btn-outline-primary btn-sm btn ml-2" [class.magnifyText]="!loader.loaderVisible"
+            [disabled]="loader.loaderVisible" matDialogClose>
+            Cancel
+        </button>
+    </mat-dialog-actions>
+
+    <ng-template #show>
+        <div class="form-group">
+            <label for="deletionReason" [class.text-danger]="deletionReason.touched && deletionReason.invalid">Reason
+                for deletion</label>
+            <select style="border-radius: 2px;" id="deletionReason" class="form-control form-control-sm"
+                [class.error-control]="deletionReason.touched && deletionReason.invalid"
+                formControlName="deletionReason" (change)="setRefunds()">
+                <option selected hidden value="">Select deletion reason</option>
+                <option *ngFor="let d of deletionReasons" [value]="d">{{ d | uppercase }}</option>
+            </select>
+
+            <div class="text-danger mt-1" *ngIf="deletionReason.touched && deletionReason.invalid">
+                <div *ngIf="deletionReason.errors.required">
+                    Select a deletion reason.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="refundDetails" [class.text-danger]="refundDetails.touched && refundDetails.invalid">Has pilgrim
+                been refunded?</label>
+            <select style="border-radius: 2px;" id="refundDetails" class="form-control form-control-sm"
+                [class.error-control]="refundDetails.touched && refundDetails.invalid" formControlName="refundDetails"
+                (change)="setOtherRefunds()">
+                {{ refunds | json }}
+                <option selected hidden value="">Select refund details</option>
+                <option *ngFor="let r of refunds" [value]="r">{{ r | uppercase }}</option>
+            </select>
+
+            <div class="text-danger mt-1" *ngIf="refundDetails.touched && refundDetails.invalid">
+                <div *ngIf="refundDetails.errors.required">
+                    Select a deletion reason.
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="refundDetails.value === 'others'">
+            <div class="form-group">
+                <label for="otherRefunds" [class.text-danger]="otherRefunds.touched && otherRefunds.invalid">Others,
+                    please specify</label>
+                <input type="text" id="otherRefunds" class="form-control form-control-sm"
+                    [class.error-control]="otherRefunds.touched && otherRefunds.invalid" formControlName="otherRefunds">
+
+                <div class="text-danger mt-1" *ngIf="otherRefunds.touched && otherRefunds.invalid">
+                    <div *ngIf="otherRefunds.errors.required">
+                        This field is required.
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="form-group">
+            <label for="amountRefunded"
+                [class.text-danger]="amountRefunded.touched && amountRefunded.invalid">amountRefunded</label>
+            <input type="number" id="amountRefunded" class="form-control form-control-sm"
+                [class.error-control]="amountRefunded.touched && amountRefunded.invalid"
+                formControlName="amountRefunded">
+
+            <div class="text-danger mt-1" *ngIf="amountRefunded.touched && amountRefunded.invalid">
+                <div *ngIf="amountRefunded.errors.required">
+                    This field is required.
+                </div>
+                <div *ngIf="amountRefunded.errors.pattern">
+                    Please enter a valid amount.
+                </div>
+                <div *ngIf="amountRefunded.errors.min">
+                    amount must be more than -1;
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #load>
+        <app-loader>Please wait...</app-loader>
+    </ng-template>
+</form>

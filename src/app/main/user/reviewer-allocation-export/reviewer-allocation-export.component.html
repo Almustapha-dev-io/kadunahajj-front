@@ -1,0 +1,38 @@
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb" style="font-size: 150%;">
+        <li class="breadcrumb-item"><a class="text-primary">Allocations</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Export Allocations</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body" style="overflow-x: auto;">
+                <h6 class="card-title">export allocations to excel</h6>
+
+                <select style="border-radius: 2px;" id="type"
+                    class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4 mr-2" [(ngModel)]="type"
+                    required>
+                    <option value="" selected hidden>Select Type</option>
+                    <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+                </select>
+
+                <select style="border-radius: 2px;" id="yearId"
+                    class="form-control col-sm-12 col-md-3 col-lg-2 float-left mr-2 mb-4" [(ngModel)]="year" required>
+                    <option value="" selected hidden>Select Year</option>
+                    <option *ngFor="let year of years" [value]="year._id">{{ year.year | uppercase }} <span
+                            class="text-success" *ngIf="year.active">&nbsp;&nbsp;&nbsp;Active</span></option>
+                </select>
+
+                <select style="border-radius: 2px;" id="zoneId"
+                    class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4 mr-2" [(ngModel)]="zone" required>
+                    <option value="" selected hidden>Select Zone</option>
+                    <option *ngFor="let z of zones" [value]="z._id">{{ z.name }}</option>
+                </select>
+
+                <a [href]="url" target="_blank" class="btn btn-success">Export to excel</a>
+            </div>
+        </div>
+    </div>
+</div>

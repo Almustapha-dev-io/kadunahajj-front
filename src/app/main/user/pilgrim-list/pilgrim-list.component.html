@@ -12,19 +12,6 @@
       <div class="card-body" style="overflow-x: auto;">
         <h6 class="card-title">PILGRIMS MASTER LIST</h6>
 
-        <select
-          style="border-radius: 2px;"
-          id="yearId"
-          class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4"
-          name="yearId"
-          ngModel
-          #yearId="ngModel"
-          required
-          (change)="getPilgrims(yearId.value)">
-          <option value="" selected hidden>Select Year</option>
-          <option *ngFor="let year of years" [value]="year._id">{{ year.year | uppercase }} <span class="text-success" *ngIf="year.active">&nbsp;&nbsp;&nbsp;Active</span></option>
-        </select>
-
         <input
           type="search"
           name="search"
@@ -87,10 +74,10 @@
   <thead>
     <tr>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="sn">S/N</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentDetails.code">Registration Code</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="name">Full Name</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="gender">Gender</th>
-      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="enrollmentDetails.enrollmentZone">Registration Zone</th>
+      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="phone">Phone</th>
+      <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="emial">Email</th>
       <th class="sort" scope="col" [appSort]="pilgrims" data-order="desc" data-name="dateCreated">Registration Date</th>
       <th>Actions</th>
     </tr>
@@ -98,10 +85,10 @@
   <tbody  *ngFor="let i=index; let pilgrim of pilgrims | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
     <tr>
       <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
-      <td><b>{{ pilgrim.enrollmentDetails.code }}</b></td>
       <td>{{ pilgrim.personalDetails.surname + ', ' + pilgrim.personalDetails.otherNames | uppercase }}</td>
       <td>{{ pilgrim.personalDetails.sex | uppercase }}</td>
-      <td>{{ pilgrim.enrollmentDetails.enrollmentZone.name }}</td>
+      <td><b>{{ pilgrim.personalDetails.phone }}</b></td>
+      <td>{{ pilgrim.personalDetails.email }}</td>
       <td>{{ pilgrim.dateCreated | date: 'medium' }}</td>
       <td>
           <button
@@ -116,12 +103,12 @@
             class="btn btn-success magnifyText mr-1">
             Edit
         </button>
-        <button
+        <!-- <button
           type="button"
           class="btn magnifyText btn-warning btn"
           (click)="migratePilgrim(pilgrim)">
           Migrate
-        </button>
+        </button> -->
       </td>
     </tr>
   </tbody>

@@ -16,11 +16,11 @@
     <th>Office</th>
     <th>Office Address</th>
     <th></th>
-    <th>Hajj Experience</th>
+    <!-- <th>Hajj Experience</th>
     <th>Last Hajj Year</th>
     <th>Enrollment Zone</th>
     <th>Registration Code</th>
-    <th>Registration Year</th>
+    <th>Registration Year</th> -->
     <th></th>
     <th>Next of Kin</th>
     <th>Next of Kin Address</th>
@@ -33,7 +33,7 @@
     <th>Passport Date of Issue</th>
     <th>Passport Expiry Date</th>
     <th></th>
-    <th>Payment History</th>
+    <!-- <th>Payment History</th> -->
   </tr>
   <tr *ngFor="let p of pilgrims; let i=index">
     <td>{{ i+1 }}</td>
@@ -51,11 +51,11 @@
     <td>{{ p.officeDetails.placeOfWork }}</td>
     <td>{{ p.officeDetails.officeAddress }}</td>
     <td></td>
-    <td>{{ p.enrollmentDetails.hajjExperience }}</td>
+    <!-- <td>{{ p.enrollmentDetails.hajjExperience }}</td>
     <td>{{ p.enrollmentDetails.lastHajjYear }}</td>
     <td>{{ p.enrollmentDetails.enrollmentZone.name }}</td>
     <td>{{ p.enrollmentDetails.code }}</td>
-    <td>{{ p.enrollmentDetails.enrollmentYear.year }}</td>
+    <td>{{ p.enrollmentDetails.enrollmentYear.year }}</td> -->
     <td></td>
     <td>{{ p.nextOfKinDetails.fullName }}</td>
     <td>{{ p.nextOfKinDetails.address }}</td>
@@ -68,7 +68,7 @@
     <td>{{ p.passportDetails.dateOfIssue | date: 'shortDate' }}</td>
     <td>{{ p.passportDetails.expiryDate | date: 'shortDate' }}</td>
     <td></td>
-    <td>
+    <!-- <td>
       <ul *ngFor="let ph of p.paymentHistory">
         {{ '{'}}
         <li>Bank: {{ ph.bankObject?.name }},&nbsp;&nbsp;<br /></li>
@@ -78,6 +78,6 @@
         <li>Amount: {{ ph.amount | currency: 'NGN': 'symbol-narrow' }}&nbsp;&nbsp;<br /></li>
         {{ '}'}}
       </ul>
-    </td>
+    </td> -->
   </tr>
 </table>

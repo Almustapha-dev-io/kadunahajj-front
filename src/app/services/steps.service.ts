@@ -7,7 +7,7 @@ const STEPS = [
   { stepIndex: 2, isComplete: false },
   { stepIndex: 3, isComplete: false },
   { stepIndex: 4, isComplete: false },
-  { stepIndex: 5, isComplete: false },
+//   { stepIndex: 5, isComplete: false },
 ];
 
 @Injectable({

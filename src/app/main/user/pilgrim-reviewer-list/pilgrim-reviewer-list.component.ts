@@ -2,163 +2,147 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { forkJoin, Subscription } from 'rxjs';
 import { environment } from '@environment';
 import { MatDialog } from '@angular/material/dialog';
-import * as XLSX from 'xlsx';
-
 import { DataService } from '../../../services/data.service';
 import { LoaderService } from '../../../services/loader.service';
 
-import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
-import { EditPilgrimComponent } from '../pilgrim-list/edit-pilgrim/edit-pilgrim.component';
-import { NotificationService } from 'src/app/services/notification.service';
-import { PilgrimDeleteComponent } from '../pilgrim-delete/pilgrim-delete.component';
-import { PilgrimMigrateComponent } from '../pilgrim-migrate/pilgrim-migrate.component';
+import { ViewHajjAllocationComponent } from '../view-hajj-allocation/view-hajj-allocation.component';
+import { EditHajjAllocationComponent } from '../edit-hajj-allocation/edit-hajj-allocation.component';
+import { DeleteHajjAllocationComponent } from '../delete-hajj-allocation/delete-hajj-allocation.component';
+import { MigrateHajjAllocationComponent } from '../migrate-hajj-allocation/migrate-hajj-allocation.component';
 
 @Component({
-  selector: 'app-pilgrim-reviewer-list',
-  templateUrl: './pilgrim-reviewer-list.component.html',
-  styleUrls: ['./pilgrim-reviewer-list.component.scss']
+    selector: 'app-pilgrim-reviewer-list',
+    templateUrl: './pilgrim-reviewer-list.component.html',
+    styleUrls: ['./pilgrim-reviewer-list.component.scss']
 })
 export class PilgrimReviewerListComponent implements OnInit, OnDestroy {
 
-  @ViewChild('yearId') year: HTMLInputElement;
-  @ViewChild('zoneId') zone: HTMLInputElement;
+    @ViewChild('yearId') year: HTMLInputElement;
+    @ViewChild('zoneId') zone: HTMLInputElement;
 
-  searchText = '';
-  years = [];
-  zones = [];
-  banks = [];
-  pilgrims = [];
-  p: number = 1;
-  pageSize: number = 5;
-  pages = [5, 10, 15, 20];
-  totalItems: number = 0;
-  subscription = new Subscription();
-  token = sessionStorage.getItem('token');
+    searchText = '';
+    years = [];
+    zones = [];
+    banks = [];
+    allocations = [];
+    p = 1;
+    pageSize = 5;
+    pages = [5, 10, 15, 20];
+    totalItems = 0;
+    subscription = new Subscription();
+    token = sessionStorage.getItem('token');
 
-  constructor(
-    public loader: LoaderService,
-    private dataService: DataService,
-    private dialog: MatDialog,
-  ) { }
+    constructor(
+        public loader: LoaderService,
+        private dataService: DataService,
+        private dialog: MatDialog,
+    ) { }
 
-  ngOnInit(): void {
-    this.fetchData();
-  }
-
-  ngOnDestroy(): void {
-    this.loader.hideLoader();
-    this.subscription.unsubscribe();
-  }
-
-  fetchData() {
-    this.loader.showLoader();
-    const yearsUri = `${environment.years}/all`;
-    const zoneUri = environment.zones;
-
-    this.subscription = forkJoin([this.dataService.get(yearsUri, this.token), this.dataService.get(zoneUri, this.token)])
-      .subscribe(response => {
-        this.years = [...response[0]];
-        const exemptedZones = ['00', '01'];
-
-        this.zones = response[1].filter(z => !exemptedZones.includes(z.code));
-        this.loader.hideLoader();
-      });
-  }
-
-  onPageSizeChange() {
-    this.onNavigate(1);
-  }
-
-  onNavigate(p?) {
-    if (p) {
-      this.p = p;
+    ngOnInit(): void {
+        this.fetchData();
     }
 
-    this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p);
-  }
+    ngOnDestroy(): void {
+        this.loader.hideLoader();
+        this.subscription.unsubscribe();
+    }
 
-  fetchPilgrims(yearId, zoneId, pageSize?, page?) {
-    this.loader.showLoader();
-    const uri = `${environment.pilgrims}/reviewer/by-year-and-lga/${zoneId}/${yearId}`;
-    const params = { pageSize, page };
+    fetchData() {
+        this.loader.showLoader();
+        const yearsUri = `${environment.years}/all`;
+        const zoneUri = environment.zones;
 
-    this.subscription = this.dataService.get(uri, this.token, null, params).subscribe(response => {
-      this.pilgrims = [...response.pilgrims];
-      this.totalItems = response.totalDocs;
-      this.getBanks();
-      this.loader.hideLoader();
-    });
-  }
+        this.subscription = forkJoin([this.dataService.get(yearsUri, this.token), this.dataService.get(zoneUri, this.token)])
+            .subscribe(response => {
+                this.years = [...response[0]];
+                const exemptedZones = ['00', '01'];
 
-  getBanks() {
+                this.zones = response[1].filter(z => !exemptedZones.includes(z.code));
+                this.loader.hideLoader();
+            });
+    }
 
-    this.loader.showLoader();
-    const uri = environment.banks;
-    const token = sessionStorage.getItem('token');
+    onPageSizeChange() {
+        this.onNavigate(1);
+    }
 
-    this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
-      this.banks = [...response];
+    onNavigate(p?) {
+        if (p) {
+            this.p = p;
+        }
 
-      this.pilgrims.forEach(p => {
-        p.paymentHistory.forEach(ph => {
-          ph.bankObject = this.banks.find(b => b._id === ph.bank)
-        })
-      });
+        this.fetchAllocations(this.year.value, this.zone.value, this.pageSize, this.p);
+    }
 
-      this.loader.hideLoader();
-    });
-  }
+    fetchAllocations(yearId, zoneId, pageSize?, page?) {
+        this.loader.showLoader();
+        const uri = `${environment.allocations}/zone/${zoneId}/year/${yearId}/active`;
+        const params = { pageSize, page };
+
+        this.subscription = this.dataService.get(uri, this.token, null, params).subscribe(response => {
+            this.allocations = [...response.allocations];
+            this.totalItems = response.totalDocs;
+            this.getBanks();
+            this.loader.hideLoader();
+        });
+    }
 
 
-  viewPilgrim(pilgrim) {
-    window.scroll(0, 0);
-    this.dialog.open(PilgrimDetailsComponent, {
-      width: '45rem',
-      disableClose: true,
-      data: pilgrim
-    });
-  }
+    getBanks() {
+        this.loader.showLoader();
+        const uri = environment.banks;
+        const token = sessionStorage.getItem('token');
 
-  editPilgrim(pilgrim) {
-    window.scroll(0, 0);
-    pilgrim.isReviewer = true;
-    this.dialog.open(EditPilgrimComponent, {
-      width: '45rem',
-      disableClose: true,
-      data: pilgrim
-    }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
-  }
+        this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
+            this.banks = [...response];
 
-  deletePilgrim(pilgrim) {
-    window.scroll(0, 0);
-    this.dialog.open(PilgrimDeleteComponent, {
-      width: '450px',
-      disableClose: true,
-      data: pilgrim
-    }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
-  }
+            this.allocations.forEach(p => {
+                p.paymentHistory.forEach(ph => {
+                    ph.bankObject = this.banks.find(b => b._id === ph.bank);
+                })
+            });
 
-  migratePilgrim(pilgrim) {
-    window.scroll(0, 0);
-    this.dialog.open(PilgrimMigrateComponent, {
-      width: '25rem',
-      disableClose: true,
-      data: { pilgrim, years: this.years.filter(y => {
-          console.log({ y: y._id, s: this.year.value});
-          return y._id !== this.year.value;
-      }) }
-    }).afterClosed().subscribe(r => r ? this.fetchPilgrims(this.year.value, this.zone.value, this.pageSize, this.p) : '');
-}
+            this.loader.hideLoader();
+        });
+    }
 
-  exportToExcel() {
-    const filename = 'ExcelSheet.xlsx';
-    let element = document.getElementById('excel-table');
 
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    viewAllocation(a) {
+        window.scroll(0, 0);
+        this.dialog.open(ViewHajjAllocationComponent, {
+            width: '45rem',
+            disableClose: true,
+            data: a
+        });
+    }
 
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    editAllocation(a) {
+        window.scroll(0, 0);
+        this.dialog.open(EditHajjAllocationComponent, {
+            width: '45rem',
+            disableClose: true,
+            data: a
+        }).afterClosed().subscribe(r => r ? this.fetchAllocations(this.year.value, this.zone.value, this.pageSize, this.p) : '');
+    }
 
-    XLSX.writeFile(wb, filename);
-  }
+    deleteAllocation(a) {
+        window.scroll(0, 0);
+        this.dialog.open(DeleteHajjAllocationComponent, {
+            width: '25rem',
+            disableClose: true,
+            data: a
+        }).afterClosed().subscribe(r => r ? this.fetchAllocations(this.year.value, this.zone.value, this.pageSize, this.p) : '');
+    }
+
+    migrateAllocation(allocation) {
+        window.scroll(0, 0);
+        this.dialog.open(MigrateHajjAllocationComponent, {
+            width: '25rem',
+            disableClose: true,
+            data: {
+                allocation,
+                years: this.years.filter(y => y._id !== this.year.value)
+            }
+        }).afterClosed().subscribe(r => r ? this.fetchAllocations(this.year.value, this.zone.value, this.pageSize, this.p) : '');
+    }
 }

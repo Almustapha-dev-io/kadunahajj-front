@@ -1,0 +1,146 @@
+<app-loader *ngIf="loader.loaderVisible"></app-loader>
+
+<p mat-dialog-title style="font-size: 160%;" *ngIf="!loader.loaderVisible">Allocation Details</p>
+
+<mat-dialog-content *ngIf="!loader.loaderVisible">
+    <h5>Pilgrim Details</h5>
+    <hr style="margin-top: 0px;" />
+
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="surname">Surname</label>
+            <input class="form-control form-control-sm" type="text" id="surname" disabled
+                [value]="data.pilgrim.personalDetails.surname">
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="otherNames">Other names</label>
+            <input type="text" id="otherNames" class="form-control form-control-sm" disabled
+                [value]="data.pilgrim.personalDetails.otherNames">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="phone">Phone</label>
+            <input class="form-control form-control-sm" type="text" id="phone" disabled
+                [value]="data.pilgrim.personalDetails.phone">
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="email">Email</label>
+            <input type="text" id="email" class="form-control form-control-sm" disabled
+                [value]="data.pilgrim.personalDetails.email">
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="passortNumber">Passport Number</label>
+            <input class="form-control form-control-sm" type="text" id="passortNumber" disabled
+                [value]="data.pilgrim.passportDetails.passportNumber">
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            
+        </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="registrationCode">Registration Code</label>
+            <input class="form-control form-control-sm" type="text" id="registrationCode" disabled
+                [value]="data.code ? data.code : 'UNASSIGNED'">
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="year">Registration Year</label>
+            <input type="text" id="year" class="form-control form-control-sm" disabled
+                [value]="data.enrollmentYear.year">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="registrationZone">Registration Zone</label>
+            <input class="form-control form-control-sm" type="text" id="registrationZone" disabled
+                [value]="data.enrollmentZone.name">
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="lastHajjYear">Last Hajj Year</label>
+            <input type="text" id="lastHajjYear" class="form-control form-control-sm" disabled
+                [value]="data.lastHajjYear">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="registrationZone">Registration Number</label>
+            <input class="form-control form-control-sm" type="text" id="registrationZone" disabled
+                [value]="data.enrollmentAllocationNumber">
+        </div>
+
+        <div class="form-group col-md-6 col-sm-12 mx-auto">
+            <label for="hajjExperience">Last Hajj Experience</label>
+            <input type="text" id="hajjExperience" class="form-control form-control-sm" disabled
+                [value]="data.hajjExperience">
+        </div>
+    </div>
+
+    <br />
+
+    <h5>Payment history</h5>
+    <hr style="margin-top: 0px;" />
+
+    <div *ngFor="let payment of data.paymentHistory; let i = index">
+        <div class="row col-12 mx-auto">
+            <h4>{{ i+1 }}.</h4>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-6 col-sm-12 mx-auto">
+                <label [for]="'receiptNumber'+i">Receipt Number</label>
+                <input class="form-control form-control-sm" type="text" [id]="'receiptNumber'+i" disabled
+                    [value]="payment.receiptNumber | uppercase">
+            </div>
+
+            <div class="form-group col-md-6 col-sm-12 mx-auto">
+                <label [for]="'tellerNumber'+i">Teller Number</label>
+                <input type="text" [id]="'tellerNumber'+i" class="form-control form-control-sm" disabled
+                    [value]="payment.tellerNumber | uppercase">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-6 col-sm-12 mx-auto">
+                <label [for]="'paymentDate'+i">Payment Date</label>
+                <input type="text" [id]="'paymentDate'+i" class="form-control form-control-sm" disabled
+                    [value]="payment.paymentDate | date: 'longDate'">
+            </div>
+
+            <div class="form-group col-md-6 col-sm-12 mx-auto">
+                <label [for]="'bank'+i">Bank</label>
+                <input class="form-control form-control-sm" type="text" [id]="'bank'+i" disabled
+                    [value]="payment.bankObject.name">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-sm-12 mx-auto">
+                <h5>Amount: <span class="text-success">{{ payment.amount | currency: 'NGN': 'symbol-narrow' }}</span>
+                </h5>
+            </div>
+        </div>
+    </div>
+    <br />
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end" *ngIf="!loader.loaderVisible">
+    <button type="button" class="btn-outline-primary btn-sm btn ml-2" matDialogClose>
+        Close
+    </button>
+</mat-dialog-actions>

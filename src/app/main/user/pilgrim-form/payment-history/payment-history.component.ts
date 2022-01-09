@@ -31,53 +31,55 @@ export class PaymentHistoryComponent implements OnInit, OnDestroy {
     private notifications: NotificationService
   ) { }
 
-  ngOnInit(): void {
-    this.paymentHistory = this.formsService.paymentHistory;
+  ngOnInit(): void {}
+  ngOnDestroy(): void {}
+//   ngOnInit(): void {
+//     this.paymentHistory = this.formsService.paymentHistory;
 
-    this.getBanks();
-  }
+//     this.getBanks();
+//   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-    this.loader.hideLoader();
-  }
+//   ngOnDestroy(): void {
+//     this.subscription.unsubscribe();
+//     this.loader.hideLoader();
+//   }
 
-  valueChange() {
-    this.formsService.paymentHistory$.next(this.paymentHistory);
-    this.paymentHistory = this.formsService.paymentHistory;
+//   valueChange() {
+//     this.formsService.paymentHistory$.next(this.paymentHistory);
+//     this.paymentHistory = this.formsService.paymentHistory;
 
-    this.step.isComplete = this.paymentHistory.controls.every(c => c.valid);
-  }
+//     this.step.isComplete = this.paymentHistory.controls.every(c => c.valid);
+//   }
 
-  getBanks() {
-    this.loader.showLoader();
-    const uri = environment.banks;
+//   getBanks() {
+//     this.loader.showLoader();
+//     const uri = environment.banks;
 
-    this.subscription = this.dataService.get(uri, this.token, '').subscribe(response => {
-      this.banks = [...response];
-      this.loader.hideLoader();
-    });
-  }
+//     this.subscription = this.dataService.get(uri, this.token, '').subscribe(response => {
+//       this.banks = [...response];
+//       this.loader.hideLoader();
+//     });
+//   }
 
-  addFormGroup() {
-    if (this.paymentHistory.controls.length >= 10) {
-      this.notifications.alert('Sorry only a maximum of 10 payment records is allowed.');
-    } else {
-      this.paymentHistory.push(new FormGroup({
-        bank: new FormControl(null, Validators.required),
-        tellerNumber: new FormControl(null, Validators.required),
-        receiptNumber: new FormControl(null, Validators.required),
-        paymentDate: new FormControl(null, [Validators.required, YearValidators.greaterThanToday]),
-        amount: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+$/)])
-      }));
+//   addFormGroup() {
+//     if (this.paymentHistory.controls.length >= 10) {
+//       this.notifications.alert('Sorry only a maximum of 10 payment records is allowed.');
+//     } else {
+//       this.paymentHistory.push(new FormGroup({
+//         bank: new FormControl(null, Validators.required),
+//         tellerNumber: new FormControl(null, Validators.required),
+//         receiptNumber: new FormControl(null, Validators.required),
+//         paymentDate: new FormControl(null, [Validators.required, YearValidators.greaterThanToday]),
+//         amount: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+$/)])
+//       }));
 
-      this.valueChange();
-    }
-  }
+//       this.valueChange();
+//     }
+//   }
 
-  removeFormGroup(index) {
-    this.paymentHistory.controls.splice(index, 1);
-    this.valueChange();
-  }
+//   removeFormGroup(index) {
+//     this.paymentHistory.controls.splice(index, 1);
+//     this.valueChange();
+//   }
 
 }

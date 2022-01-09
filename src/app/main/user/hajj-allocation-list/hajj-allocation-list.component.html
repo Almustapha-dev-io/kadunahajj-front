@@ -1,0 +1,145 @@
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb" style="font-size: 150%;">
+        <li class="breadcrumb-item"><a class="text-primary">Allocations</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ display }}</li>
+    </ol>
+</nav>
+
+<div class="col-12" style="text-align: center;" *ngIf="yearId.value">
+    <div class="btn-group mb-4" role="group">
+        <button type="button" [disabled]="loader.loaderVisible" [class.btn-active]="active === 'active'"
+            class="magnifyText btn btn-primary" (click)="tabClick('active')">
+            Active
+        </button>
+        <button type="button" [disabled]="loader.loaderVisible" [class.btn-active]="active === 'migrated'"
+            class="magnifyText btn btn-primary" (click)="tabClick('migrated')">
+            Migrated
+        </button>
+        <button type="button" [disabled]="loader.loaderVisible" [class.btn-active]="active === 'deleted'"
+            class="magnifyText btn btn-primary" (click)="tabClick('deleted')">
+            Deleted
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body" style="overflow-x: auto;">
+                <h6 class="card-title">ALLOCATIONS MASTER LIST</h6>
+                <div class="col-sm-12 px-0 mb-3" *ngIf="rolesService.isInitiator">
+                    <button (click)="addAllocation()" class="ml-auto btn btn-sm btn-success">Add allocation</button>
+                </div>
+
+                <select style="border-radius: 2px;" id="yearId"
+                    class="form-control col-sm-12 col-md-3 col-lg-2 float-left mb-4" name="yearId" ngModel
+                    #yearId="ngModel" required (change)="getAllocations(yearId.value)">
+                    <option value="" selected hidden>Select Year</option>
+                    <option *ngFor="let year of years" [value]="year._id">
+                        {{ year.year | uppercase }}
+                        <span class="text-success" *ngIf="year.active">
+                            &nbsp;&nbsp;&nbsp;Active
+                        </span>
+                    </option>
+                </select>
+
+                <input type="search" name="search" [(ngModel)]="searchText"
+                    class="form-control col-sm-12 col-md-3 float-right mb-4" placeholder="Search">
+
+
+                <div class="table-responsive" style="overflow-y: hidden!important;">
+                    <table class="table">
+                        <ng-container *ngIf="loader.loaderVisible then load; else show"></ng-container>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #load>
+    <thead>
+        <tr style="font-weight: 600;">
+            <td>
+                <app-loader>Fetching data...</app-loader>
+            </td>
+        </tr>
+    </thead>
+</ng-template>
+
+<ng-template #show>
+    <ng-container *ngIf="allocations.length > 0 then tableData; else noData"></ng-container>
+</ng-template>
+
+<ng-template #noData>
+    <thead>
+        <tr>
+            <td>No record(s) to display. <span *ngIf="yearId.value === ''">Select a year.</span></td>
+        </tr>
+    </thead>
+</ng-template>
+
+<ng-template #tableData>
+    <thead>
+        <tr>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc" data-name="sn">S/N</th>
+            <th class="sort" scope="col">Pilgrim</th>
+            <th class="sort" scope="col">Pilgrim Passport</th>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc"
+                data-name="enrollmentAllocationNumber">Allocated Number</th>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc" data-name="code">Registration Number
+            </th>
+            <th class="sort" scope="col" [appSort]="allocations" data-order="desc" data-name="dateCreated">Registration
+                Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody
+        *ngFor="let i=index; let a of allocations | filter: searchText | paginate: {itemsPerPage: pageSize, currentPage: p, totalItems: totalItems}">
+        <tr>
+            <td>{{ ((p - 1) * pageSize) + (i+1) }}</td>
+            <td>{{ a.pilgrim.personalDetails.surname + ', ' + a.pilgrim.personalDetails.otherNames | uppercase }}</td>
+            <td>{{ a.pilgrim.passportDetails.passportNumber }}</td>
+            <td><b>{{ a.enrollmentAllocationNumber }}</b></td>
+            <td>{{ a.code }}</td>
+            <td>{{ a.createdAt | date: 'medium' }}</td>
+            <td>
+                <div class="d-inline-block" ngbDropdown container="body" #moreActionsDrop="ngbDropdown">
+                    <button class="magnifyText btn btn-sm btn-outline-primary" id="moredropDown" ngbDropdownAnchor
+                        (focus)="moreActionsDrop.open()">Actions
+                    </button>
+                    
+                    <div ngbDropdownMenu aria-labelledby="moredropDown">
+                        <button 
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="viewAllocation(a)">
+                            View
+                        </button>
+                        
+                        <button 
+                            *ngIf="(active === 'active')"
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="editAllocation(a)">
+                            Edit
+                        </button>
+
+                        <button 
+                            *ngIf="(active === 'active') && (rolesService.isUserAdmin || rolesService.isReviewer)"
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="deleteAllocation(a)">
+                            Delete
+                        </button>
+
+                        <button
+                            *ngIf="(active === 'active') && (rolesService.isUserAdmin || rolesService.isReviewer)"
+                            class="my-2" style="font-size: 105%!important;" ngbDropdownItem
+                            (click)="migrateAllocation(a)">
+                            Migrate Allocation
+                        </button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+
+</ng-template>

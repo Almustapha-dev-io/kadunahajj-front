@@ -13,25 +13,36 @@ import { InitiatorGuard } from '../../common/guards/initiator.guard';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { UserAdminGuard } from '../../common/guards/user-admin.guard';
 import { ReviewerGuard } from '../../common/guards/reviewer.guard';
+import { HajjAllocationListComponent } from './hajj-allocation-list/hajj-allocation-list.component';
+import { MigratedHajjAllocationListComponent } from './migrated-hajj-allocation-list/migrated-hajj-allocation-list.component';
+import { AllocationExportComponent } from './allocation-export/allocation-export.component';
+import { PilgrimExportComponent } from './pilgrim-export/pilgrim-export.component';
+import { ReviewerAllocationExportComponent } from './reviewer-allocation-export/reviewer-allocation-export.component';
 
 const routes: Routes = [
-  { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
+    { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
 
-  { path: 'pilgrims', canActivate: [AuthGuard, InitiatorGuard], component: PilgrimListComponent },
-  { path: 'register-pilgrim', canActivate: [AuthGuard, InitiatorGuard], component: PilgrimFormComponent },
+    { path: 'pilgrims', canActivate: [AuthGuard], component: PilgrimListComponent },
+    { path: 'register-pilgrim', canActivate: [AuthGuard, InitiatorGuard], component: PilgrimFormComponent },
 
-  { path: 'pilgrims-admin', canActivate: [AuthGuard, UserAdminGuard], component: PilgrimAdminListComponent },
+    //   { path: 'pilgrims-admin', canActivate: [AuthGuard, UserAdminGuard], component: PilgrimAdminListComponent },
+    { path: 'hajj-allocations', canActivate: [AuthGuard], component: HajjAllocationListComponent },
+    { path: 'hajj-allocations-reviewer', canActivate: [AuthGuard, ReviewerGuard], component: PilgrimReviewerListComponent },
+    { path: 'deleted-hajj-allocations', canActivate: [AuthGuard, ReviewerGuard], component: PilgrimDeletedReviewerListComponent },
+    { path: 'migrated-hajj-allocations', canActivate: [AuthGuard, ReviewerGuard], component: MigratedHajjAllocationListComponent },
+    
+    { path: 'hajj-allocations-exports-reviewer', canActivate: [AuthGuard, ReviewerGuard], component: ReviewerAllocationExportComponent },
+    { path: 'hajj-allocations-exports', canActivate: [AuthGuard], component: AllocationExportComponent },
+    { path: 'pilgrims-exports', canActivate: [AuthGuard], component: PilgrimExportComponent },
 
-  { path: 'pilgrims-reviewer', canActivate: [AuthGuard, ReviewerGuard], component: PilgrimReviewerListComponent },
-  { path: 'pilgrims-deleted-reviewer', canActivate: [AuthGuard, ReviewerGuard], component: PilgrimDeletedReviewerListComponent },
-
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes)
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes)
+    ]
 })
 export class UserRoutingModule { }

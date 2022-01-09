@@ -1,129 +1,114 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { forkJoin, Subscription } from 'rxjs';
 import { environment } from '@environment';
 import { MatDialog } from '@angular/material/dialog';
-import * as XLSX from 'xlsx';
-
 import { DataService } from '../../../services/data.service';
 import { LoaderService } from '../../../services/loader.service';
-import { PilgrimDetailsComponent } from '../pilgrim-list/pilgrim-details/pilgrim-details.component';
-import { RestorePilgrimComponent } from '../pilgrim-admin-list/restore-pilgrim/restore-pilgrim.component';
+
+import { ViewHajjAllocationComponent } from '../view-hajj-allocation/view-hajj-allocation.component';
 
 @Component({
-  selector: 'app-pilgrim-deleted-reviewer-list',
-  templateUrl: './pilgrim-deleted-reviewer-list.component.html',
-  styleUrls: ['./pilgrim-deleted-reviewer-list.component.scss']
+    selector: 'app-pilgrim-deleted-reviewer-list',
+    templateUrl: './pilgrim-deleted-reviewer-list.component.html',
+    styleUrls: ['./pilgrim-deleted-reviewer-list.component.scss']
 })
 export class PilgrimDeletedReviewerListComponent implements OnInit, OnDestroy {
 
-  searchText = '';
-  years = [];
-  zones = [];
-  banks = [];
-  pilgrims = [];
-  p: number = 1;
-  pageSize: number = 5;
-  pages = [5, 10, 15, 20];
-  totalItems: number = 0;
-	year = '';
-	zone = '';
+    @ViewChild('yearId') year: HTMLInputElement;
+    @ViewChild('zoneId') zone: HTMLInputElement;
 
-  subscription = new Subscription();
-  token = sessionStorage.getItem('token');
-  constructor(
-    public loader: LoaderService,
-    private dataService: DataService,
-    private dialog: MatDialog
-  ) { }
+    searchText = '';
+    years = [];
+    zones = [];
+    banks = [];
+    allocations = [];
+    p = 1;
+    pageSize = 5;
+    pages = [5, 10, 15, 20];
+    totalItems = 0;
+    subscription = new Subscription();
+    token = sessionStorage.getItem('token');
 
-  ngOnInit(): void {
-    this.fetchData();
-  }
+    constructor(
+        public loader: LoaderService,
+        private dataService: DataService,
+        private dialog: MatDialog
+    ) { }
 
-  ngOnDestroy(): void {
-    this.loader.hideLoader();
-    this.subscription.unsubscribe();
-  }
+    ngOnInit(): void {
+        this.fetchData();
+    }
 
-  fetchData() {
-    this.loader.showLoader();
-    const yearsUri = `${environment.years}/all`;
-    const zoneUri = environment.zones;
-
-    this.subscription = forkJoin([this.dataService.get(yearsUri, this.token), this.dataService.get(zoneUri, this.token)])
-      .subscribe(response => {
-        this.years = [...response[0]];
-        const exemptedZones = ['00', '01'];
-
-        this.zones = response[1].filter(z => !exemptedZones.includes(z.code));
+    ngOnDestroy(): void {
         this.loader.hideLoader();
-      });
-  }
+        this.subscription.unsubscribe();
+    }
 
-  fetchPilgrims(yearId, zoneId) {
-    this.loader.showLoader();
-    const uri = `${environment.pilgrims}/reviewer/deleted-by-year-and-lga/${zoneId}/${yearId}`;
+    fetchData() {
+        this.loader.showLoader();
+        const yearsUri = `${environment.years}/all`;
+        const zoneUri = environment.zones;
 
-    this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
-			console.log(this.pilgrims, response);
-      this.pilgrims = [...response.pilgrims];
-      this.getBanks();
-      this.loader.hideLoader();
-    });
-  }
+        this.subscription = forkJoin([this.dataService.get(yearsUri, this.token), this.dataService.get(zoneUri, this.token)])
+            .subscribe(response => {
+                this.years = [...response[0]];
+                const exemptedZones = ['00', '01'];
 
-  getBanks() {
+                this.zones = response[1].filter(z => !exemptedZones.includes(z.code));
+                this.loader.hideLoader();
+            });
+    }
+    
+    onPageSizeChange() {
+        this.onNavigate(1);
+    }
 
-    this.loader.showLoader();
-    const uri = environment.banks;
-    const token = sessionStorage.getItem('token');
+    onNavigate(p?) {
+        if (p) {
+            this.p = p;
+        }
 
-    this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
-      this.banks = [...response];
+        this.fetchAllocations(this.year.value, this.zone.value, this.pageSize, this.p);
+    }
 
-      this.pilgrims.forEach(p => {
-        p.paymentHistory.forEach(ph => {
-          ph.bankObject = this.banks.find(b => b._id === ph.bank)
-        })
-      });
 
-      this.loader.hideLoader();
-    });
-  }
+    fetchAllocations(yearId, zoneId, pageSize?, page?) {
+        this.loader.showLoader();
+        const uri = `${environment.allocations}/zone/${zoneId}/year/${yearId}/deleted`;
+        const params = { pageSize, page };
 
-  viewPilgrim(pilgrim) {
-    window.scroll(0, 0);
-    this.dialog.open(PilgrimDetailsComponent, {
-      width: '35rem',
-      disableClose: true,
-      data: pilgrim
-    });
-  }
+        this.subscription = this.dataService.get(uri, this.token, null, params).subscribe(response => {
+            this.allocations = [...response.allocations];
+            this.totalItems = response.totalDocs;
+            this.getBanks();
+            this.loader.hideLoader();
+        });
+    }
 
-	restorePilgrim(pilgrim) {
-		pilgrim.zone = this.zone;
-		pilgrim.isReviewer = true;
-    window.scroll(0, 0);
-    this.dialog.open(RestorePilgrimComponent, {
-      width: '20rem',
-      disableClose: true,
-      data: pilgrim
-    }).afterClosed().subscribe(result => {
-      if (result) {
-        this.fetchPilgrims(this.year, this.zone);
-      }
-    });
-  }
+    getBanks() {
+        this.loader.showLoader();
+        const uri = environment.banks;
+        const token = sessionStorage.getItem('token');
 
-  exportToExcel() {
-    const filename = 'ExcelSheet.xlsx';
-    let element = document.getElementById('excel-table');
+        this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
+            this.banks = [...response];
 
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+            this.allocations.forEach(p => {
+                p.paymentHistory.forEach(ph => {
+                    ph.bankObject = this.banks.find(b => b._id === ph.bank);
+                })
+            });
 
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+            this.loader.hideLoader();
+        });
+    }
 
-    XLSX.writeFile(wb, filename);
-  }
+    viewAllocation(a) {
+        window.scroll(0, 0);
+        this.dialog.open(ViewHajjAllocationComponent, {
+            width: '45rem',
+            disableClose: true,
+            data: a
+        });
+    }
 }

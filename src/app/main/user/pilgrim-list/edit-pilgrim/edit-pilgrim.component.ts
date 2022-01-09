@@ -24,7 +24,6 @@ export class EditPilgrimComponent implements OnInit {
   officeDetails;
   passportDetails;
   nextOfKinDetails;
-  paymentHistory = [];
   attachedDocuments;
 
   banks = [];
@@ -54,31 +53,16 @@ export class EditPilgrimComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data);
-    this.getBanks();
     this.personalDetails = { ...this.data.personalDetails };
     this.officeDetails = { ...this.data.officeDetails };
     this.passportDetails = { ...this.data.passportDetails };
     this.attachedDocuments = { ...this.data.attachedDocuments };
-    this.paymentHistory = [...this.data.paymentHistory];
     this.nextOfKinDetails = { ...this.data.nextOfKinDetails };
     this.initializeForm();
 
     this.getStates();
   }
 
-  getBanks() {
-    this.paymentHistory = [...this.data.paymentHistory];
-
-    this.loader.showLoader();
-    const uri = environment.banks;
-    const token = sessionStorage.getItem('token');
-
-    this.subscription = this.dataService.get(uri, token, '').subscribe(response => {
-      this.banks = [...response];
-      this.loader.hideLoader();
-    });
-  }
 
   imageFile(name) {
     window.scroll(0, 0);
@@ -101,7 +85,8 @@ export class EditPilgrimComponent implements OnInit {
         localGovOfOrigin: [this.personalDetails.localGovOfOrigin._id, Validators.required],
         dateOfBirth: [moment(new Date(this.personalDetails.dateOfBirth)).format('YYYY-MM-DD'), [Validators.required, YearValidators.greaterThanToday]],
         phone: [this.personalDetails.phone, [Validators.required, Validators.minLength(11), Validators.maxLength(11), Validators.pattern(/^[0-9]{11}$/)]],
-        alternatePhone: [this.personalDetails.alternatePhone, Validators.pattern(/^[0-9]{11}$/)]
+        alternatePhone: [this.personalDetails.alternatePhone, Validators.pattern(/^[0-9]{11}$/)],
+        email: [this.personalDetails.email, Validators.email]
       }),
       officeDetails: this.fb.group({
         occupation: [this.officeDetails.occupation, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -125,7 +110,6 @@ export class EditPilgrimComponent implements OnInit {
         ]],
         expiryDate: [moment(new Date(this.passportDetails.expiryDate)).format('YYYY-MM-DD'), [Validators.required, YearValidators.lessThanToday]]
       }),
-      paymentHistory: this.fb.array([]),
       attachedDocuments: this.fb.group({
         guarantorFormUrl: [this.attachedDocuments.guarantorFormUrl, Validators.required],
         passportUrl: [this.attachedDocuments.passportUrl, Validators.required],
@@ -135,7 +119,6 @@ export class EditPilgrimComponent implements OnInit {
     });
 
     const otherDocsForm = this.editPilgrimForm.get('attachedDocuments').get('otherDocuments') as FormArray;
-    console.log({ otherDocsForm })
     this.attachedDocuments.otherDocuments.forEach(doc => {
         const form = this.formsService.docForm;
         form.patchValue({
@@ -145,30 +128,10 @@ export class EditPilgrimComponent implements OnInit {
         otherDocsForm.push(form);
     });
 
-    const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
-    this.paymentHistory.forEach(payment => paymentHistory.push(this.getPaymentHistoryForm(payment)));
+    // const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
+    // this.paymentHistory.forEach(payment => paymentHistory.push(this.getPaymentHistoryForm(payment)));
 
-    console.log(this.editPilgrimForm.value)
-  }
-
-  getPaymentHistoryForm(data?) {
-    return this.fb.group({
-      bank: [data && data.bank ? data.bank : '', Validators.required],
-      tellerNumber: [data && data.tellerNumber ? data.tellerNumber : '', Validators.required],
-      receiptNumber: [data && data.receiptNumber ? data.receiptNumber : '', Validators.required],
-      paymentDate: [data && data.paymentDate ? moment(data.paymentDate).format('YYYY-MM-DD') : '', [Validators.required, YearValidators.greaterThanToday]],
-      amount: [data && data.amount ? data.amount : '', [Validators.required, Validators.pattern(/^[0-9]+$/)]]
-    });
-  }
-
-  addPaymentForm() {
-    const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
-    paymentHistory.push(this.getPaymentHistoryForm());
-  }
-
-  removePaymentForm(index) {
-    const paymentHistory = this.editPilgrimForm.get('paymentHistory') as FormArray;
-    paymentHistory.removeAt(index);
+    // console.log(this.editPilgrimForm.value)
   }
 
   get personalDetailsForm() {
@@ -214,6 +177,9 @@ export class EditPilgrimComponent implements OnInit {
   get alternatePhone(): FormControl {
     return this.personalDetailsForm.get('alternatePhone') as FormControl;
   }
+  get email(): FormControl {
+    return this.personalDetailsForm.get('email') as FormControl;
+  }
   get occupation(): FormControl {
     return this.officeDetailsForm.get('occupation') as FormControl;
   }
@@ -256,10 +222,6 @@ export class EditPilgrimComponent implements OnInit {
 
   get nextOfKinRelationship(): FormControl {
     return this.nextOfKinDetailsForm.get('relationship') as FormControl;
-  }
-
-  get paymentHistoryForms() {
-    return (this.editPilgrimForm.get('paymentHistory') as FormArray).controls as FormGroup[];
   }
 
   get attachDocumentsForm() {
@@ -338,7 +300,7 @@ export class EditPilgrimComponent implements OnInit {
             this.notifications.successToast(`${fileRes.message} Sending user data...`);
 
             this.subscription = this.dataService.update(uri, this.data._id, body, token).subscribe(response => {
-              this.notifications.alert(`Pilgrim updated successfully. <br />Code: <b>${response.enrollmentDetails.code}</b>`).then(result => {
+              this.notifications.alert(`Pilgrim updated successfully.`).then(result => {
                 this.loader.hideLoader();
                 this.dialogRef.close(true);
               });
@@ -346,7 +308,7 @@ export class EditPilgrimComponent implements OnInit {
           })
         } else {
           this.subscription = this.dataService.update(uri, this.data._id, body, token).subscribe(response => {
-            this.notifications.alert(`Pilgrim updated successfully. <br />Code: <b>${response.enrollmentDetails.code}</b>`).then(result => {
+            this.notifications.alert(`Pilgrim updated successfully.`).then(result => {
               this.loader.hideLoader();
               this.dialogRef.close(true);
             });
@@ -357,7 +319,7 @@ export class EditPilgrimComponent implements OnInit {
   }
 
   get formsValid() {
-    return this.passportDetailsForm.valid && this.paymentHistoryForms.every(f => f.valid);
+    return this.passportDetailsForm.valid;
   }
 
   getStates() {

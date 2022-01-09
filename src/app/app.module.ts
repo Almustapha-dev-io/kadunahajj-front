@@ -9,7 +9,6 @@ import { MaterialModule } from './material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { DataService } from './services/data.service';
 import { LoaderService } from './services/loader.service';
 import { ModalLoaderService } from './services/modal-loader.service';
@@ -55,7 +54,7 @@ import { ProfileComponent } from './main/profile/profile.component';
     DataService,
     LoaderService,
     ModalLoaderService,
-    { provide: ErrorHandler, useClass: AppErrorHandler}
+    // { provide: ErrorHandler, useClass: AppErrorHandler}
   ],
   bootstrap: [AppComponent]
 })

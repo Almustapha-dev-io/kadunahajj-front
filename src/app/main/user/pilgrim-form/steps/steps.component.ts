@@ -46,7 +46,7 @@ export class StepsComponent implements OnInit {
 
     switch (stepIndex) {
       case 1:
-        display = 'Enrollment & Passport';
+        display = 'Passport Details';
         break;
 
       case 2:
@@ -58,12 +58,12 @@ export class StepsComponent implements OnInit {
         break;
 
       case 4:
-        display = 'Document Upload'
+        display = 'Document Upload';
         break;
 
-      case 5:
-        display = 'Payment History'
-        break;
+    //   case 5:
+    //     display = 'Payment History';
+    //     break;
     }
 
     return display;

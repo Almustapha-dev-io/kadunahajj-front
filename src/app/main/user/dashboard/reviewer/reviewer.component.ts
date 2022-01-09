@@ -22,21 +22,23 @@ export class ReviewerComponent implements OnInit, OnDestroy {
   localGov = sessionStorage.getItem('localGov');
   subscription = new Subscription();
 
-  allPilgrimsCounts = [];
-  allPilgrimsZones = [];
+  allAllocationsCounts = [];
+  allAllocationsZones = [];
 
-  allPilgrimsByYearCounts = [];
-  allPilgrimsByYearZones = [];
+  allAllocationsByYearCounts = [];
+  allAllocationsByYearZones = [];
 
-  allPilgrimsComplete = false;
-  allPilgrimsByYearComplete = false;
+  allAllocationsComplete = false;
+  allAllocationsByYearComplete = false;
 
   totalThisYear = 0;
   overAllTotal = 0;
   overAllTotalComplete = false;
   totalThisYearComplete = false;
 
-  constructor(
+  totalAllocations = 0;
+
+  constructor(  
     public loader: LoaderService,
     private dataService: DataService
   ) { }
@@ -45,11 +47,12 @@ export class ReviewerComponent implements OnInit, OnDestroy {
     this.loader.showLoader();
     this.getCurrentYearCount();
     this.getAllPilgrimsCount();
-    this.getAllPilgrimsForChart();
-    this.getAllPilgrimsForChartThisYear();
-
+    this.getAllAllocationsForChart();
+    this.getAllAllocationsForChartThisYear();
+    this.getAllAllocationsCount();
+    
     const interval = setInterval(() => {
-      if (this.totalThisYearComplete && this.overAllTotalComplete && this.allPilgrimsComplete && this.allPilgrimsByYearComplete) {
+      if (this.totalThisYearComplete && this.overAllTotalComplete && this.allAllocationsComplete && this.allAllocationsByYearComplete) {
         this.loader.hideLoader();
 
         clearInterval(interval);
@@ -71,7 +74,7 @@ export class ReviewerComponent implements OnInit, OnDestroy {
   }
 
   getCurrentYearCountHelper(yearId): void {
-    const uri = `${environment.analytics}/all-pilgrims-by-year/${yearId}`;
+    const uri = `${environment.analytics}/all-allocations-by-year/${yearId}`;
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
       this.totalThisYear = response.count;
@@ -81,43 +84,49 @@ export class ReviewerComponent implements OnInit, OnDestroy {
 
   getAllPilgrimsCount(): void {
     const uri = `${environment.analytics}/all-pilgrims`;
-
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
       this.overAllTotal = response.count;
       this.overAllTotalComplete = true;
     });
   }
-
-  getAllPilgrimsForChart(): void {
-    const uri = `${environment.analytics}/all-lga-pilgrim-count`;
-
+  
+  getAllAllocationsCount(): void {
+    const uri = `${environment.analytics}/all-allocations`;
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
-
-      this.allPilgrimsCounts = [
-        { data: response[0] }
-      ];
-      this.allPilgrimsZones = response[1];
-      this.allPilgrimsComplete = true;
+      this.totalAllocations = response.count;
     });
   }
 
-  getAllPilgrimsForChartThisYear(): void {
+  getAllAllocationsForChart(): void {
+    const uri = `${environment.analytics}/all-lga-allocations-count`;
+
+    this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
+
+      this.allAllocationsCounts = [
+        { data: response[0] }
+      ];
+      this.allAllocationsZones = response[1];
+      this.allAllocationsComplete = true;
+    });
+  }
+
+  getAllAllocationsForChartThisYear(): void {
     const uri = `${environment.years}/by-year/${new Date().getFullYear()}`;
 
     this.subscription = this.dataService.get(uri, this.token).subscribe(year => {
-      this.getAllPilgrimsForChartThisYearHelper(year._id);
+      this.getAllAllocationsForChartThisYearHelper(year._id);
     });
   }
 
-  getAllPilgrimsForChartThisYearHelper(yearId): void {
-    const uri = `${environment.analytics}/all-lga-pilgrim-count/${yearId}`;
+  getAllAllocationsForChartThisYearHelper(yearId): void {
+    const uri = `${environment.analytics}/all-lga-allocations-count/${yearId}`;
     this.subscription = this.dataService.get(uri, this.token).subscribe(response => {
 
-      this.allPilgrimsByYearCounts = [
+      this.allAllocationsByYearCounts = [
         { data: response[0] }
       ];
-      this.allPilgrimsByYearZones = response[1];
-      this.allPilgrimsByYearComplete = true;
+      this.allAllocationsByYearZones = response[1];
+      this.allAllocationsByYearComplete = true;
     });
   }
 }
